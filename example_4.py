@@ -15,9 +15,9 @@ MAP_MASS = 50
 SIZE = (MAP_W * MAP_MASS,MAP_H * MAP_MASS) #ウインドウサイズ
 
 #画像取込み
-img_Wall = pygame.image.load("wall2.png")
-img_Floor = pygame.image.load("concrete.png")
-img_car = pygame.image.load("car_3.png")
+img_Wall = pygame.image.load("img/wall2.png")
+img_Floor = pygame.image.load("img/concrete.png")
+img_car = pygame.image.load("img/car_3.png")
 
 #変数定義(mapに必要なもの)
 map = np.zeros((MAP_H,MAP_W),dtype=np.int) #0で初期化
