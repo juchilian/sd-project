@@ -10,7 +10,7 @@ SIZE = (1200,700)
 
 car_x = 400
 car_y = 200
-img_car = pygame.image.load("car_3.png")
+img_car = pygame.image.load("img/car_3.png")
 img_car_now = img_car
 car_w = img_car.get_width()
 car_h = img_car.get_height()
