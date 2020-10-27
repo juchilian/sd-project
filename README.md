@@ -4,7 +4,9 @@
 
 Gitコマンド  
 git checkout [ブランチ名]  
-⇒作業するブランチに移動
+⇒作業するブランチに移動  
+オススメサイト  
+https://qiita.com/shh-nkmr/items/fde133cbdfa5f0092be1
 
 
 Git構造  
