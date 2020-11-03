@@ -1,7 +1,7 @@
-import pygame
 import sys
-import random
+#import random
 import math
+import pygame
 
 BLACK = (  0,  0,  0)
 SILBER = (192,192,192)
