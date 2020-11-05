@@ -1,4 +1,4 @@
-# Message app using server
+# Message app using server...
 import socket
 # import pickle # to send type other than str
 
