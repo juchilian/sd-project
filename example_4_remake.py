@@ -64,7 +64,7 @@ goal_xs , goal_ys = 625,50
 goal_xe , goal_ye = 625,150
 
 #音楽の読み込み
-#pygame.mixer.music.load("music/GB-Racing-A05-2(Stage3-Loop180).ogg")
+pygame.mixer.music.load("music/GB-Racing-A05-2(Stage3-Loop180).ogg")
 
 
     
@@ -92,7 +92,7 @@ def bgm_play(bg):
     global index
     if index == 0:
         if pygame.mixer.music.get_busy() == True:
-             pygame.mixer.music.stop()
+            pygame.mixer.music.stop()
     if index == 1:
         if pygame.mixer.music.get_busy() == False:
             pygame.mixer.music.play(-1)
@@ -200,8 +200,8 @@ def move_car():
         img_rotate = pygame.transform.rotozoom(img_car,arg,1)
         car_rotate_w = img_rotate.get_width()
         car_rotate_h = img_rotate.get_height()
-        reposition_x = (car_rotate_w - CAR_W) / 2
-        reposition_y = (car_rotate_h - CAR_H) / 2
+        # reposition_x = (car_rotate_w - CAR_W) / 2
+        # reposition_y = (car_rotate_h - CAR_H) / 2
         img_car_now = img_rotate
     #LEFTキーが押されたら
     if key[pygame.K_LEFT] == 1:
@@ -209,8 +209,8 @@ def move_car():
         img_rotate = pygame.transform.rotozoom(img_car,arg,1)
         car_rotate_w = img_rotate.get_width()
         car_rotate_h = img_rotate.get_height()
-        reposition_x = (car_rotate_w - CAR_W) / 2
-        reposition_y = (car_rotate_h - CAR_H) / 2
+        # reposition_x = (car_rotate_w - CAR_W) / 2
+        # reposition_y = (car_rotate_h - CAR_H) / 2
         img_car_now = img_rotate
     
     

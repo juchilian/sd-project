@@ -101,7 +101,7 @@ class Game:
 
 
 class Canvas:
-
+    BLACK  = (  0,  0,  0)
     def __init__(self, w, h, name="None"):
         self.width = w
         self.height = h
