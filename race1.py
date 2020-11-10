@@ -119,6 +119,7 @@ def drive_car(key):                                                #プレイヤ
 
 
 def main():
+
     pygame.init()                                                      #pygameモジュールの初期化
     pygame.display.set_caption("Pygame Racer")                         #ウインドウに表示するタイトルを指定
     screen = pygame.display.set_mode((800,600))                        #描画面を初期化
