@@ -14,7 +14,7 @@ class Player:
         self.spd = 0          #車の速度を管理するリスト
         self.PLself = 10  #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         
-    def drive_car(self, key, curve):                                                #プレイヤーの車の操作、制御する関数
+    def drive_car(self, key, curve): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
         if key[K_LEFT] == 1:                                           #左キーが押されたら
             if self.lr > -3:                                          #向きが-3より大きければ
                 self.lr -= 1                                           #向きを-1する
@@ -71,7 +71,7 @@ class Game:
         updown = [0] * C.CMAX          #道の起伏を入れるリスト
         object_left = [0]*C.CMAX     #道路左にある物体の番号を入れるリスト
         object_right = [0] * C.CMAX  #道路右にある物体の番号を入れるリスト
-        self.make_course(curve, updown, object_left, object_right) #コース設計
+        self.make_course(curve, updown, object_left, object_right) #コース設計 #修正箇所(returnで値の変更を反映)
 
         while True:                                    #無限ループで処理を続ける
             for event in pygame.event.get():            #pygameのイベントを繰り返しで処理する
@@ -150,13 +150,13 @@ class Game:
                     self.draw_obj(screen, self.img_car[3 + self.p1.lr], ux + self.p1.x * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])  #プレイヤーの車を描く
             
             key = pygame.key.get_pressed()                       #keyに全てのキーの状態代入
-            self.p1.drive_car(key, curve)  #プレイヤーの車を操作する関数を実行
+            self.p1.drive_car(key, curve)  #プレイヤーの車を操作する関数を実行 #修正箇所(returnで値の変更を反映)
 
 
             pygame.display.update()                      #画面を更新する
             clock.tick(60)                               #フレームレートを指定
 
-    def make_course(self, curve, updown, object_left, object_right):         #コースデータを作る関数
+    def make_course(self, curve, updown, object_left, object_right): #コースデータを作る関数 #修正箇所(returnで値の変更を反映)
         for i in range(C.CLEN):  
             lr1 = C.DATA_LR[i]                    #カーブデータをlr1に代入   
             lr2 = C.DATA_LR[(i+1)%C.CLEN]           #次のカーブデータをlr2に代入
