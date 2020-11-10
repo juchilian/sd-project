@@ -146,76 +146,75 @@ def main():
     #道路の板の基本形状を計算
     BOARD_W = [0]*BOARD                            #板の幅を代入するリスト
     BOARD_H = [0]*BOARD                            #板の高さを代入する
-    BOARD_UP = [0]*BOARD                           #
-    for i in range(BOARD):
-        BOARD_W[i] = 10 + (BOARD-i)*(BOARD-i)/12
-        BOARD_H[i] = 3.4*(BOARD-i)/BOARD
-        BOARD_UP[i] = 2*sin(radians(i*1.5))
+    BOARD_UP = [0]*BOARD                           #板の起伏用の値を代入するりすと
+    for i in range(BOARD):                         #繰り返しで
+        BOARD_W[i] = 10 + (BOARD-i)*(BOARD-i)/12    #幅を計算
+        BOARD_H[i] = 3.4*(BOARD-i)/BOARD            #高さを計算
+        BOARD_UP[i] = 2*sin(radians(i*1.5))         #起伏の値を三角関数で計算
     
-    make_course()
+    make_course()                                  #コースデータを作る
 
     
-    vertical = 0
+    vertical = 0                                   #背景の横方向の位置を管理する変数
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+    while True:                                    #無限ループで処理を続ける
+        for event in pygame.event.get():            #pygameのイベントを繰り返しで処理する
+            if event.type == QUIT:                   #ウインドウの×ボタンをクリックしたら
+                pygame.quit()                        #pygameモジュールの初期化を解除
+                sys.exit()                           #プログラムを終了する
         
         
         #描画用の道路のX座標と路面の高低を計算
-        di = 0
-        ud = 0
-        board_x = [0]*BOARD
-        board_ud = [0]*BOARD
+        di = 0                                                    #道が曲がる向きを計算する変数
+        ud = 0                                                    #道の起伏を計算する変数
+        board_x = [0]*BOARD                                       #板のx座標を計算するためのリスト
+        board_ud = [0]*BOARD                                      #板の工程を計算するためのリスト
         for i in range(BOARD):
-            di += curve[int(car_y[0]+i) % CMAX]
-            ud += updown[int(car_y[0]+i) % CMAX]
-            board_x[i] = 400 - BOARD_W[i]*car_x[0]/800 + di/2
-            #board_x[i] = 400 - BOARD_W[i]/2 + di/2
-            board_ud[i] = ud/30
+            di += curve[int(car_y[0]+i) % CMAX]                      #カーブデータからの道の曲がりを計算
+            ud += updown[int(car_y[0]+i) % CMAX]                     #起伏データから起伏を計算
+            board_x[i] = 400 - BOARD_W[i]*car_x[0]/800 + di/2        #板のx座標を計算し代入
+            board_ud[i] = ud/30                                      #板の高低を計算し代入
 
-        horizon = 400 + int(ud/3)
-        sy = horizon
+        horizon = 400 + int(ud/3)                                 #地平線のy座標を計算しhorizonに代入
+        sy = horizon                                              #道路を描き始めるy座標をsyに代入
 
-        vertical = vertical - int(car_spd[0]*di/8000)
+        vertical = vertical - int(car_spd[0]*di/8000)             #背景の垂直位置を計算
         #背景の垂直位置
-        if vertical < 0:
-            vertical += 800
-        if vertical >= 800:
-            vertical -= 800
+        if vertical < 0:                                           #それが0未満になったら
+            vertical += 800                                          #800を足す
+        if vertical >= 800:                                        #800以上になったら
+            vertical -= 800                                          #800を引く
 
         #フィードの描画
-        screen.fill((0,56,255)) #上空の色
-        screen.blit(img_bg,[vertical-800,horizon-400])
-        screen.blit(img_bg,[vertical,horizon-400])
-        screen.blit(img_sea,[board_x[BOARD-1]-780,sy]) #一番奥の海
+        screen.fill((0,56,255)) #上空の色                           #指定の色で画面を塗りつぶす
+        screen.blit(img_bg,[vertical-800,horizon-400])             #空と地面の画像を描画(左側)
+        screen.blit(img_bg,[vertical,horizon-400])                 #空と地面の画像を描画(右側)
+        screen.blit(img_sea,[board_x[BOARD-1]-780,sy])             #左手奥の海を描画
 
         #描画用データを基に道路を描く
-        for i in range(BOARD-1,0,-1):
-            ux = board_x[i]
-            uy = sy - BOARD_UP[i]*board_ud[i]
-            uw = BOARD_W[i]
-            sy = sy + BOARD_H[i]*(600-horizon)/200
-            bx = board_x[i-1]
-            by = sy - BOARD_UP[i-1]*board_ud[i-1]
-            bw = BOARD_W[i-1]
-            col = (160,160,160)
+        for i in range(BOARD-1,0,-1):                              #繰り返しで道路の板を描いていく
+            ux = board_x[i]                                        #台形の上底のx座標をuxに代入
+            uy = sy - BOARD_UP[i]*board_ud[i]                      #上底のy座標をuyに代入
+            uw = BOARD_W[i]                                        #上底の幅をuwに代入
+            sy = sy + BOARD_H[i]*(600-horizon)/200                 #台形を描くy座標を次の値にする
+            bx = board_x[i-1]                                      #台形の下底のx座標をbxに代入
+            by = sy - BOARD_UP[i-1]*board_ud[i-1]                  #下底のy座標をbyに代入
+            bw = BOARD_W[i-1]                                      #下底の幅をbwに代入
+            col = (160,160,160)                                    #colに板の色を代入
             
-            pygame.draw.polygon(screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])
+            pygame.draw.polygon(screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
 
-            if int(car_y[0]+i)%10 <= 4:  #左右の黄色線
-                pygame.draw.polygon(screen,YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])
-                pygame.draw.polygon(screen,YELLOW,[[ux+uw*0.98,uy],[ux+uw,uy],[bx+bw,by],[bx+bw*0.98,by]])
+            if int(car_y[0]+i)%10 <= 4:  #左右の黄色線を描画
+                pygame.draw.polygon(screen,YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])      #左
+                pygame.draw.polygon(screen,YELLOW,[[ux+uw*0.98,uy],[ux+uw,uy],[bx+bw,by],[bx+bw*0.98,by]])   #右
 
-            if int(car_y[0]+i)%20 <= 10:   #白線
-                pygame.draw.polygon(screen,WHITE,[[ux+uw*0.24,uy],[ux+uw*0.26,uy],[bx+bw*0.26,by],[bx+bw*0.24,by]])
-                pygame.draw.polygon(screen,WHITE,[[ux+uw*0.49,uy],[ux+uw*0.51,uy],[bx+bw*0.51,by],[bx+bw*0.49,by]])
-                pygame.draw.polygon(screen,WHITE,[[ux+uw*0.74,uy],[ux+uw*0.76,uy],[bx+bw*0.76,by],[bx+bw*0.74,by]])
+            if int(car_y[0]+i)%20 <= 10:   #白線を描画
+                pygame.draw.polygon(screen,WHITE,[[ux+uw*0.24,uy],[ux+uw*0.26,uy],[bx+bw*0.26,by],[bx+bw*0.24,by]])  #左
+                pygame.draw.polygon(screen,WHITE,[[ux+uw*0.49,uy],[ux+uw*0.51,uy],[bx+bw*0.51,by],[bx+bw*0.49,by]])  #中央
+                pygame.draw.polygon(screen,WHITE,[[ux+uw*0.74,uy],[ux+uw*0.76,uy],[bx+bw*0.76,by],[bx+bw*0.74,by]])  #右
 
 
-            scale = 1.5*BOARD_W[i]/BOARD_W[0]
+            scale = 1.5*BOARD_W[i]/BOARD_W[0]    #道路横の物体のスケールを計算
             obj_l = object_left[int(car_y[0]+i)%CMAX]   #道路左の物体
             if obj_l == 2: #ヤシの木
                 draw_obj(screen,img_obj[obj_l],ux-uw*0.05,uy,scale)
@@ -225,21 +224,21 @@ def main():
                 screen.blit(img_sea,[ux-uw*0.5-780,uy])
 
             obj_r = object_right[int(car_y[0]+i)%CMAX]  #道路右の物体
-            """
+            """  #看板はいらないため描画しない
             if obj_r == 1:  #看板
                 draw_obj(screen,img_obj[obj_r],ux+uw*1.3,uy,scale)
             """
                 
-            if i == PLCAR_Y: #PLAYERカー
-                draw_shadow(screen, ux+car_x[0]*BOARD_W[i]/800,uy,200*BOARD_W[i]/BOARD_W[0])
-                draw_obj(screen,img_car[3+car_lr[0]],ux+car_x[0]*BOARD_W[i]/800,uy, 0.05+BOARD_W[i]/BOARD_W[0])
+            if i == PLCAR_Y: #PLAYERカー                                                                           #プレイヤーの車の位置なら
+                draw_shadow(screen, ux+car_x[0]*BOARD_W[i]/800,uy,200*BOARD_W[i]/BOARD_W[0])                       #車の影を描き
+                draw_obj(screen,img_car[3+car_lr[0]],ux+car_x[0]*BOARD_W[i]/800,uy, 0.05+BOARD_W[i]/BOARD_W[0])    #プレイヤーの車を描く
         
-        key = pygame.key.get_pressed()
-        drive_car(key)
+        key = pygame.key.get_pressed()                       #keyに全てのキーの状態代入
+        drive_car(key)                                       #プレイヤーの車を操作する関数を実行
 
 
-        pygame.display.update()
-        clock.tick(60)
+        pygame.display.update()                      #画面を更新する
+        clock.tick(60)                               #フレームレートを指定
 
-if __name__ == '__main__':
-    main()
+if __name__ == '__main__':                           #このプログラムが実行されたときに
+    main()                                           #main()関数を呼び出す
