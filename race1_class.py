@@ -4,61 +4,17 @@ from math import sin,radians
 from pygame.locals import *  #pygame.定数の記述の省略
 ### 自作ファイルのインポート ###
 import Const as C
+from player import Player
 from network import Network
-
-
-class Player:
-
-    def __init__(self, startx):
-        self.x = startx            #車の横方向の座標を管理するリスト
-        self.y = 0            #車のコース上の位置を管理するリスト
-        self.lr = 0           #車の左右の向きを管理するリスト
-        self.spd = 0          #車の速度を管理するリスト
-        self.PLself = 10  #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
-        
-    def drive_car(self, key, curve): #プレイヤーの車の操作、制御する関数
-        if key[K_LEFT] == 1: #左キーが押されたら
-            if self.lr > -3: #向きが-3より大きければ
-                self.lr -= 1 #向きを-1する
-            self.x += (self.lr - 3) * self.spd / 100 - 5 #車の横方向の座標を計算
-        elif key[K_RIGHT] == 1: #そうでなく右キーが押されたら
-            if self.lr < 3: #向きが3より小さければ
-                self.lr += 1 #向きを+1する
-            self.x += (self.lr + 3) * self.spd / 100 + 5 #車の横方向の座標を計算
-        else:
-            self.lr = int(self.lr*0.9) #正面向きに近づける
-        
-        if key[K_a] == 1: #アクセル                                     #Aキーが押されたら
-            self.spd += 3                                            #速度を増やす
-        elif key[K_z] == 1:  #ブレーキ                                  #そうでなくzキーが押されたら
-            self.spd -= 10                                            #速度を減らす
-        else:                                                          #そうでないなら
-            self.spd -= 0.25                                          #ゆっくり減速
-
-        if self.spd < 0:  #最低速度                                  #速度が0未満なら
-            self.spd = 0                                             #速度を0にする
-        if self.spd > 200:  #最高速度 #最高速度を超えたら
-            self.spd = 200 #最高速度にする
-
-        self.x -= self.spd * curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
-        if self.x < 0: #左の路肩に接触したら
-            self.x = 0 #横方向の座標を0にして
-            self.spd *= 0.9 #減速する
-        if self.x > 800: #右の路肩に接触したら
-            self.x = 800 #横方向の座標を800にして
-            self.spd *= 0.9 #減速する
-
-        self.y += self.spd / 100 #車の速度からコース上の位置を計算
-        if self.y > C.CMAX - 1: #コース終点を超えたら
-            self.y -= C.CMAX #コースを頭に戻す
 
 
 class Game:
     def __init__(self):
         # self.game_mode = game_mode # game_mode 1:1人プレイ, 2人プレイ
-        self.p1 = Player(300) # Player1 定義 #バグ#割り振られたIDに寄って初期位置を変える
-        self.p2 = Player(500) # Player2 定義
         self.net = Network()  # Online機能のロード
+        self.startPos = self.read_pos(self.net.getPos())
+        self.p1 = Player(self.startPos[0], self.startPos[1]) # Player1 定義 #バグ#割り振られたIDに寄って初期位置を変える
+        self.p2 = Player(500, 0) # Player2 定義
 
 
 
@@ -155,19 +111,38 @@ class Game:
             self.p1.drive_car(key, curve) #プレイヤーの車を操作する関数を実行 
 
             # Send Network Stuff & Get opponent info
-            self.p2.x, self.p2.y = self.parse_data(self.send_data())
+            # print("ここでプリント " + self.net.send(self.make_pos((self.p1.x, self.p1.y)))) #返り値がNone
+            # self.make_pos((self.p1.x, self.p1.y)) => 500.0, 0.0
+            # self.net.sendの返り値が None
+            p2Pos = self.read_pos(self.net.send(self.make_pos((self.p1.x, self.p1.y)))) # read_posでエラー発生中？
+            self.p2.x = p2Pos[0]
+            self.p2.y = p2Pos[1]
+            # 旧コード
+            # self.p2.x, self.p2.y = self.parse_data(self.send_data())
 
             pygame.display.update() #画面を更新する
             clock.tick(60) #フレームレートを指定
 
-    def send_data(self): # 座標をサーバーに送信
-        """
-        Send position to server
-        :return: None
-        """
-        data = str(self.net.id) + ":" + str(self.p1.x) + "," + str(self.p1.y)
-        reply = self.net.send(data)
-        return reply
+    # 旧コードの関数
+    # def send_data(self): # 座標をサーバーに送信
+    #     """
+    #     Send position to server
+    #     :return: None
+    #     """
+    #     data = str(self.net.id) + ":" + str(self.p1.x) + "," + str(self.p1.y)
+    #     reply = self.net.send(data)
+    #     return reply
+
+    def read_pos(self, str):
+        print("strの出力：" + str)
+        str = str.split(",")
+        return int(str[0]), int(str[1])
+
+
+    def make_pos(self, tup):
+        # print(str(tup[0]) + "," + str(tup[1])) # 値 500.0, 0.0
+        return str(tup[0]) + "," + str(tup[1])
+
 
     @staticmethod
     def parse_data(data): # 相手の座標を受信したのを解読
