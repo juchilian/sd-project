@@ -13,20 +13,20 @@ https://qiita.com/shh-nkmr/items/fde133cbdfa5f0092be1
 
 
 Git構造  
-main・・・リリース用(完成品をアップする) 基本いじらない
-develop・・・基本となるゲーム開発をするブランチ(担当：藤井、ゲーム機能をゴリゴリ作りこむ)
-  feature_online・・・オンライン対戦機能開発(担当：菊池、サーバー設定etc)
+main・・・リリース用(完成品をアップする) 基本いじらない  
+develop・・・基本となるゲーム開発をするブランチ(担当：藤井、ゲーム機能をゴリゴリ作りこむ)  
+  feature_online・・・オンライン対戦機能開発(担当：菊池、サーバー設定etc)  
   feature_pulse・・・脈拍の機能開発(担当：福井、ラズパイで脈拍検知するコード作成)  
-  feature_eye_detect・・・視線の検出機能（担当：福井）
+  feature_eye_detect・・・視線の検出機能（担当：福井）  
 
-作業を開始する前にターミナルですること
-1.git branch (自分がどこのブランチにいるか知る)
-2.git checkout [branch名] (自分が作業するブランチに移動) 
+作業を開始する前にターミナルですること  
+1.git branch (自分がどこのブランチにいるか知る)  
+2.git checkout [branch名] (自分が作業するブランチに移動)   
 
-branchがない場合は
-git branch [branch名] で新しいブランチを作れます。
+branchがない場合は  
+git branch [branch名] で新しいブランチを作れます。  
 
-git commitしたらpushも同時にしていいよ
+git commitしたらpushも同時にしていいよ  
 
  参考 Youtube-The gitflow workflow - in less than 5 mins.  
  [youtube.com/watch?v=1SXpE08hvGs]
