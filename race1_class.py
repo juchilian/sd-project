@@ -12,10 +12,7 @@ class Game:
     def __init__(self):
         # self.game_mode = game_mode # game_mode 1:1人プレイ, 2人プレイ
         self.net = Network()  # Online機能のロード
-        self.startPos = self.read_pos(self.net.getPos())
-        self.p1 = Player(self.startPos[0], self.startPos[1]) # Player1 定義 #バグ#割り振られたIDに寄って初期位置を変える
-        self.p2 = Player(500, 0) # Player2 定義
-
+        self.p1 = self.net.getP()
 
 
     def run(self):
@@ -110,49 +107,11 @@ class Game:
             key = pygame.key.get_pressed() #keyに全てのキーの状態代入
             self.p1.drive_car(key, curve) #プレイヤーの車を操作する関数を実行 
 
-            # Send Network Stuff & Get opponent info
-            # print("ここでプリント " + self.net.send(self.make_pos((self.p1.x, self.p1.y)))) #返り値がNone
-            # self.make_pos((self.p1.x, self.p1.y)) => 500.0, 0.0
-            # self.net.sendの返り値が None
-            p2Pos = self.read_pos(self.net.send(self.make_pos((self.p1.x, self.p1.y)))) # read_posでエラー発生中？
-            self.p2.x = p2Pos[0]
-            self.p2.y = p2Pos[1]
-            # 旧コード
-            # self.p2.x, self.p2.y = self.parse_data(self.send_data())
-
+            
+            p2 = self.net.send(self.p1)
+            
             pygame.display.update() #画面を更新する
             clock.tick(60) #フレームレートを指定
-
-    # 旧コードの関数
-    # def send_data(self): # 座標をサーバーに送信
-    #     """
-    #     Send position to server
-    #     :return: None
-    #     """
-    #     data = str(self.net.id) + ":" + str(self.p1.x) + "," + str(self.p1.y)
-    #     reply = self.net.send(data)
-    #     return reply
-
-    def read_pos(self, str):
-        print("strの出力：" + str)
-        str = str.split(",")
-        return int(str[0]), int(str[1])
-
-
-    def make_pos(self, tup):
-        # print(str(tup[0]) + "," + str(tup[1])) # 値 500.0, 0.0
-        return str(tup[0]) + "," + str(tup[1])
-
-
-    @staticmethod
-    def parse_data(data): # 相手の座標を受信したのを解読
-        try:
-            d = data.split(":")[1].split(",")
-            return int(d[0]), int(d[1])
-        except:
-            return 0,0
-
-
 
 
     def make_course(self, curve, updown, object_left, object_right): #コースデータを作る関数
