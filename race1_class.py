@@ -55,7 +55,7 @@ class Game:
     def __init__(self):
         # self.game_mode = game_mode # game_mode 1:1人プレイ, 2人プレイ
         self.p1 = Player() # Player1定義
-        # self.p2 = Player() # Player2 定義
+        self.p2 = Player() # Player2 定義
         # self.net = Network()  # Online機能のロード
 
 
@@ -151,10 +151,11 @@ class Game:
             
             key = pygame.key.get_pressed() #keyに全てのキーの状態代入
             self.p1.drive_car(key, curve) #プレイヤーの車を操作する関数を実行 
-            print(self.p1.spd)
+
 
             pygame.display.update() #画面を更新する
             clock.tick(60) #フレームレートを指定
+
 
     def make_course(self, curve, updown, object_left, object_right): #コースデータを作る関数
         for i in range(C.CLEN):  
