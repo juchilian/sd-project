@@ -35,6 +35,7 @@ class Game:
                     sys.exit() #プログラムを終了する
             
             
+            
             #描画用の道路のX座標と路面の高低を計算
             di = 0 #道が曲がる向きを計算する変数
             ud = 0 #道の起伏を計算する変数
@@ -106,12 +107,12 @@ class Game:
             
             key = pygame.key.get_pressed() #keyに全てのキーの状態代入
             self.p1.drive_car(key, curve) #プレイヤーの車を操作する関数を実行 
-
             
+            #オンライン通信
             p2 = self.net.send(self.p1)
             
             pygame.display.update() #画面を更新する
-            clock.tick(60) #フレームレートを指定
+            clock.tick(60)  #フレームレートを指定
 
 
     def make_course(self, curve, updown, object_left, object_right): #コースデータを作る関数
@@ -173,7 +174,6 @@ class Game:
         shadow.set_alpha(128)                               #Surfaceの透明度を指定
         pygame.draw.ellipse(shadow, C.BLACK, [0, 0, siz, siz / 4]) #描画面に黒で楕円を描く
         bg.blit(shadow, [x - siz / 2, y - siz / 4]) #楕円を描いた描画面をゲーム画面に転送
-
 
 
 
