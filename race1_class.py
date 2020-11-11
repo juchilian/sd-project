@@ -9,8 +9,8 @@ from network import Network
 
 class Player:
 
-    def __init__(self):
-        self.x = 0            #車の横方向の座標を管理するリスト
+    def __init__(self, startx):
+        self.x = startx            #車の横方向の座標を管理するリスト
         self.y = 0            #車のコース上の位置を管理するリスト
         self.lr = 0           #車の左右の向きを管理するリスト
         self.spd = 0          #車の速度を管理するリスト
@@ -56,8 +56,8 @@ class Player:
 class Game:
     def __init__(self):
         # self.game_mode = game_mode # game_mode 1:1人プレイ, 2人プレイ
-        self.p1 = Player() # Player1定義
-        self.p2 = Player() # Player2 定義
+        self.p1 = Player(300) # Player1 定義 #バグ#割り振られたIDに寄って初期位置を変える
+        self.p2 = Player(500) # Player2 定義
         self.net = Network()  # Online機能のロード
 
 
