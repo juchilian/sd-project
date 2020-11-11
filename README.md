@@ -1,6 +1,6 @@
 # sd-project
 **SD工学演習プロジェクト**  
-[Googleスライド][https://docs.google.com/presentation/d/1etpcOGrdUzuPp5GeeEU-b6uY9f1UJ5I0BhD9hmIuGak/edit?usp=sharing]
+(Googleスライド)[https://docs.google.com/presentation/d/1etpcOGrdUzuPp5GeeEU-b6uY9f1UJ5I0BhD9hmIuGak/edit?usp=sharing]
 
 **sd-project[クラス、変数定義]**
 [https://docs.google.com/spreadsheets/d/1rZuYTwfBg2fiRPgnmv7i9B-a1WxZP_BdaMZDMcfW_kY/edit?usp=sharing]
@@ -10,6 +10,8 @@ git checkout [ブランチ名]
 ⇒作業するブランチに移動  
 オススメサイト  
 https://qiita.com/shh-nkmr/items/fde133cbdfa5f0092be1
+
+[google]: http://google.com/        "Google"
 
 
 Git構造  
@@ -29,4 +31,4 @@ git branch [branch名] で新しいブランチを作れます。
 git commitしたらpushも同時にしていいよ  
 
  参考 Youtube-The gitflow workflow - in less than 5 mins.  
- [youtube.com/watch?v=1SXpE08hvGs]
+ [https://youtube.com/watch?v=1SXpE08hvGs]
