@@ -2,7 +2,9 @@ import pygame
 import sys
 from math import sin,radians
 from pygame.locals import *  #pygame.定数の記述の省略
+### 自作ファイルのインポート ###
 import Const as C
+from network import Network
 
 
 class Player:
@@ -56,7 +58,7 @@ class Game:
         # self.game_mode = game_mode # game_mode 1:1人プレイ, 2人プレイ
         self.p1 = Player() # Player1定義
         self.p2 = Player() # Player2 定義
-        # self.net = Network()  # Online機能のロード
+        self.net = Network()  # Online機能のロード
 
 
 
@@ -152,9 +154,30 @@ class Game:
             key = pygame.key.get_pressed() #keyに全てのキーの状態代入
             self.p1.drive_car(key, curve) #プレイヤーの車を操作する関数を実行 
 
+            # Send Network Stuff & Get opponent info
+            self.p2.x, self.p2.y = self.parse_data(self.send_data())
 
             pygame.display.update() #画面を更新する
             clock.tick(60) #フレームレートを指定
+
+    def send_data(self): # 座標をサーバーに送信
+        """
+        Send position to server
+        :return: None
+        """
+        data = str(self.net.id) + ":" + str(self.p1.x) + "," + str(self.p1.y)
+        reply = self.net.send(data)
+        return reply
+
+    @staticmethod
+    def parse_data(data): # 相手の座標を受信したのを解読
+        try:
+            d = data.split(":")[1].split(",")
+            return int(d[0]), int(d[1])
+        except:
+            return 0,0
+
+
 
 
     def make_course(self, curve, updown, object_left, object_right): #コースデータを作る関数

@@ -1,25 +1,26 @@
+# サーバー設定用ファイル
 import socket
 from _thread import *
 import sys
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-server = '192.168.0.6'
+server = 'localhost' # メモだから気にしないで => 'ipconfig' in Terminal => write value of ipv4 
 port = 5555
 
 server_ip = socket.gethostbyname(server)
-print(server_ip)
+
 try:
     s.bind((server, port))
 
 except socket.error as e:
     print(str(e))
 
-s.listen(2)
+s.listen(2) #2人プレイを待つ
 print("Waiting for a connection")
 
 currentId = "0"
-pos = ["0:50,50", "1:100,100"]
+pos = ["0:50,0", "1:100,100"]
 def threaded_client(conn):
     global currentId, pos
     conn.send(str.encode(currentId))
