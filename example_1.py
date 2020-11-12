@@ -1,4 +1,4 @@
-import sys
+import sys # jfaofuaabougahbouafanfafa
 #import random
 import math
 import pygame
