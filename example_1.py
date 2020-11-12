@@ -1,7 +1,7 @@
 import sys #先にいじったぜ
 #import random
 import math
-import pygame
+import pygame #fajouaofah
 
 BLACK = (  0,  0,  0)
 SILBER = (192,192,192)
