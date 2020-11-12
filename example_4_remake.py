@@ -8,6 +8,7 @@ import time
 
 pygame.init()
 
+#福井はやっぱり死んでほしい 
 #イベント毎に処理を分けるための変数
 index = 0
 
