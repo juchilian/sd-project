@@ -1,4 +1,5 @@
 import sys
+#コミットメント！！
 #import random
 import math
 import pygame
