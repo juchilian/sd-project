@@ -4,6 +4,7 @@ import math
 import random
 from pygame.locals import *
 # コメントby 福井
+# fujiishine
 
 WHITE = (255, 255, 255)
 BLACK = (  0,   0,   0)
