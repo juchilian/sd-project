@@ -33,7 +33,9 @@
 
 # cv2.imwrite('fujiishine.jpg',img)
 
+
 # 大っ嫌い！！!!!!!!!
+
 
 import cv2
 img = cv2.imread('/Users/toshikifukui/Downloads/news_300404_1.jpg')
