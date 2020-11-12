@@ -1,4 +1,5 @@
-import sys
+import sys    
+#コンフリクトを起こそう
 #import random
 import math
 import pygame
