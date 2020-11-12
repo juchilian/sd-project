@@ -6,6 +6,7 @@ from pygame.locals import *
 # コメントby 福井
 # fujiishine
 # やっぱ藤井死んで
+# もっと死んでほしい
 
 WHITE = (255, 255, 255)
 BLACK = (  0,   0,   0)
