@@ -1,4 +1,4 @@
-import sys
+import sys #先にいじったぜ
 #import random
 import math
 import pygame
