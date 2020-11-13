@@ -16,11 +16,11 @@ class Computer:
             self.lr[i] = 0                                    #左右の向きを0に(正面向きにする)
             self.spd[i] = random.randint(100,200)             #速度をランダムに決める
     
-    def move_car(self,cs):  #COMカーの制御                                #コンピュータの車を制御する関数
+    def move_car(self,cs, tmr):  #COMカーの制御                                #コンピュータの車を制御する関数
         for i in range(cs,C.CAR_NUM):                                     #繰り返しで全ての車を処理する
             if self.spd[i] < 100:                                    #速度が100より小さいなら
                 self.spd[i] += 3                                         #速度を増やす
-            if i == C.tmr % 120:                                        #一定時間ごとに
+            if i == tmr % 120:                                        #一定時間ごとに
                 self.lr[i] += random.choice([-1,0,1])                    #向きをランダムに変える
                 if self.lr[i] < -3:                                      #向きが-3未満なら-3にする
                     self.lr[i] = -3                                      

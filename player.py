@@ -18,7 +18,7 @@ class Player:
         mi  = int(sec/60)                            #分をmiに代入
         return "{}'{:02}.{:02}".format(mi,sec%60,ms)   # **'**.**という文字列を返す
     
-    def drive_car(self, key, curve): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
+    def drive_car(self, key, curve, laptime, laps, rec, recbk, tmr): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
         if key[K_LEFT] == 1:                                           #左キーが押されたら
             if self.lr > -3:                                          #向きが-3より大きければ
                 self.lr -= 1                                           #向きを-1する
@@ -53,18 +53,18 @@ class Player:
         self.y += self.spd/100                          #車の速度からコース上の位置を計算
         if self.y > C.CMAX-1:                                         #コース終点を超えたら
             self.y -= C.CMAX                                           #コースを頭に戻す
-            C.laptime[C.laps] = self.time_str(C.rec-C.recbk)                            #ラップタイムを計算し代入
-            C.recbk = C.rec                                                    #現在のタイムを保持
-            C.laps += 1                                                      #周回数の値を1増やす
-            if C.laps == C.LAPS:                                               #周回数がLAPSの値になったら
-                C.idx = 3                                                        #idxを3にしてゴール処理へ
-                C.tmr = 0                                                        #tmrを0にする
+            laptime[laps] = self.time_str(rec-recbk)                            #ラップタイムを計算し代入
+            recbk = rec                                                    #現在のタイムを保持
+            laps += 1                                                      #周回数の値を1増やす
+            if laps == C.LAPS:                                               #周回数がLAPSの値になったら
+                idx = 3                                                        #idxを3にしてゴール処理へ
+                tmr = 0                                                        #tmrを0にする
             
 
-    def move_player(self):                                #プレイヤーの車を勝手に動かすための関数
+    def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
         if self.spd < 200:                                    #速度が100より小さいなら
             self.spd += 3                                         #速度を増やす
-            if  C.tmr % 120 == 1:                                        #一定時間ごとに
+            if  tmr % 120 == 1:                                        #一定時間ごとに
                 self.lr += random.choice([-1,0,1])                    #向きをランダムに変える
                 if self.lr < -3:                                      #向きが-3未満なら-3にする
                     self.lr = -3                                      
@@ -80,7 +80,7 @@ class Player:
         self.y += self.spd/100                              #車の速度からコース上の位置を計算
         if self.y > C.CMAX-1:                                   #コース終点を超えたら
             self.y -= C.CMAX                                         #コースの頭に戻す
-            C.laps += 1                                                      #周回数の値を1増やす
-            if C.laps == C.LAPS:                                               #周回数がLAPSの値になったら
-                C.laps = 0                                                         #lapsを0にする
+            laps += 1                                                      #周回数の値を1増やす
+            if laps == C.LAPS:                                               #周回数がLAPSの値になったら
+                laps = 0                                                         #lapsを0にする
         
