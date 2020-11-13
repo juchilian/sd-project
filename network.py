@@ -1,5 +1,5 @@
 #Networkクラスのファイル
-# network-game-tutorial-4と完全一致
+# network-game-tutorial-5と完全一致
 import socket
 import pickle
 
@@ -16,16 +16,15 @@ class Network:
         return self.p
 
     def connect(self):
-        self.client.connect(self.addr)
-        return pickle.loads(self.client.recv(2048))
+        try:
+            self.client.connect(self.addr)
+            return pickle.loads(self.client.recv(2048))
+        except:
+            pass
 
     def send(self, data):
-        """
-        :param data: str
-        :return: str
-        """
         try:
             self.client.send(pickle.dumps(data))
             return pickle.loads(self.client.recv(2048))
         except socket.error as e:
-            return str(e)
+            print(e)

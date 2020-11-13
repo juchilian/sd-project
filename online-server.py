@@ -10,25 +10,22 @@ port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# server_ip = socket.gethostbyname(server)
-
 try:
     s.bind((server, port))
 except socket.error as e:
-    print(str(e))
+    str(e)
 
 s.listen(2) #2人プレイを待つ
-print("Waiting for a connection")
+print("Waiting for a connection, Server Started")
 
-players = [Player(300, 0), Player(500, 0)] #修正箇所
+players = [Player(300, 0), Player(500, 0)]
 
 def threaded_client(conn, player):
-    # global currentId, pos
-    conn.send(pickle.dumps(players[player]))  #player1の位置情報 300, 0を送信
+    conn.send(pickle.dumps(players[player]))
     reply = ""
     while True:
         try: 
-            data = pickle.loads(conn.recv(2048)) # ここにバグ有 実行されない
+            data = pickle.loads(conn.recv(2048))
             players[player] = data
 
             if not data:
@@ -40,16 +37,11 @@ def threaded_client(conn, player):
                 else:
                     reply = players[1]
                 
-                print("Received: " + data)
-                print("Sending: " + reply)
+                print("Received: ", data)
+                print("Sending: ", reply)
 
             conn.sendall(pickle.dumps(reply))
-        except Exception as e:
-            print('=== エラー内容 ===')
-            print('type:' + str(type(e)))
-            print('args:' + str(e.args))
-            print('e自身:' + str(e))
-            print("error has occured")
+        except:
             break
 
     print("Lost Connection")
