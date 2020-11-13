@@ -1,31 +1,37 @@
 import pygame
 from pygame.locals import *  #pygame.定数の記述の省略
+import random
 import Const as C
-
 
 class Player:
 
-    def __init__(self, startx, starty):
-        self.x = startx            #車の横方向の座標を管理するリスト
-        self.y = starty            #車のコース上の位置を管理するリスト
+    def __init__(self):
+        self.x = 400          #車の横方向の座標を管理するリスト
+        self.y = 0            #車のコース上の位置を管理するリスト
         self.lr = 0           #車の左右の向きを管理するリスト
         self.spd = 0          #車の速度を管理するリスト
-        self.PLself = 10  #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
+        self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         
-    def drive_car(self, key, curve): #プレイヤーの車の操作、制御する関数
-        if key[K_LEFT] == 1: #左キーが押されたら
-            if self.lr > -3: #向きが-3より大きければ
-                self.lr -= 1 #向きを-1する
-            self.x += (self.lr - 3) * self.spd / 100 - 5 #車の横方向の座標を計算
-        elif key[K_RIGHT] == 1: #そうでなく右キーが押されたら
-            if self.lr < 3: #向きが3より小さければ
-                self.lr += 1 #向きを+1する
-            self.x += (self.lr + 3) * self.spd / 100 + 5 #車の横方向の座標を計算
-        else:
-            self.lr = int(self.lr*0.9) #正面向きに近づける
+    def time_str(self,val):                               # **'**.**という時間の文字列を作る関数
+        sec = int(val)                               #引数を整数の秒数にしてsecに代入
+        ms  = int((val-sec)*100)                     #秒数の小数点以下の値をmsに代入
+        mi  = int(sec/60)                            #分をmiに代入
+        return "{}'{:02}.{:02}".format(mi,sec%60,ms)   # **'**.**という文字列を返す
+    
+    def drive_car(self, key, curve, laptime, laps, rec, recbk, tmr): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
+        if key[K_LEFT] == 1:                                           #左キーが押されたら
+            if self.lr > -3:                                          #向きが-3より大きければ
+                self.lr -= 1                                           #向きを-1する
+            self.x += (self.lr-3)*self.spd/100 - 5      #車の横方向の座標を計算
+        elif key[K_RIGHT] == 1:                                        #そうでなく右キーが押されたら
+            if self.lr < 3:                                           #向きが3より小さければ
+                self.lr += 1                                           #向きを+1する
+            self.x +=(self.lr+3)*self.spd/100 + 5      #車の横方向の座標を計算
+        else:                                                          #そうでないなら
+            self.lr = int(self.lr*0.9)                              #正面向きに近づける
         
         if key[K_a] == 1: #アクセル                                     #Aキーが押されたら
-            self.spd += 3                                            #速度を増やす
+            self.spd += 10                                             #速度を増やす
         elif key[K_z] == 1:  #ブレーキ                                  #そうでなくzキーが押されたら
             self.spd -= 10                                            #速度を減らす
         else:                                                          #そうでないなら
