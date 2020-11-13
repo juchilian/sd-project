@@ -2,6 +2,9 @@
 **SD工学演習プロジェクト**  
 (Googleスライド)<https://docs.google.com/presentation/d/1etpcOGrdUzuPp5GeeEU-b6uY9f1UJ5I0BhD9hmIuGak/edit?usp=sharing>
 
+**sd-project[miro]**
+<https://miro.com/welcomeonboard/ZJwFbvRwlqD5JeYIpDtvRglvvTXwTa3WafQ1k2p5LipMgQ0sNVbAm0vJn3Um2yor>
+
 **sd-project[クラス、変数定義]**
 <https://docs.google.com/spreadsheets/d/1rZuYTwfBg2fiRPgnmv7i9B-a1WxZP_BdaMZDMcfW_kY/edit?usp=sharing>
 
