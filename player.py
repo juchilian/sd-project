@@ -39,8 +39,8 @@ class Player:
 
         if self.spd < 0:  #最低速度                                  #速度が0未満なら
             self.spd = 0                                             #速度を0にする
-        if self.spd > 200:  #最高速度                                #最高速度を超えたら
-            self.spd = 200                                           #最高速度にする
+        if self.spd > C.CAR_SPD_MAX:  #最高速度                                #最高速度を超えたら
+            self.spd = C.CAR_SPD_MAX                                           #最高速度にする
 
         self.x -= self.spd * curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
         if self.x < 0:                                              #左の路肩に接触したら

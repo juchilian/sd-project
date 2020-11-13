@@ -1,8 +1,5 @@
 from math import sin,radians
 
-
-
-
 # Constants
 WHITE  = (255,255,255)
 BLACK  = (  0,  0,  0)
@@ -11,6 +8,8 @@ YELLOW = (255,224,  0)
 GREEN  = (  0,255,  0)
 BLUE   = ( 30,  0,255)
 
+#車の最高スピード
+CAR_SPD_MAX = 300
 #何周すればゴールかを定める定数
 LAPS = 1
 
