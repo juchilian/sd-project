@@ -6,14 +6,14 @@ from pygame.locals import *  #pygame.定数の記述の省略
 import Const as C
 from player import Player
 from computer import Computer
+from network import Network
 
 
 class Game:
     def __init__(self):
         # self.game_mode = game_mode # game_mode 1:1人プレイ, 2人プレイ
-        self.p1 = Player() # Player1定義
-        # self.p2 = Player() # Player2 定義
-        # self.net = Network()  # Online機能のロード
+        self.net = Network()  # Online機能のロード
+        self.p1 = self.net.getP() # Player1定義
         self.com = Computer()
         # Parameters(Varaible)
         self.idx = 0
@@ -23,19 +23,6 @@ class Game:
         self.recbk = 0                         #ラップタイム計算用の変数
         self.laptime = ["0'00.00"] * C.LAPS #ラップタイム表示用のリスト
         self.mycar = 0                         #車選択用の変数
-
-    def collision_judge(self,cs):
-        if self.idx == 2:
-            for i in range(cs,C.CAR_NUM):
-                cx = self.com.x[i]-self.p1.x                                        #プレイヤーの車との横方向の距離
-                cy = self.com.y[i]-(self.p1.y+self.p1.PLself) % C.CMAX                         #プレイヤーの車とのコース上の距離
-                if -100 <= cx and cx <= 100 and -10 <= cy and cy <= 10:       #それらがこの範囲内なら
-                    #衝突時の座標変化、速度の入れ替えと減速
-                    self.p1.x -= cx/4                                          #プレイヤーの車を横に移動
-                    self.com.x[i] += cx/4                                          #コンピュータの車を横に移動
-                    self.p1.spd, self.com.spd[i] = self.com.spd[i]*0.3, self.p1.spd*0.3   #2つの車の速度を入れ替え、減速する
-                    self.se_crash.play()                                           #衝突音を出力する
-        
 
     def run(self):
         pygame.init() #pygameモジュールの初期化                                                
@@ -60,6 +47,9 @@ class Game:
                     pygame.quit()                        #pygameモジュールの初期化を解除
                     sys.exit()                           #プログラムを終了する
             self.tmr += 1
+            #オンライン通信にて敵位置取得＆自分位置送信
+            p2 = self.net.send(self.p1)
+            # 動的に描画する関数
             self.update_canvas(curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
             key = pygame.key.get_pressed()                       #keyに全てのキーの状態代入
             self.manage_game(key, curve, screen, fnt_s, fnt_m, fnt_l)
@@ -71,10 +61,10 @@ class Game:
             screen.blit(self.img_title,[120,120])                               #タイトルロゴを表示
             self.draw_text(screen,"[A] Start game",400,320,C.WHITE,fnt_m)            #[A] Start game の文字を表示
             self.draw_text(screen,"[S] Select your car",400,400,C.WHITE,fnt_m)       #[S] Select your car の文字を表示
-            self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
+            # self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
             if key[K_a] != 0:                                                   #Aキーが押されたら
-                self.p1.__init__()                                                   #プレイヤーの車を初期化
+                # self.p1.__init__()                                                   #プレイヤーの車を初期化
                 self.com.__init__()                                                  #コンピュータの車を初期化
                 self.idx = 1                                                            #idxを1にしてカウントダウンに
                 self.tmr = 0                                                            #タイマーを0に
@@ -273,7 +263,18 @@ class Game:
             txt_lap = fnt_s.render("{}/{}".format((self.laps-i),self.laps),True,C.BLACK)
             bg.blit(txt_lap,[810,100+int(i*400/self.laps)-10])
 
-
+    def collision_judge(self,cs):
+        if self.idx == 2:
+            for i in range(cs,C.CAR_NUM):
+                cx = self.com.x[i]-self.p1.x                                        #プレイヤーの車との横方向の距離
+                cy = self.com.y[i]-(self.p1.y+self.p1.PLself) % C.CMAX                         #プレイヤーの車とのコース上の距離
+                if -100 <= cx and cx <= 100 and -10 <= cy and cy <= 10:       #それらがこの範囲内なら
+                    #衝突時の座標変化、速度の入れ替えと減速
+                    self.p1.x -= cx/4                                          #プレイヤーの車を横に移動
+                    self.com.x[i] += cx/4                                          #コンピュータの車を横に移動
+                    self.p1.spd, self.com.spd[i] = self.com.spd[i]*0.3, self.p1.spd*0.3   #2つの車の速度を入れ替え、減速する
+                    self.se_crash.play()  #衝突音を出力する
+                
     def map_pl(self,bg,player,x):
         pygame.draw.line(bg,C.BLACK,[x,500],[x,100],1)      #中心線の描画
         fnt_s = pygame.font.Font(None,20)    #小さい文字
@@ -293,10 +294,6 @@ class Game:
             pl = "1p"
         txt_pl = fnt_s.render(pl,True,C.BLACK)
         bg.blit(txt_pl,[910,int(y)-10])
-
-        
-        
-
 
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title.png").convert_alpha()    #タイトルロゴ

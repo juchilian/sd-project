@@ -2,12 +2,13 @@
 # network-game-tutorial-5と完全一致
 import socket
 import pickle
+import Const as C
 
 class Network:
 
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server = "192.168.0.13" 
+        self.server = C.SERVER 
         self.port = 5555
         self.addr = (self.server, self.port)
         self.p = self.connect()

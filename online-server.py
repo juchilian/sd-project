@@ -3,9 +3,10 @@ import socket
 from _thread import *
 import sys
 import pickle
+import Const as C
 from player import Player
 
-server = '192.168.0.13' # メモだから気にしないで => 'ipconfig' in Terminal => write value of ipv4 
+server = C.SERVER # メモだから気にしないで => 'ipconfig' in Terminal => write value of ipv4 
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
