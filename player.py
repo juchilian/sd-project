@@ -56,18 +56,20 @@ class Player:
         self.y += self.spd/100                          #車の速度からコース上の位置を計算
         if self.y > C.CMAX-1:                                         #コース終点を超えたら
             self.y -= C.CMAX                                           #コースを頭に戻す
-            laptime[laps[0]] = self.time_str(rec[0]-recbk[0])                            #ラップタイムを計算し代入
-            recbk[0] = rec[0]                                                    #現在のタイムを保持
-            laps[0] += 1                                                      #周回数の値を1増やす
-            if laps[0] == C.LAPS:                                               #周回数がLAPSの値になったら
-                idx[0] = 3                                                        #idxを3にしてゴール処理へ
-                tmr[0] = 0                                                        #tmrを0にする
+            laptime[laps] = self.time_str(rec-recbk)                            #ラップタイムを計算し代入
+            recbk = rec                                                    #現在のタイムを保持
+            laps += 1                                                      #周回数の値を1増やす
+            if laps == C.LAPS:                                               #周回数がLAPSの値になったら
+                idx = 3                                                        #idxを3にしてゴール処理へ
+                tmr = 0                                                        #tmrを0にする
+
+        return  laptime, rec, recbk, tmr, laps, idx
             
 
     def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
         if self.spd < 200:                                    #速度が100より小さいなら
             self.spd += 3                                         #速度を増やす
-            if  tmr[0] % 120 == 1:                                        #一定時間ごとに
+            if  tmr % 120 == 1:                                        #一定時間ごとに
                 self.lr += random.choice([-1,0,1])                    #向きをランダムに変える
                 if self.lr < -3:                                      #向きが-3未満なら-3にする
                     self.lr = -3                                      
@@ -83,7 +85,8 @@ class Player:
         self.y += self.spd/100                              #車の速度からコース上の位置を計算
         if self.y > C.CMAX-1:                                   #コース終点を超えたら
             self.y -= C.CMAX                                         #コースの頭に戻す
-            laps[0] += 1                                                      #周回数の値を1増やす
-            if laps[0] == C.LAPS:                                               #周回数がLAPSの値になったら
-                laps[0] = 0                                                         #lapsを0にする
+            laps += 1                                                      #周回数の値を1増やす
+            if laps == C.LAPS:                                               #周回数がLAPSの値になったら
+                laps = 0                                                         #lapsを0にする
+        return tmr, laps
         

@@ -16,16 +16,16 @@ class Game:
         # self.net = Network()  # Online機能のロード
         self.com = Computer()
         # Parameters(Varaible)
-        self.idx = [0]
-        self.tmr = [0]                           #タイマーの変数
-        self.laps = [0]                          #何周目かを管理する変数
-        self.rec = [0]                           #走行時間を測る変数
-        self.recbk = [0]                         #ラップタイム計算用の変数
+        self.idx = 0
+        self.tmr = 0                           #タイマーの変数
+        self.laps = 0                          #何周目かを管理する変数
+        self.rec = 0                           #走行時間を測る変数
+        self.recbk = 0                         #ラップタイム計算用の変数
         self.laptime = ["0'00.00"] * C.LAPS #ラップタイム表示用のリスト
         self.mycar = 0                         #車選択用の変数
 
     def collision_judge(self,cs):
-        if self.idx[0] == 2:
+        if self.idx == 2:
             for i in range(cs,C.CAR_NUM):
                 cx = self.com.x[i]-self.p1.x                                        #プレイヤーの車との横方向の距離
                 cy = self.com.y[i]-(self.p1.y+self.p1.PLself) % C.CMAX                         #プレイヤーの車とのコース上の距離
@@ -59,7 +59,7 @@ class Game:
                 if event.type == QUIT:                   #ウインドウの×ボタンをクリックしたら
                     pygame.quit()                        #pygameモジュールの初期化を解除
                     sys.exit()                           #プログラムを終了する
-            self.tmr[0] += 1
+            self.tmr += 1
             self.update_canvas(curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
             key = pygame.key.get_pressed()                       #keyに全てのキーの状態代入
             self.manage_game(key, curve, screen, fnt_s, fnt_m, fnt_l)
@@ -67,48 +67,47 @@ class Game:
             clock.tick(60)                               #フレームレートを指定
 
     def manage_game(self, key, curve, screen, fnt_s, fnt_m, fnt_l):
-        if self.idx[0] == 0:                                                     #idxが0(タイトル画面)のとき
+        if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             screen.blit(self.img_title,[120,120])                               #タイトルロゴを表示
             self.draw_text(screen,"[A] Start game",400,320,C.WHITE,fnt_m)            #[A] Start game の文字を表示
             self.draw_text(screen,"[S] Select your car",400,400,C.WHITE,fnt_m)       #[S] Select your car の文字を表示
-            self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
             if key[K_a] != 0:                                                   #Aキーが押されたら
                 self.p1.__init__()                                                   #プレイヤーの車を初期化
                 self.com.__init__()                                                  #コンピュータの車を初期化
-                self.idx[0] = 1                                                            #idxを1にしてカウントダウンに
-                self.tmr[0] = 0                                                            #タイマーを0に
-                self.laps[0] = 0                                                    #周回数を0に
-                self.rec[0] = 0                                                     #走行時間を0に
-                self.recbk[0] = 0                                                   #ラップタイム計算用の変数を0に
-                for i in range(self.laps[0]):                                       #繰り返しで
+                self.idx = 1                                                            #idxを1にしてカウントダウンに
+                self.tmr = 0                                                            #タイマーを0に
+                self.laps = 0                                                    #周回数を0に
+                self.rec = 0                                                     #走行時間を0に
+                self.recbk = 0                                                   #ラップタイム計算用の変数を0に
+                for i in range(self.laps):                                       #繰り返しで
                     self.laptime[i] = "0'00.00"                                      #ラップタイムを0'00.00に
             if key[K_s] != 0:                                               #Sキーが押されたら         
-                self.idx[0] = 4                                                         #idxを4にして車種選択に移行
+                self.idx = 4                                                         #idxを4にして車種選択に移行
 
-        if self.idx[0] == 1:                                                    #idxが1(カウントダウン)のとき
-            n = 3-int(self.tmr[0]/60)                                                 #カウントダウンの数を計算しnに代入
+        if self.idx == 1:                                                    #idxが1(カウントダウン)のとき
+            n = 3-int(self.tmr/60)                                                 #カウントダウンの数を計算しnに代入
             self.draw_text(screen,str(n),400,240,C.YELLOW,fnt_l)                #その数を表示
-            if self.tmr[0] == 179:                                                    #tmrが179になったら
+            if self.tmr == 179:                                                    #tmrが179になったら
                 pygame.mixer.music.load("sound_pr/bgm.ogg")                          #BGMを読み込み
                 pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
                 pygame.mixer.music.play(-1)                                          #無限ループで出力
-                self.idx[0] = 2                                                              #idxを2にしてレースへ
-                self.tmr[0] = 0                                                              #tmrを0にする
+                self.idx = 2                                                              #idxを2にしてレースへ
+                self.tmr = 0                                                              #tmrを0にする
 
-        if self.idx[0] == 2:                                                    #idxが2(レース中)のとき
-            if self.tmr[0] < 60:                                                      #60フレームの間だけ
+        if self.idx == 2:                                                    #idxが2(レース中)のとき
+            if self.tmr < 60:                                                      #60フレームの間だけ
                 self.draw_text(screen,"Go!",400,240,C.RED,fnt_l)                     #GO!と表示
-            self.rec[0] = self.rec[0] + 1/60                                                 #走行時間をカウント
-            self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx)                                       #プレイヤーの車を動かせるように
+            self.rec = self.rec + 1/60                                                 #走行時間をカウント
+            self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx)                                       #プレイヤーの車を動かせるように
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
             self.collision_judge(1)                                             #衝突判定
 
-        if self.idx[0] == 3:                                                    #idxが3(ゴール)のとき
-            self.laps[0] = C.LAPS - 1 
-            if self.tmr[0] == 1:                                                      #tmrが1なら
+        if self.idx == 3:                                                    #idxが3(ゴール)のとき
+            if self.tmr == 1:                                                      #tmrが1なら
                 pygame.mixer.music.stop()                                             #bgmを停止
-            if self.tmr[0] == 30:                                                     #tmrが30になったら
+            if self.tmr == 30:                                                     #tmrが30になったら
                 pygame.mixer.music.load("sound_pr/goal.ogg")                          #ゴール音を読み込み
                 pygame.mixer.music.set_volume(0.2)                                    #音を小さくして
                 pygame.mixer.music.play(0)                                            #1回だけ出力
@@ -116,12 +115,12 @@ class Game:
             self.p1.spd = self.p1.spd*0.96                                      #プレイヤーの車の速度を落とす
             self.p1.y = self.p1.y + self.p1.spd/100                             #コース上を進ませる
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
-            if self.tmr[0] > 60*8:                                                    #8秒経過したら
-                self.laps[0] = 0
-                self.idx[0] = 0                                                             #idxを0にしてタイトルに戻る
+            if self.tmr > 60*8:                                                    #8秒経過したら
+                self.laps = 0
+                self.idx = 0                                                             #idxを0にしてタイトルに戻る
 
-        if self.idx[0] == 4:                                                      #idxが4(車種選択)のとき
-            self.p1.move_player(self.tmr, self.laps)                                               #プレイヤーの車をただ動かすだけ
+        if self.idx == 4:                                                      #idxが4(車種選択)のとき
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)                                               #プレイヤーの車をただ動かすだけ
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.draw_text(screen,"Select your car",400,160,C.WHITE,fnt_m)      #Select your car を表示
             for i in range(3):                                                  #繰り返しで
@@ -141,7 +140,7 @@ class Game:
             if key[K_3] == 1:                                                   #3キーが押されたら
                 self.mycar = 2                                                         #mycarに2を代入(黄色の車)
             if key[K_RETURN] == 1:                                              #Enterキーが押されたら
-                self.idx[0] = 0                                                           #idxを0にしてタイトル画面に戻る
+                self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
 
     def update_canvas(self, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l):
         #描画用の道路のX座標と路面の高低を計算
@@ -233,9 +232,12 @@ class Game:
 
         
         self.draw_text(screen,str(int(self.p1.spd))+"km/h",680,30,C.RED,fnt_m)            #速度を表示
-        self.draw_text(screen,"lap {}/{}".format(self.laps[0]+1,C.LAPS),100,30,C.WHITE,fnt_m)     #周回数を表示
-        self.draw_text(screen,"time "+self.p1.time_str(self.rec[0]),100,80,C.GREEN,fnt_s)             #タイムを表示
-        for i in range(self.laps[0]):                                                  #繰り返しで
+        if self.idx != 3:
+            self.draw_text(screen,"lap {}/{}".format(self.laps+1,C.LAPS),100,30,C.WHITE,fnt_m)     #周回数を表示
+        if self.idx == 3:
+            self.draw_text(screen,"lap {}/{}".format(self.laps,C.LAPS),100,30,C.WHITE,fnt_m)     #補正した周回数を表示
+        self.draw_text(screen,"time "+self.p1.time_str(self.rec),100,80,C.GREEN,fnt_s)             #タイムを表示
+        for i in range(self.laps):                                                  #繰り返しで
             self.draw_text(screen,self.laptime[i],80,130+40*i,C.YELLOW,fnt_s)                  #ラップタイムを表示
 
     def make_course(self, curve, updown, object_left, object_right): #コースデータを作る関数 #修正箇所(returnで値の変更を反映)
@@ -285,7 +287,7 @@ class Game:
         if self.mycar == 2:
             map_car_col = C.YELLOW
         
-        y = 100 + (C.CMAX * (C.LAPS - self.laps[0]) - player.y) * 400 / (C.CMAX * C.LAPS) #マップ上のy座標を計算
+        y = 100 + (C.CMAX * (C.LAPS - self.laps) - player.y) * 400 / (C.CMAX * C.LAPS) #マップ上のy座標を計算
         pygame.draw.circle(bg, map_car_col, [x, int(y)], 8, 0) #マップ上に円を描画
 
         pl = ""           #プレイヤーがどちらなのかを入れる変数
