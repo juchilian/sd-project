@@ -12,13 +12,16 @@ class Player:
         self.spd = 0          #車の速度を管理するリスト
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         
+        
+        
+        
     def time_str(self,val):                               # **'**.**という時間の文字列を作る関数
         sec = int(val)                               #引数を整数の秒数にしてsecに代入
         ms  = int((val-sec)*100)                     #秒数の小数点以下の値をmsに代入
         mi  = int(sec/60)                            #分をmiに代入
         return "{}'{:02}.{:02}".format(mi,sec%60,ms)   # **'**.**という文字列を返す
     
-    def drive_car(self, key, curve, laptime, laps, rec, recbk, tmr): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
+    def drive_car(self, key, curve, laptime, rec, recbk, tmr,laps,idx): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
         if key[K_LEFT] == 1:                                           #左キーが押されたら
             if self.lr > -3:                                          #向きが-3より大きければ
                 self.lr -= 1                                           #向きを-1する
@@ -59,6 +62,8 @@ class Player:
             if laps == C.LAPS:                                               #周回数がLAPSの値になったら
                 idx = 3                                                        #idxを3にしてゴール処理へ
                 tmr = 0                                                        #tmrを0にする
+
+        return  laptime, rec, recbk, tmr, laps, idx
             
 
     def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
@@ -83,3 +88,5 @@ class Player:
             laps += 1                                                      #周回数の値を1増やす
             if laps == C.LAPS:                                               #周回数がLAPSの値になったら
                 laps = 0                                                         #lapsを0にする
+        return tmr, laps
+        

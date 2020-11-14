@@ -90,14 +90,13 @@ class Game:
             if self.tmr < 60:                                                      #60フレームの間だけ
                 self.draw_text(screen,"Go!",400,240,C.RED,fnt_l)                     #GO!と表示
             self.rec = self.rec + 1/60                                                 #走行時間をカウント
-            self.p1.drive_car(key, curve, self.laptime, self.laps, self.rec, self.recbk, self.tmr)                                       #プレイヤーの車を動かせるように
+            self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx)                                       #プレイヤーの車を動かせるように
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
             self.collision_judge(1)                                             #衝突判定
 
         if self.idx == 3:                                                    #idxが3(ゴール)のとき
             if self.tmr == 1:                                                      #tmrが1なら
                 pygame.mixer.music.stop()                                             #bgmを停止
-                #self.laps = self.laps - 1
             if self.tmr == 30:                                                     #tmrが30になったら
                 pygame.mixer.music.load("sound_pr/goal.ogg")                          #ゴール音を読み込み
                 pygame.mixer.music.set_volume(0.2)                                    #音を小さくして
@@ -105,14 +104,14 @@ class Game:
             self.draw_text(screen,"GOAL!",400,240,C.GREEN,fnt_l)                #GOAL!と表示       
             self.p1.spd = self.p1.spd*0.96                                      #プレイヤーの車の速度を落とす
             self.p1.y = self.p1.y + self.p1.spd/100                             #コース上を進ませる
-            self.com.move_car(1)                                                #コンピュータの車を動かす
+            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             if self.tmr > 60*8:                                                    #8秒経過したら
                 self.laps = 0
                 self.idx = 0                                                             #idxを0にしてタイトルに戻る
 
         if self.idx == 4:                                                      #idxが4(車種選択)のとき
-            self.p1.move_player()                                               #プレイヤーの車をただ動かすだけ
-            self.com.move_car(1)                                                #コンピュータの車を動かす
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)                                               #プレイヤーの車をただ動かすだけ
+            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.draw_text(screen,"Select your car",400,160,C.WHITE,fnt_m)      #Select your car を表示
             for i in range(3):                                                  #繰り返しで
                 x = 160+240*i                                                       #xに選択用の枠のx座標を代入
@@ -223,7 +222,10 @@ class Game:
 
         
         self.draw_text(screen,str(int(self.p1.spd))+"km/h",680,30,C.RED,fnt_m)            #速度を表示
-        self.draw_text(screen,"lap {}/{}".format(self.laps+1,self.laps),100,30,C.WHITE,fnt_m)     #周回数を表示
+        if self.idx != 3:
+            self.draw_text(screen,"lap {}/{}".format(self.laps+1,C.LAPS),100,30,C.WHITE,fnt_m)     #周回数を表示
+        if self.idx == 3:
+            self.draw_text(screen,"lap {}/{}".format(self.laps,C.LAPS),100,30,C.WHITE,fnt_m)     #補正した周回数を表示
         self.draw_text(screen,"time "+self.p1.time_str(self.rec),100,80,C.GREEN,fnt_s)             #タイムを表示
         for i in range(self.laps):                                                  #繰り返しで
             self.draw_text(screen,self.laptime[i],80,130+40*i,C.YELLOW,fnt_s)                  #ラップタイムを表示
@@ -258,10 +260,10 @@ class Game:
         txt_g = fnt_s.render("Goal",True,C.BLACK)            #Goalの記述
         bg.blit(txt_s,[810,490])
         bg.blit(txt_g,[810,90])
-        for i in range(1,self.laps):    #ラップに対応したラインの描画
-            pygame.draw.line(bg,C.BLACK,[850,100+int(i*400/self.laps)],[950,100+int(i*400/self.laps)],1)
-            txt_lap = fnt_s.render("{}/{}".format((self.laps-i),self.laps),True,C.BLACK)
-            bg.blit(txt_lap,[810,100+int(i*400/self.laps)-10])
+        for i in range(1,C.LAPS):    #ラップに対応したラインの描画
+            pygame.draw.line(bg,C.BLACK,[850,100+int(i*400/C.LAPS)],[950,100+int(i*400/C.LAPS)],1)
+            txt_lap = fnt_s.render("{}/{}".format((C.LAPS-i),C.LAPS),True,C.BLACK)
+            bg.blit(txt_lap,[810,100+int(i*400/C.LAPS)-10])
 
     def collision_judge(self,cs):
         if self.idx == 2:
