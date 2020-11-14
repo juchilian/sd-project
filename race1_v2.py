@@ -6,11 +6,8 @@ from pygame.locals import *  #pygame.定数の記述の省略
 import Const as C
 from player import Player
 from computer import Computer
-<<<<<<< HEAD
 from network import Network
-=======
 import time
->>>>>>> develop
 
 
 class Game:
@@ -79,12 +76,8 @@ class Game:
             screen.blit(self.img_title,[120,120])                               #タイトルロゴを表示
             self.draw_text(screen,"[A] Start game",400,320,C.WHITE,fnt_m)            #[A] Start game の文字を表示
             self.draw_text(screen,"[S] Select your car",400,400,C.WHITE,fnt_m)       #[S] Select your car の文字を表示
-<<<<<<< HEAD
-            # self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
-=======
             self.draw_text(screen,"[M] Select mode",400,480,C.WHITE,fnt_m)
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
->>>>>>> develop
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
             if key[K_a] != 0:                                                   #Aキーが押されたら
                 # self.p1.__init__()                                                   #プレイヤーの車を初期化
@@ -309,8 +302,6 @@ class Game:
         txt_pl = fnt_s.render(pl,True,C.BLACK)
         bg.blit(txt_pl,[910,int(y)-10])
 
-<<<<<<< HEAD
-=======
     def car_select(self,bg,fnt_m,key):
         self.draw_text(bg,"Select your car",400,160,C.WHITE,fnt_m)      #Select your car を表示
         for i in range(3):                                                  #繰り返しで
@@ -360,7 +351,6 @@ class Game:
    
 
 
->>>>>>> develop
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
         self.img_bg = pygame.image.load("image_pr/bg.png").convert()            #背景(空と地面の絵)
