@@ -6,6 +6,7 @@ from pygame.locals import *  #pygame.定数の記述の省略
 import Const as C
 from player import Player
 from computer import Computer
+import time
 
 
 class Game:
@@ -18,6 +19,7 @@ class Game:
         # Parameters(Varaible)
         self.idx = 0
         self.tmr = 0                           #タイマーの変数
+        self.time = 0                          #timeモジュールを使った時間の計測のための変数
         self.laps = 0                          #何周目かを管理する変数
         self.rec = 0                           #走行時間を測る変数
         self.recbk = 0                         #ラップタイム計算用の変数
@@ -36,55 +38,7 @@ class Game:
                     self.com.x[i] += cx/4                                          #コンピュータの車を横に移動
                     self.p1.spd, self.com.spd[i] = self.com.spd[i]*0.3, self.p1.spd*0.3   #2つの車の速度を入れ替え、減速する
                     self.se_crash.play()                                           #衝突音を出力する
-        
-    def car_select(self,bg,fnt_m,key):
-        self.draw_text(bg,"Select your car",400,160,C.WHITE,fnt_m)      #Select your car を表示
-        for i in range(3):                                                  #繰り返しで
-            x = 160+240*i                                                       #xに選択用の枠のx座標を代入
-            y = 300                                                             #yに選択用の枠のy座標を代入
-            col = C.BLACK                                                       #colにBLACkを代入
-            if i == self.mycar:                                                    #選択している車種なら
-                col = (0,128,255)                                                   #colに明るい青の値を代入
-            pygame.draw.rect(bg,col,[x-100,y-80,200,160])                   #colの色で枠を描く
-            self.draw_text(bg,"["+str(i+1)+"]",x,y-50,C.WHITE,fnt_m)        #[n]の文字を表示
-            bg.blit(self.img_car[3+i*7],[x-100,y-20])                       #それぞれの車を描画
-        self.draw_text(bg,"[Enter] OK!",400,440,C.GREEN,fnt_m)          #[Enter] OK! を表示
-        if key[K_1] == 1:                                                   #1キーが押されたら
-            self.mycar = 0                                                         #mycarに0を代入(赤い車)
-        if key[K_2] == 1:                                                   #2キーが押されたら
-            self.mycar = 1                                                         #mycarに1を代入(青い車)
-        if key[K_3] == 1:                                                   #3キーが押されたら
-            self.mycar = 2                                                         #mycarに2を代入(黄色の車)
-        if key[K_RETURN] == 1:                                              #Enterキーが押されたら
-            self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
-
-
-    def mode_select(self,bg,fnt_m,key):
-        self.draw_text(bg,"Select mode",400,160,C.WHITE,fnt_m)          #Select mode　を表示
-        for i in range(2):                                                  #繰り返しで
-            x = 200+400*i                                                       #xに選択用の枠のx座標を代入
-            y = 300                                                             #yに選択用の枠のy座標を代入
-            col = C.BLACK                                                       #colにBLACkを代入
-            if i == self.mymode:                                                    #選択している車種なら
-                col = (0,128,255)                                                   #colに明るい青の値を代入
-            pygame.draw.rect(bg,col,[x-120,y-120,240,240])                   #colの色で枠を描く
-            self.draw_text(bg,"["+str(i+1)+"]",x,y-90,C.WHITE,fnt_m)        #[n]の文字を表示
-            if i == 0:
-                self.draw_text(bg,"Single play",x,y-40,C.WHITE,fnt_m)
-            if i == 1:
-                self.draw_text(bg,"Multi play",x,y-40,C.WHITE,fnt_m)
-            
-            bg.blit(self.img_mode[i],[x-100,y-10])                       #それぞれの車を描画
-
-        self.draw_text(bg,"[Enter] OK!",400,460,C.GREEN,fnt_m)          #[Enter] OK! を表示
-        if key[K_1] == 1:                                                   #1キーが押されたら
-            self.mymode = 0                                                         #mymodeに0を代入(single play)
-        if key[K_2] == 1:                                                   #2キーが押されたら
-            self.mymode = 1                                                         #mymodeに1を代入(multi play)
-        if key[K_RETURN] == 1:                                              #Enterキーが押されたら
-            self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
-
-
+ 
     def run(self):
         pygame.init() #pygameモジュールの初期化                                                
         pygame.display.set_caption("Pygame Racer") #ウインドウに表示するタイトルを指定
@@ -126,6 +80,7 @@ class Game:
                 self.p1.__init__()                                                   #プレイヤーの車を初期化
                 self.com.__init__()                                                  #コンピュータの車を初期化
                 self.idx = 1                                                            #idxを1にしてカウントダウンに
+                self.time = time.time()                                                   #このときの時刻を記録
                 self.tmr = 0                                                            #タイマーを0に
                 self.laps = 0                                                    #周回数を0に
                 self.rec = 0                                                     #走行時間を0に
@@ -138,30 +93,26 @@ class Game:
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
 
         if self.idx == 1:                                                    #idxが1(カウントダウン)のとき
-            n = 3-int(self.tmr/60)                                                 #カウントダウンの数を計算しnに代入
-            self.draw_text(screen,str(n),400,240,C.YELLOW,fnt_l)                #その数を表示
-            if self.tmr == 179:                                                    #tmrが179になったら
-                pygame.mixer.music.load("sound_pr/bgm.ogg")                          #BGMを読み込み
-                pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
-                pygame.mixer.music.play(-1)                                          #無限ループで出力
+            time_c = time.time()
+            time_cd = 3 - int(time_c - self.time)
+            self.music_play()
+            self.draw_text(screen,str(time_cd),400,240,C.YELLOW,fnt_l)
+            if time_cd <= 0 :
                 self.idx = 2                                                              #idxを2にしてレースへ
                 self.tmr = 0                                                              #tmrを0にする
+                self.time = time.time()                                                             #このときの時刻を計算
 
         if self.idx == 2:                                                    #idxが2(レース中)のとき
             if self.tmr < 60:                                                      #60フレームの間だけ
-                self.draw_text(screen,"Go!",400,240,C.RED,fnt_l)                     #GO!と表示
+                self.draw_text(screen,"Go!",400,240,C.RED,fnt_l)                     #GO!と表示    
+            self.music_play()
             self.rec = self.rec + 1/60                                                 #走行時間をカウント
             self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx)                                       #プレイヤーの車を動かせるように
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
             self.collision_judge(1)                                             #衝突判定
 
         if self.idx == 3:                                                    #idxが3(ゴール)のとき
-            if self.tmr == 1:                                                      #tmrが1なら
-                pygame.mixer.music.stop()                                             #bgmを停止
-            if self.tmr == 30:                                                     #tmrが30になったら
-                pygame.mixer.music.load("sound_pr/goal.ogg")                          #ゴール音を読み込み
-                pygame.mixer.music.set_volume(0.2)                                    #音を小さくして
-                pygame.mixer.music.play(0)                                            #1回だけ出力
+            self.music_play()
             self.draw_text(screen,"GOAL!",400,240,C.GREEN,fnt_l)                #GOAL!と表示       
             self.p1.spd = self.p1.spd*0.96                                      #プレイヤーの車の速度を落とす
             self.p1.y = self.p1.y + self.p1.spd/100                             #コース上を進ませる
@@ -337,8 +288,53 @@ class Game:
         txt_pl = fnt_s.render(pl,True,C.BLACK)
         bg.blit(txt_pl,[910,int(y)-10])
 
-        
-        
+    def car_select(self,bg,fnt_m,key):
+        self.draw_text(bg,"Select your car",400,160,C.WHITE,fnt_m)      #Select your car を表示
+        for i in range(3):                                                  #繰り返しで
+            x = 160+240*i                                                       #xに選択用の枠のx座標を代入
+            y = 300                                                             #yに選択用の枠のy座標を代入
+            col = C.BLACK                                                       #colにBLACkを代入
+            if i == self.mycar:                                                    #選択している車種なら
+                col = (0,128,255)                                                   #colに明るい青の値を代入
+            pygame.draw.rect(bg,col,[x-100,y-80,200,160])                   #colの色で枠を描く
+            self.draw_text(bg,"["+str(i+1)+"]",x,y-50,C.WHITE,fnt_m)        #[n]の文字を表示
+            bg.blit(self.img_car[3+i*7],[x-100,y-20])                       #それぞれの車を描画
+        self.draw_text(bg,"[Enter] OK!",400,440,C.GREEN,fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:                                                   #1キーが押されたら
+            self.mycar = 0                                                         #mycarに0を代入(赤い車)
+        if key[K_2] == 1:                                                   #2キーが押されたら
+            self.mycar = 1                                                         #mycarに1を代入(青い車)
+        if key[K_3] == 1:                                                   #3キーが押されたら
+            self.mycar = 2                                                         #mycarに2を代入(黄色の車)
+        if key[K_RETURN] == 1:                                              #Enterキーが押されたら
+            self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
+
+
+    def mode_select(self,bg,fnt_m,key):
+        self.draw_text(bg,"Select mode",400,160,C.WHITE,fnt_m)          #Select mode　を表示
+        for i in range(2):                                                  #繰り返しで
+            x = 200+400*i                                                       #xに選択用の枠のx座標を代入
+            y = 300                                                             #yに選択用の枠のy座標を代入
+            col = C.BLACK                                                       #colにBLACkを代入
+            if i == self.mymode:                                                    #選択している車種なら
+                col = (0,128,255)                                                   #colに明るい青の値を代入
+            pygame.draw.rect(bg,col,[x-120,y-120,240,240])                   #colの色で枠を描く
+            self.draw_text(bg,"["+str(i+1)+"]",x,y-90,C.WHITE,fnt_m)        #[n]の文字を表示
+            if i == 0:
+                self.draw_text(bg,"Single play",x,y-40,C.WHITE,fnt_m)
+            if i == 1:
+                self.draw_text(bg,"Multi play",x,y-40,C.WHITE,fnt_m)
+            
+            bg.blit(self.img_mode[i],[x-100,y-10])                       #それぞれの車を描画
+
+        self.draw_text(bg,"[Enter] OK!",400,460,C.GREEN,fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:                                                   #1キーが押されたら
+            self.mymode = 0                                                         #mymodeに0を代入(single play)
+        if key[K_2] == 1:                                                   #2キーが押されたら
+            self.mymode = 1                                                         #mymodeに1を代入(multi play)
+        if key[K_RETURN] == 1:                                              #Enterキーが押されたら
+            self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
+   
 
 
     def load_image(self): #画像の読み込み
@@ -381,6 +377,32 @@ class Game:
         ]
         
     
+    def music_play(self):
+        if self.idx == 0:   #タイトル画面
+            pass
+        if self.idx == 1:   #カウントダウン画面
+            if pygame.mixer.music.get_busy() == False:
+                pygame.mixer.music.load("sound_pr/countdown.mp3")                          #BGMを読み込み
+                pygame.mixer.music.set_volume(1.0)                                   #音を小さくして
+                pygame.mixer.music.play(0)     
+        if self.idx == 2:   #レース中
+            if pygame.mixer.music.get_busy() == False:
+                pygame.mixer.music.load("sound_pr/bgm.ogg")                          #BGMを読み込み
+                pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
+                pygame.mixer.music.play(-1)     
+        if self.idx == 3:   #ゴール画面
+            if self.tmr == 1:                                                      #tmrが1なら
+                pygame.mixer.music.stop()                                             #bgmを停止
+            if self.tmr == 30:                                                     #tmrが30になったら
+                pygame.mixer.music.load("sound_pr/goal.ogg")                          #BGMを読み込み
+                pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
+                pygame.mixer.music.play(0)     
+        if self.idx == 4:   #車種選択画面
+            pass
+        if self.idx == 5:   #モード選択画面
+            pass   
+
+
     def load_sound(self):
         self.se_crash = pygame.mixer.Sound("sound_pr/crash.ogg")   #SE(衝突音)の読み込み
         self.se_crash.set_volume(0.2)                              #衝突音が大きすぎたので小さくする
