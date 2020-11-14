@@ -338,7 +338,7 @@ class Game:
 
 
     def load_image(self): #画像の読み込み
-        self.img_title = pygame.image.load("image_pr/title.png").convert_alpha()    #タイトルロゴ
+        self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
         self.img_bg = pygame.image.load("image_pr/bg.png").convert()            #背景(空と地面の絵)
         self.img_sea = pygame.image.load("image_pr/sea.png").convert_alpha()    #海
         self.img_obj = [
@@ -377,7 +377,7 @@ class Game:
         ]
         
     
-    def music_play(self):
+    def music_play(self):   #bgmを流す関数
         if self.idx == 0:   #タイトル画面
             pass
         if self.idx == 1:   #カウントダウン画面
