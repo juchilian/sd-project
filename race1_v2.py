@@ -13,8 +13,9 @@ import time
 class Game:
     def __init__(self):
         # self.game_mode = game_mode # game_mode 1:1人プレイ, 2人プレイ
-        self.net = Network()  # Online機能のロード
-        self.p1 = self.net.getP() # Player1定義
+        # self.net = Network()  # Online機能のロード
+        # self.p1 = self.net.getP() # Player1定義
+        self.p1 = Player(400, 0)
         self.com = Computer()
         # Parameters(Varaible)
         self.idx = 0
