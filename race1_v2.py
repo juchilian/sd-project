@@ -12,9 +12,6 @@ import time
 
 class Game:
     def __init__(self):
-        # self.game_mode = game_mode # game_mode 1:1人プレイ, 2人プレイ
-        # self.net = Network()  # Online機能のロード
-        # self.p1 = self.net.getP() # Player1定義
         self.p1 = Player(400, 0)
         self.com = Computer()
         # Parameters(Varaible)
@@ -64,8 +61,6 @@ class Game:
                     pygame.quit()                        #pygameモジュールの初期化を解除
                     sys.exit()                           #プログラムを終了する
             self.tmr += 1
-            #オンライン通信にて敵位置取得＆自分位置送信
-            p2 = self.net.send(self.p1)
             # 動的に描画する関数
             self.update_canvas(curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
             key = pygame.key.get_pressed()                       #keyに全てのキーの状態代入
@@ -96,13 +91,17 @@ class Game:
             if key[K_m] != 0:                                               #Mキーが押されたら
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
 
-        if self.idx == 1:                                                    #idxが1(カウントダウン)のとき
+        if self.idx == 1: #idxが1(カウントダウン)のとき
             time_c = time.time()
             time_cd = 3 - int(time_c - self.time)
             self.music_play()
-            self.draw_text(screen,str(time_cd),400,240,C.YELLOW,fnt_l)
+            self.draw_text(screen, str(time_cd), 400, 240, C.YELLOW, fnt_l)
+            if self.mymode == 1: #multiplaymodeなら
+                #オンライン通信にて敵位置取得＆自分位置送信
+                p2 = self.net.send(self.p1)
+
             if time_cd <= 0 :
-                self.idx = 2                                                              #idxを2にしてレースへ
+                self.idx = 2  #idxを2にしてレースへ                
                 self.tmr = 0                                                              #tmrを0にする
                 self.time = time.time()                                                             #このときの時刻を計算
 
@@ -114,7 +113,11 @@ class Game:
             self.rec = self.rec + 1/60                                                 #走行時間をカウント
             self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx) #プレイヤーの車を動かせるように
             self.com.move_car(1, self.tmr)          #コンピュータの車を動かす
-            self.collision_judge(1)       #衝突判定
+            self.collision_judge(1)  #衝突判定
+            if self.mymode == 1: #multiplaymodeなら
+                #オンライン通信にて敵位置取得＆自分位置送信
+                p2 = self.net.send(self.p1)
+
 
         if self.idx == 3:              #idxが3(ゴール)のとき
             self.music_play()
@@ -366,7 +369,8 @@ class Game:
                 for i in range(self.laps):  #繰り返しで
                     self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
             if self.mymode == 1:  #multiモードが選択されたら
-                self.setup_online_mode()
+                self.setup_online_mode() # server接続、対戦相手待つ
+                self.idx = 1 # カウントダウンフェーズに移行
 
         if key[K_b] != 0:
             self.idx = 0   #タイトル画面に戻る
@@ -443,7 +447,8 @@ class Game:
         self.se_crash.set_volume(0.2)                              #衝突音が大きすぎたので小さくする
 
     def setup_online_mode(self):
-        pass
+        self.net = Network()  # Online機能のロード
+        self.p1 = self.net.getP()  # Player1定義
 
     @staticmethod
     def draw_obj(bg, img, x, y, sc):                        #座標とスケールを受け取り、物体を描く関数
