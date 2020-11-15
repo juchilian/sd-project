@@ -70,6 +70,15 @@ class Game:
             clock.tick(60)                               #フレームレートを指定
 
     def manage_game(self, key, curve, screen, fnt_s, fnt_m, fnt_l):
+        '''
+            indexの説明
+            0 => タイトル画面
+            1 => カウントダウン時
+            2 => レース中
+            3 => ゴール時
+            4 => 車種選択の時
+            5 => モード選択の時
+        '''
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             screen.blit(self.img_title,[120,120])                               #タイトルロゴを表示
             
@@ -224,6 +233,7 @@ class Game:
         for i in range(self.laps):                                                  #繰り返しで
             self.draw_text(screen,self.laptime[i],80,130+40*i,C.YELLOW,fnt_s)                  #ラップタイムを表示
 
+
     def make_course(self, curve, updown, object_left, object_right): #コースデータを作る関数 #修正箇所(returnで値の変更を反映)
         for i in range(C.CLEN):
             lr1 = C.DATA_LR[i]                    #カーブデータをlr1に代入   
@@ -245,6 +255,7 @@ class Game:
                         object_left[pos] = 3 #ヨット
                 if j%12 == 6:
                     object_left[pos] = 9 #海
+
 
     def make_map(self,bg):
         fnt_s = pygame.font.Font(None,20)    #小さい文字
@@ -280,6 +291,7 @@ class Game:
         txt_pl = fnt_s.render(pl,True,C.BLACK)
         bg.blit(txt_pl,[910,int(y)-10])
 
+
     def car_select(self,bg,fnt_m,key):
         self.draw_text(bg,"Select your car",400,160,C.WHITE,fnt_m)      #Select your car を表示
         for i in range(3):                                                  #繰り返しで
@@ -303,7 +315,7 @@ class Game:
 
 
     def mode_select(self,bg,fnt_m,key):
-        self.draw_text(bg,"Select mode",400,160,C.WHITE,fnt_m)          #Select mode　を表示
+        self.draw_text(bg,"Select mode",400,160,C.WHITE,fnt_m)          #Select mode を表示
         for i in range(2):                                                  #繰り返しで
             x = 200+400*i                                                       #xに選択用の枠のx座標を代入
             y = 300                                                             #yに選択用の枠のy座標を代入
@@ -322,11 +334,11 @@ class Game:
         self.draw_text(bg,"[Enter] Start game",400,460,C.GREEN,fnt_m)          #[Enter] OK! を表示
         self.draw_text(bg,"[B] Back to title",400,540,C.WHITE,fnt_m)          #[Enter] OK! を表示
         if key[K_1] == 1:                                                   #1キーが押されたら
-            self.mymode = 0                                                         #mymodeに0を代入(single play)
+            self.mymode = 0  #mymodeに0を代入(single play)
         if key[K_2] == 1:                                                   #2キーが押されたら
             self.mymode = 1                                                         #mymodeに1を代入(multi play)
         
-        if key[K_RETURN] != 0:                                                   #Aキーが押されたら
+        if key[K_RETURN] != 0:                                                   #enterキーが押されたら
             self.p1.__init__()                                                   #プレイヤーの車を初期化
             self.com.__init__()                                                  #コンピュータの車を初期化
             self.idx = 1                                                            #idxを1にしてカウントダウンに
