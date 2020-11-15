@@ -27,6 +27,7 @@ class Game:
         self.laptime = ["0'00.00"] * C.LAPS #ラップタイム表示用のリスト
         self.mycar = 0                         #車選択用の変数
         self.mymode = 0                        #モード選択用の変数
+        
 
     def collision_judge(self,cs):
         if self.idx == 2:
@@ -73,24 +74,23 @@ class Game:
             clock.tick(60)                               #フレームレートを指定
 
     def manage_game(self, key, curve, screen, fnt_s, fnt_m, fnt_l):
+        '''
+            indexの説明
+            0 => タイトル画面
+            1 => カウントダウン時
+            2 => レース中
+            3 => ゴール時
+            4 => 車種選択の時
+            5 => モード選択の時
+        '''
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             screen.blit(self.img_title,[120,120])                               #タイトルロゴを表示
-            self.draw_text(screen,"[A] Start game",400,320,C.WHITE,fnt_m)            #[A] Start game の文字を表示
-            self.draw_text(screen,"[S] Select your car",400,400,C.WHITE,fnt_m)       #[S] Select your car の文字を表示
-            self.draw_text(screen,"[M] Select mode",400,480,C.WHITE,fnt_m)
+            
+            self.draw_text(screen,"[S] Select your car",400,320,C.WHITE,fnt_m)       #[S] Select your car の文字を表示
+            self.draw_text(screen,"[M] Select mode",400,400,C.WHITE,fnt_m)
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
-            if key[K_a] != 0:                                                   #Aキーが押されたら
-                # self.p1.__init__()                                                   #プレイヤーの車を初期化
-                self.com.__init__()                                                  #コンピュータの車を初期化
-                self.idx = 1                                                            #idxを1にしてカウントダウンに
-                self.time = time.time()                                                   #このときの時刻を記録
-                self.tmr = 0                                                            #タイマーを0に
-                self.laps = 0                                                    #周回数を0に
-                self.rec = 0                                                     #走行時間を0に
-                self.recbk = 0                                                   #ラップタイム計算用の変数を0に
-                for i in range(self.laps):                                       #繰り返しで
-                    self.laptime[i] = "0'00.00"                                      #ラップタイムを0'00.00に
+            
             if key[K_s] != 0:                                               #Sキーが押されたら         
                 self.idx = 4                                                         #idxを4にして車種選択に移行
             if key[K_m] != 0:                                               #Mキーが押されたら
@@ -108,22 +108,23 @@ class Game:
 
         if self.idx == 2:                                                    #idxが2(レース中)のとき
             if self.tmr < 60:                                                      #60フレームの間だけ
-                self.draw_text(screen,"Go!",400,240,C.RED,fnt_l)                     #GO!と表示    
+                self.draw_text(screen,"Go!",400,240,C.RED,fnt_l)                     #GO!と表示 
+            
             self.music_play()
             self.rec = self.rec + 1/60                                                 #走行時間をカウント
-            self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx)                                       #プレイヤーの車を動かせるように
-            self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
-            self.collision_judge(1)                                             #衝突判定
+            self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx) #プレイヤーの車を動かせるように
+            self.com.move_car(1, self.tmr)          #コンピュータの車を動かす
+            self.collision_judge(1)       #衝突判定
 
-        if self.idx == 3:                                                    #idxが3(ゴール)のとき
+        if self.idx == 3:              #idxが3(ゴール)のとき
             self.music_play()
             self.draw_text(screen,"GOAL!",400,240,C.GREEN,fnt_l)                #GOAL!と表示       
-            self.p1.spd = self.p1.spd*0.96                                      #プレイヤーの車の速度を落とす
-            self.p1.y = self.p1.y + self.p1.spd/100                             #コース上を進ませる
-            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
-            if self.tmr > 60*8:                                                    #8秒経過したら
+            self.p1.spd = self.p1.spd * 0.96 #プレイヤーの車の速度を落とす
+            self.p1.y = self.p1.y + self.p1.spd/100 #コース上を進ませる
+            self.com.move_car(1,self.tmr)                    #コンピュータの車を動かす
+            if self.tmr > 60*8:                        #8秒経過したら
                 self.laps = 0
-                self.idx = 0                                                             #idxを0にしてタイトルに戻る
+                self.idx = 0                                 #idxを0にしてタイトルに戻る
 
         if self.idx == 4:                                                      #idxが4(車種選択)のとき
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
@@ -236,6 +237,7 @@ class Game:
         for i in range(self.laps):                                                  #繰り返しで
             self.draw_text(screen,self.laptime[i],80,130+40*i,C.YELLOW,fnt_s)                  #ラップタイムを表示
 
+
     def make_course(self, curve, updown, object_left, object_right): #コースデータを作る関数 #修正箇所(returnで値の変更を反映)
         for i in range(C.CLEN):
             lr1 = C.DATA_LR[i]                    #カーブデータをlr1に代入   
@@ -257,6 +259,7 @@ class Game:
                         object_left[pos] = 3 #ヨット
                 if j%12 == 6:
                     object_left[pos] = 9 #海
+
 
     def make_map(self,bg):
         fnt_s = pygame.font.Font(None,20)    #小さい文字
@@ -303,6 +306,7 @@ class Game:
         txt_pl = fnt_s.render(pl,True,C.BLACK)
         bg.blit(txt_pl,[910,int(y)-10])
 
+
     def car_select(self,bg,fnt_m,key):
         self.draw_text(bg,"Select your car",400,160,C.WHITE,fnt_m)      #Select your car を表示
         for i in range(3):                                                  #繰り返しで
@@ -326,7 +330,7 @@ class Game:
 
 
     def mode_select(self,bg,fnt_m,key):
-        self.draw_text(bg,"Select mode",400,160,C.WHITE,fnt_m)          #Select mode　を表示
+        self.draw_text(bg,"Select mode",400,160,C.WHITE,fnt_m)          #Select mode を表示
         for i in range(2):                                                  #繰り返しで
             x = 200+400*i                                                       #xに選択用の枠のx座標を代入
             y = 300                                                             #yに選択用の枠のy座標を代入
@@ -342,14 +346,30 @@ class Game:
             
             bg.blit(self.img_mode[i],[x-100,y-10])                       #それぞれの車を描画
 
-        self.draw_text(bg,"[Enter] OK!",400,460,C.GREEN,fnt_m)          #[Enter] OK! を表示
-        if key[K_1] == 1:                                                   #1キーが押されたら
-            self.mymode = 0                                                         #mymodeに0を代入(single play)
-        if key[K_2] == 1:                                                   #2キーが押されたら
-            self.mymode = 1                                                         #mymodeに1を代入(multi play)
-        if key[K_RETURN] == 1:                                              #Enterキーが押されたら
-            self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
-   
+        self.draw_text(bg,"[Enter] Start game",400,460,C.GREEN,fnt_m)          #[Enter] OK! を表示
+        self.draw_text(bg,"[B] Back to title",400,540,C.WHITE,fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:
+            self.mymode = 0  #mymodeに0を代入(single play)
+        if key[K_2] == 1: #2キーが押されたら
+            self.mymode = 1 #mymodeに1を代入(multi play)
+        
+        if key[K_RETURN] != 0: 
+            if self.mymode == 0: #singleモードが選択されたら
+                self.p1.__init__()  #プレイヤーの車を初期化
+                self.com.__init__()  #コンピュータの車を初期化
+                self.idx = 1  #idxを1にしてカウントダウンに
+                self.time = time.time()  #このときの時刻を記録
+                self.tmr = 0  #タイマーを0に
+                self.laps = 0  #周回数を0に
+                self.rec = 0  #走行時間を0に
+                self.recbk = 0  #ラップタイム計算用の変数を0に
+                for i in range(self.laps):  #繰り返しで
+                    self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
+            if self.mymode == 1:  #multiモードが選択されたら
+                self.setup_online_mode()
+
+        if key[K_b] != 0:
+            self.idx = 0   #タイトル画面に戻る
 
 
     def load_image(self): #画像の読み込み
@@ -392,7 +412,7 @@ class Game:
         ]
         
     
-    def music_play(self):   #bgmを流す関数
+    def music_play(self):
         if self.idx == 0:   #タイトル画面
             pass
         if self.idx == 1:   #カウントダウン画面
@@ -421,6 +441,9 @@ class Game:
     def load_sound(self):
         self.se_crash = pygame.mixer.Sound("sound_pr/crash.ogg")   #SE(衝突音)の読み込み
         self.se_crash.set_volume(0.2)                              #衝突音が大きすぎたので小さくする
+
+    def setup_online_mode(self):
+        pass
 
     @staticmethod
     def draw_obj(bg, img, x, y, sc):                        #座標とスケールを受け取り、物体を描く関数
