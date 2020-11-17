@@ -50,7 +50,6 @@ def threaded_client(conn, p, gameId):
                         game.reset_Goal()
                     elif data != "get":
                         game.play(p, data)
-                    print("getの実行") #実行できてる
                     conn.sendall(pickle.dumps(game))
             else:
                 break
@@ -79,7 +78,8 @@ while True:
         games[gameId] = MultiGame(gameId)
         print("Creating a new game...")
     else: # clientが偶数の時
-        games[gameId].ready = True 
+        games[gameId].ready = True
+        print("Game is ready!!") 
         p = 1 # player = 1
 
 

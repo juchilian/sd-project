@@ -230,21 +230,21 @@ class Game:
                 run = True
                 n = Network()
                 player = int(n.getP())
+                print("You are player", player)
                 while run:
                     try:
                         game = n.send("get")  # バグ データが戻ってくる
-                        print("sending data")
                     except:
                         run = False
                         print("Couldn't get game")
-                        # break
-                        
-                    if not (game.connected()): #バグ game is not defined
+                        break
+                    print("waiting for opponent")
+                    if not (game.connected()):  #バグ game is not defined
+                        pass
                         # font = pygame.font.SysFont("comicsans", 80)
                         # text = font.render("Waiting for Player...", 1, (255,0,0), True)
                         # bg.blit(text, (width / 2 - text.get_width() / 2, height / 2 - text.get_height() / 2))
-                        print("You are player", player)
-                    else: # 両者が繋がったら
+                    else:  # 両者が繋がったら
                         self.idx = 1 # カウントダウンフェーズに移行
 
         if key[K_b] != 0:
