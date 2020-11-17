@@ -101,7 +101,7 @@ class Canvas:
             self.draw_text(screen,"lap {}/{}".format(game.laps,C.LAPS),100,30,C.WHITE,fnt_m)     #補正した周回数を表示
         self.draw_text(screen,"time "+game.p1.time_str(game.rec),100,80,C.GREEN,fnt_s)             #タイムを表示
         for i in range(game.laps):                                                  #繰り返しで
-            self.draw_text(screen,self.laptime[i],80,130+40*i,C.YELLOW,fnt_s)                  #ラップタイムを表示
+            self.draw_text(screen, game.laptime[i], 80, 130 + 40 * i, C.YELLOW, fnt_s)  #ラップタイムを表示
 
     
     def make_map(self,bg):
