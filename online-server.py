@@ -79,7 +79,7 @@ while True:
         print("Creating a new game...")
     else: # clientが偶数の時
         games[gameId].ready = True
-        print("Game is ready!!") 
+        print("Game is ready!!")
         p = 1 # player = 1
 
 

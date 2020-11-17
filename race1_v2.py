@@ -83,9 +83,11 @@ class Game:
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
 
         if self.idx == 1: #idxが1(カウントダウン)のとき
-            if self.mymode == 1: #multiplaymodeなら
+            if self.mymode == 1:  #multiplaymodeなら
+                pass
                 #オンライン通信にて敵位置取得＆自分位置送信
-                p2 = self.net.send(self.p1)
+                # game.bothPos[player][0] = self.p1.x
+                # game.bothPos[player][1] = self.p1.y
             time_c = time.time()
             time_cd = 3 - int(time_c - self.time)
             self.music_play()
@@ -104,9 +106,10 @@ class Game:
             self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx) #プレイヤーの車を動かせるように
             self.com.move_car(1, self.tmr)          #コンピュータの車を動かす
             self.collision_judge(1)  #衝突判定
-            if self.mymode == 1: #multiplaymodeなら
+            if self.mymode == 1:  #multiplaymodeなら
+                pass
                 #オンライン通信にて敵位置取得＆自分位置送信
-                p2 = self.net.send(self.p1)
+                # p2 = self.net.send(self.p1)
 
 
         if self.idx == 3:              #idxが3(ゴール)のとき
@@ -229,23 +232,26 @@ class Game:
             if self.mymode == 1:  #multiモードが選択されたら
                 run = True
                 n = Network()
-                player = int(n.getP())
+                player = int(n.getP()) # プレイヤーNumをGet
                 print("You are player", player)
                 while run:
                     try:
-                        game = n.send("get")  # バグ データが戻ってくる
+                        game = n.send("get")  # Game object全てが戻ってくる
                     except:
                         run = False
                         print("Couldn't get game")
                         break
-                    print("waiting for opponent")
-                    if not (game.connected()):  #バグ game is not defined
+                    if not (game.connected()):  # 1台のみ接続中
+                        print("waiting for opponent")
                         pass
                         # font = pygame.font.SysFont("comicsans", 80)
                         # text = font.render("Waiting for Player...", 1, (255,0,0), True)
                         # bg.blit(text, (width / 2 - text.get_width() / 2, height / 2 - text.get_height() / 2))
                     else:  # 両者が繋がったら
-                        self.idx = 1 # カウントダウンフェーズに移行
+                        print("Game Id is", game.id)
+                        self.p1.__init__(game.bothPos[player][0], game.bothPos[player][1]) #Player番号に合った初期位置を代入
+                        self.idx = 1  # カウントダウンフェーズに移行
+                        break
 
         if key[K_b] != 0:
             self.idx = 0   #タイトル画面に戻る

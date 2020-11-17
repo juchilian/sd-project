@@ -35,6 +35,7 @@ class MultiGame:
     
     def connected(self):
         return self.ready
+        
 
     def online_run(self):
         try:
