@@ -7,6 +7,7 @@ import Const as C
 from player import Player
 from computer import Computer
 from network import Network
+from multigame import MultiGame
 import time
 
 
@@ -16,14 +17,15 @@ class Game:
         self.com = Computer()
         # Parameters(Varaible)
         self.idx = 0
-        self.tmr = 0                           #タイマーの変数
-        self.time = 0                          #timeモジュールを使った時間の計測のための変数
-        self.laps = 0                          #何周目かを管理する変数
-        self.rec = 0                           #走行時間を測る変数
-        self.recbk = 0                         #ラップタイム計算用の変数
-        self.laptime = ["0'00.00"] * C.LAPS #ラップタイム表示用のリスト
-        self.mycar = 0                         #車選択用の変数
-        self.mymode = 0                        #モード選択用の変数
+        self.tmr = 0  #タイマーの変数
+        self.time = 0  #timeモジュールを使った時間の計測のための変数
+        self.laps = 0  #何周目かを管理する変数
+        self.rec = 0  #走行時間を測る変数
+        self.recbk = 0  #ラップタイム計算用の変数
+        self.laptime = ["0'00.00"] * C.LAPS  #ラップタイム表示用のリスト
+        self.mycar = 0  #車選択用の変数
+        self.mymode = 0  #モード選択用の変数
+        
         
 
     def collision_judge(self,cs):
@@ -92,13 +94,13 @@ class Game:
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
 
         if self.idx == 1: #idxが1(カウントダウン)のとき
+            if self.mymode == 1: #multiplaymodeなら
+                #オンライン通信にて敵位置取得＆自分位置送信
+                p2 = self.net.send(self.p1)
             time_c = time.time()
             time_cd = 3 - int(time_c - self.time)
             self.music_play()
             self.draw_text(screen, str(time_cd), 400, 240, C.YELLOW, fnt_l)
-            if self.mymode == 1: #multiplaymodeなら
-                #オンライン通信にて敵位置取得＆自分位置送信
-                p2 = self.net.send(self.p1)
 
             if time_cd <= 0 :
                 self.idx = 2  #idxを2にしてレースへ                
@@ -369,8 +371,25 @@ class Game:
                 for i in range(self.laps):  #繰り返しで
                     self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
             if self.mymode == 1:  #multiモードが選択されたら
-                self.setup_online_mode() # server接続、対戦相手待つ
-                self.idx = 1 # カウントダウンフェーズに移行
+                run = True
+                n = Network()
+                player = int(n.getP())
+                while run:
+                    try:
+                        game = n.send("get")  # バグ データが戻ってくる
+                        print("sending data")
+                    except:
+                        run = False
+                        print("Couldn't get game")
+                        # break
+                        
+                    if not (game.connected()): #バグ game is not defined
+                        # font = pygame.font.SysFont("comicsans", 80)
+                        # text = font.render("Waiting for Player...", 1, (255,0,0), True)
+                        # bg.blit(text, (width / 2 - text.get_width() / 2, height / 2 - text.get_height() / 2))
+                        print("You are player", player)
+                    else: # 両者が繋がったら
+                        self.idx = 1 # カウントダウンフェーズに移行
 
         if key[K_b] != 0:
             self.idx = 0   #タイトル画面に戻る
@@ -446,9 +465,6 @@ class Game:
         self.se_crash = pygame.mixer.Sound("sound_pr/crash.ogg")   #SE(衝突音)の読み込み
         self.se_crash.set_volume(0.2)                              #衝突音が大きすぎたので小さくする
 
-    def setup_online_mode(self):
-        self.net = Network()  # Online機能のロード
-        self.p1 = self.net.getP()  # Player1定義
 
     @staticmethod
     def draw_obj(bg, img, x, y, sc):                        #座標とスケールを受け取り、物体を描く関数

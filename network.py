@@ -19,13 +19,15 @@ class Network:
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return pickle.loads(self.client.recv(2048))
+            # return pickle.loads(self.client.recv(2048))
+            return self.client.recv(2048).decode() #プレイヤーが接続したときに最初にplayer1or2が送られる
         except:
             pass
 
     def send(self, data):
         try:
-            self.client.send(pickle.dumps(data))
+            # self.client.send(pickle.dumps(data)) #pickle形式で送信
+            self.client.send(str.encode(data)) # str形式で送る
             return pickle.loads(self.client.recv(2048))
         except socket.error as e:
             print(e)
