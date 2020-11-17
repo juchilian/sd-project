@@ -6,6 +6,7 @@ from pygame.locals import *  #pygame.定数の記述の省略
 import Const as C
 from player import Player
 from computer import Computer
+from canvas import Canvas
 import time
 
 
