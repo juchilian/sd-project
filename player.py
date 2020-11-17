@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *  #pygame.定数の記述の省略
 import random
 import Const as C
+from pulse import Pulse
 
 class Player:
 
@@ -11,6 +12,8 @@ class Player:
         self.lr = 0           #車の左右の向きを管理するリスト
         self.spd = 0          #車の速度を管理するリスト
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
+        self.pulse_spd = 0
+        self.pls = Pulse()    #パルスを定義
         
         
         
@@ -33,17 +36,9 @@ class Player:
         else:                                                          #そうでないなら
             self.lr = int(self.lr*0.9)                              #正面向きに近づける
         
-        if key[K_a] == 1: #アクセル                                     #Aキーが押されたら
-            self.spd += 10                                             #速度を増やす
-        elif key[K_z] == 1:  #ブレーキ                                  #そうでなくzキーが押されたら
-            self.spd -= 10                                            #速度を減らす
-        else:                                                          #そうでないなら
-            self.spd -= 0.25                                          #ゆっくり減速
+        #速度制御
+        self.spd_control()
 
-        if self.spd < 0:  #最低速度                                  #速度が0未満なら
-            self.spd = 0                                             #速度を0にする
-        if self.spd > C.CAR_SPD_MAX:  #最高速度                                #最高速度を超えたら
-            self.spd = C.CAR_SPD_MAX                                           #最高速度にする
 
         self.x -= self.spd * curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
         if self.x < 0:                                              #左の路肩に接触したら
@@ -90,3 +85,32 @@ class Player:
                 laps = 0                                                         #lapsを0にする
         return tmr, laps
         
+    def spd_control(self):
+        """
+        #通常の速度制御(Not 心拍)
+        if key[K_a] == 1: #アクセル                                     #Aキーが押されたら
+            self.spd += 10                                             #速度を増やす
+        elif key[K_z] == 1:  #ブレーキ                                  #そうでなくzキーが押されたら
+            self.spd -= 10                                            #速度を減らす
+        else:                                                          #そうでないなら
+            self.spd -= 0.25                                          #ゆっくり減速
+        if self.spd < 0:  #最低速度                                  #速度が0未満なら
+            self.spd = 0                                             #速度を0にする
+        if self.spd > C.CAR_SPD_MAX:  #最高速度                                #最高速度を超えたら
+            self.spd = C.CAR_SPD_MAX                                           #最高速度にする
+        """
+
+        #心拍での速度制御
+        self.spd = self.convert_spd()
+
+
+    def convert_spd(self):  #心拍を速度に変換する関数
+        if 0 <= self.pls.data and self.pls.data <= 50:
+            self.pulse_spd = 50
+
+        if 50 < self.pls.data and self.pls.data <= 170:
+            self.pulse_spd = self.pls.data
+        if self.pls.data < 200:
+            self.pulse_spd = 170
+        
+        return self.pulse_spd
