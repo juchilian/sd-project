@@ -83,11 +83,6 @@ class Game:
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
 
         if self.idx == 1: #idxが1(カウントダウン)のとき
-            if self.mymode == 1:  #multiplaymodeなら
-                pass
-                #オンライン通信にて敵位置取得＆自分位置送信
-                # game.bothPos[player][0] = self.p1.x
-                # game.bothPos[player][1] = self.p1.y
             time_c = time.time()
             time_cd = 3 - int(time_c - self.time)
             self.music_play()
@@ -96,6 +91,12 @@ class Game:
                 self.idx = 2  #idxを2にしてレースへ                
                 self.tmr = 0                                                              #tmrを0にする
                 self.time = time.time()                                                             #このときの時刻を計算
+            if self.mymode == 1:  #multiplaymodeなら
+                #オンライン通信にて敵位置取得＆自分位置送信
+                self.game = self.n.send(self.p1)
+                #オンライン通信にて敵位置取得＆自分位置送信
+                # game.bothPos[player][0] = self.p1.x
+                # game.bothPos[player][1] = self.p1.y
 
         if self.idx == 2:                                                    #idxが2(レース中)のとき
             if self.tmr < 60:                                                      #60フレームの間だけ
@@ -242,13 +243,14 @@ class Game:
                         break
                     if not (self.game.connected()):  # 1台のみ接続中
                         print("waiting for opponent")
-                        pass
+                        # pass
                         # font = pygame.font.SysFont("comicsans", 80)
                         # text = font.render("Waiting for Player...", 1, (255,0,0), True)
                         # bg.blit(text, (width / 2 - text.get_width() / 2, height / 2 - text.get_height() / 2))
                     else:  # 両者が繋がったら
                         print("Game Id is", self.game.id)
-                        self.p1.__init__(self.game.bothPos[player][0], self.game.bothPos[player][1]) #Player番号に合った初期位置を代入
+                        self.p1 = Player(self.game.bothPos[player][0], self.game.bothPos[player][1])
+                        # __init__(self.game.bothPos[player][0], self.game.bothPos[player][1]) #Player番号に合った初期位置を代入
                         self.idx = 1  # カウントダウンフェーズに移行
                         break
 
