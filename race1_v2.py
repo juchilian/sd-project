@@ -107,9 +107,8 @@ class Game:
             self.com.move_car(1, self.tmr)          #コンピュータの車を動かす
             self.collision_judge(1)  #衝突判定
             if self.mymode == 1:  #multiplaymodeなら
-                pass
                 #オンライン通信にて敵位置取得＆自分位置送信
-                # p2 = self.net.send(self.p1)
+                self.game = self.n.send(self.p1)
 
 
         if self.idx == 3:              #idxが3(ゴール)のとき
@@ -231,25 +230,25 @@ class Game:
                     self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
             if self.mymode == 1:  #multiモードが選択されたら
                 run = True
-                n = Network()
-                player = int(n.getP()) # プレイヤーNumをGet
+                self.n = Network()
+                player = int(self.n.getP()) # プレイヤーNumをGet
                 print("You are player", player)
                 while run:
                     try:
-                        game = n.send("get")  # Game object全てが戻ってくる
+                        self.game = self.n.send("get")  # Game object全てが戻ってくる
                     except:
                         run = False
                         print("Couldn't get game")
                         break
-                    if not (game.connected()):  # 1台のみ接続中
+                    if not (self.game.connected()):  # 1台のみ接続中
                         print("waiting for opponent")
                         pass
                         # font = pygame.font.SysFont("comicsans", 80)
                         # text = font.render("Waiting for Player...", 1, (255,0,0), True)
                         # bg.blit(text, (width / 2 - text.get_width() / 2, height / 2 - text.get_height() / 2))
                     else:  # 両者が繋がったら
-                        print("Game Id is", game.id)
-                        self.p1.__init__(game.bothPos[player][0], game.bothPos[player][1]) #Player番号に合った初期位置を代入
+                        print("Game Id is", self.game.id)
+                        self.p1.__init__(self.game.bothPos[player][0], self.game.bothPos[player][1]) #Player番号に合った初期位置を代入
                         self.idx = 1  # カウントダウンフェーズに移行
                         break
 

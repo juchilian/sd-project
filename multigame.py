@@ -26,29 +26,16 @@ class MultiGame:
     def bothGoal(self):
         return self.p1Goal and self.p2Goal
     
-    def play(self, player, move):
-        self.moves[player] = move
-        if player == 0:
-            self.p1Went = True
-        else:
-            self.p2Went = True
+    def play(self, player, move):  #moveに座標が入ったobjectが入る
+        self.bothPos[player] = [move.x, move.y]
+        # if player == 0:
+        #     self.p1Goal = True
+        # else:
+        #     self.p2Goal = True
     
     def connected(self):
         return self.ready
         
-
-    def online_run(self):
-        try:
-            game = n.send("get")
-        except:
-            run = False
-            print("Couldn't get game")
-    
-    def setup_online_mode(self):
-        n = Network()  # Online機能のロード
-        playerNum = int(n.getP())
-        print("You are plyaer", playerNum)
-        # self.p1 = self.net.getP()  # Player1定義
     
 
 
