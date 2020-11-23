@@ -12,7 +12,7 @@ bpm_list = []
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     #listen 
     #wait for access
-    s.bind(('192.168.11.7', PORT))
+    s.bind(('192.168.100.112', PORT))
     s.listen()
     while True:
         (connection, client) = s.accept()
@@ -23,8 +23,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
             #このデータが心拍データ。関数の返り値にできれば藤井のやつと簡単に組み合わせられる！！
             # connection.send(data)
-            bpm_list.append(int(float(data)))
-            print(bpm_list)
+            # bpm_list.append(int(float(data)))
+            print(data)
 
         finally:
             connection.close()

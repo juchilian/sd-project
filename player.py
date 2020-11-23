@@ -3,20 +3,19 @@ from pygame.locals import *  #pygame.定数の記述の省略
 import random
 import Const as C
 from pulse import Pulse
+import copy
+import time
 
-class Player:
-
+class Player():
     def __init__(self):
         self.x = 400          #車の横方向の座標を管理するリスト
         self.y = 0            #車のコース上の位置を管理するリスト
         self.lr = 0           #車の左右の向きを管理するリスト
-        self.spd = 0          #車の速度を管理するリスト
+        # self.spd = self.temp()         #車の速度を管理するリスト
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         self.pulse_spd = 0
-        self.pls = Pulse()    #パルスを定義
-        
-        
-        
+        self.pls = Pulse() #パルスを定義
+        # self.pls = Pulse()
         
     def time_str(self,val):                               # **'**.**という時間の文字列を作る関数
         sec = int(val)                               #引数を整数の秒数にしてsecに代入
@@ -30,7 +29,7 @@ class Player:
                 self.lr -= 1                                           #向きを-1する
             self.x += (self.lr-3)*self.spd/100 - 5      #車の横方向の座標を計算
         elif key[K_RIGHT] == 1:                                        #そうでなく右キーが押されたら
-            if self.lr < 3:                                           #向きが3より小さければ
+            if self.lr < 3:                                           #向きが3より小さければ-
                 self.lr += 1                                           #向きを+1する
             self.x +=(self.lr+3)*self.spd/100 + 5      #車の横方向の座標を計算
         else:                                                          #そうでないなら
@@ -79,16 +78,15 @@ class Player:
             self.lr = int(self.lr*0.9)                           #正面向きに近づける
         self.y += self.spd/100                              #車の速度からコース上の位置を計算
         if self.y > C.CMAX-1:                                   #コース終点を超えたら
-            self.y -= C.CMAX                                         #コースの頭に戻す
-            laps += 1                                                      #周回数の値を1増やす
-            if laps == C.LAPS:                                               #周回数がLAPSの値になったら
-                laps = 0                                                         #lapsを0にする
+            self.y -= C.CMAX                                        #コースの頭に戻す
+            laps += 1                                                    #周回数の値を1増やす
+            if laps == C.LAPS:                                            #周回数がLAPSの値になったら
+                laps = 0                                                       #lapsを0にする
         return tmr, laps
-        
-    def spd_control(self):
+
         """
         #通常の速度制御(Not 心拍)
-        if key[K_a] == 1: #アクセル                                     #Aキーが押されたら
+        if key[K_a] == 1: #アクセル                                   #Aキーが押されたら
             self.spd += 10                                             #速度を増やす
         elif key[K_z] == 1:  #ブレーキ                                  #そうでなくzキーが押されたら
             self.spd -= 10                                            #速度を減らす
@@ -99,18 +97,14 @@ class Player:
         if self.spd > C.CAR_SPD_MAX:  #最高速度                                #最高速度を超えたら
             self.spd = C.CAR_SPD_MAX                                           #最高速度にする
         """
-
-        #心拍での速度制御
-        self.spd = self.convert_spd()
-
-
-    def convert_spd(self):  #心拍を速度に変換する関数
-        if 0 <= self.pls.data and self.pls.data <= 50:
-            self.pulse_spd = 50
-
-        if 50 < self.pls.data and self.pls.data <= 170:
-            self.pulse_spd = self.pls.data
-        if self.pls.data < 200:
-            self.pulse_spd = 170
-        
-        return self.pulse_spd
+    
+    
+    def spd_control(self):  #心拍を速度に変換する関数
+        self.data = self.pls.data
+        if 0 <= self.data and self.data <= 50:
+            self.spd = 50
+        elif 50 < self.data and self.data <= 170:
+            self.spd = self.data
+        else:
+            self.spd = 170
+        return self.spd

@@ -1,38 +1,44 @@
 import socket
-import matplotlib.pyplot as pyplot
+import time
+import random
+import numpy as np
 
 class Pulse:
-
     def __init__(self):
         #define standby port number as 50000
         self.PORT = 50000
         #assign buffer size as 1024
         self.BUFFER_SIZE = 1024
-        self.bpm_list = []
-        self.data = 0
-        self.pulse_socket()
-        self.convert_spd()
+        self.time = 0
+        self.data = self.pulse_socket()     
+        #IPアドレスへの接続のためのレッスン状態
 
+    #心拍数を計測してself.dataに格納
     def pulse_socket(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            #listen 
-            #wait for access
-            s.bind(('192.168.11.7', self.PORT))
-            s.listen()
-            while True:
-                (connection, client) = s.accept()
-                try:
-                    print('Client connected', client)
-                    #receive data from server
-                    self.data = connection.recv(self.BUFFER_SIZE)
-
-                    #このデータが心拍データ。関数の返り値にできれば藤井のやつと簡単に組み合わせられる！！
-                    # connection.send(data)
-                    self.bpm_list.append(int(float(data)))
-                    print(self.bpm_list)
-
-                finally:
-                    connection.close()
+        #試したい場合のコード
+        # self.data = random.randint(0,200)
+        # return self.data
 
 
 
+        #心拍が取れている場合のコード    
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
+            # コネクションを試みる
+            soc.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# ここで毎回切断
+            soc.bind(('192.168.11.7', self.PORT))
+            soc.listen()
+            (connection, client) = soc.accept()
+
+            # try:
+            print('Client connected', client)
+            #receive data from server
+            #データがリアルタイムに変化する
+            try:
+                self.data = connection.recv(self.BUFFER_SIZE)
+            #このデータが心拍データ。関数の返り値にできれば藤井のやつと簡単に組み合わせられる！！
+            # connection.send(data)
+                return self.data
+            
+            finally:
+                connection.close()
+                

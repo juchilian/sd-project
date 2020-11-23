@@ -3,5 +3,6 @@
     "python.linting.enabled": true,
     "python.linting.pylintArgs": [
         "--extension-pkg-whitelist=pygame"
-    ]
+    ],
+    "editor.tabSize": 8
 }
