@@ -108,7 +108,7 @@ class Game:
             
             self.music_play()
             self.rec = self.rec + 1/60                                                 #走行時間をカウント
-            self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx, self.p1.spd = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx)                                       #プレイヤーの車を動かせるように
+            self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx)                                       #プレイヤーの車を動かせるように
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
             self.collision_judge(1)                                             #衝突判定
 

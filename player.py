@@ -59,7 +59,7 @@ class Player():
                 idx = 3                                                        #idxを3にしてゴール処理へ
                 tmr = 0                                                        #tmrを0にする
 
-        return  laptime, rec, recbk, tmr, laps, idx, self.spd
+        return  laptime, rec, recbk, tmr, laps, idx
             
     #タイトル画面、ゲーム終了後の画面で車を動かす動きを定義
     def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
@@ -106,11 +106,11 @@ class Player():
     def spd_control(self):  #心拍を速度に変換する関数
         self.data = int(float(self.pls.data))
         if 0 <= self.data and self.data <= 50:
-            self.spd = 50
+            self.pulse_spd = 50
         elif 50 < self.data and self.data <= 170:
-            self.spd = self.data
+            self.pusle_spd = self.data
         else:
-            self.spd = 170
-        print(self.spd)
-        return self.spd
+            self.pulse_spd = 170
+        #print(self.spd)
+        return self.pulse_spd
 
