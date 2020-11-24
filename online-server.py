@@ -40,11 +40,8 @@ def threaded_client(conn, p, gameId):
                 get => get Game info from server
                 move => 
             """
-            data = conn.recv(4096).decode()
-            print("data", data)
-            if not data:
-                data = pickle.loads(conn.recv(4096))
-                print("pickle data:", data)
+            data = pickle.loads(conn.recv(4096))
+            print("pickle data:", data)
 
             if gameId in games:
                 game = games[gameId] 

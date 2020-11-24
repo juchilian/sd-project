@@ -234,23 +234,22 @@ class Game:
                 self.n = Network()
                 player = int(self.n.getP()) # プレイヤーNumをGet
                 print("You are player", player)
+                if player == 0:
+                    self.p1 = Player(300, 0)
+                elif player == 1:
+                    self.p1 = Player(500, 0)
+
                 while run:
                     try:
-                        self.game = self.n.send("get")  # Game object全てが戻ってくる
+                        self.game = self.n.send(self.p1)  # Game object全てが戻ってくる
                     except:
                         run = False
                         print("Couldn't get game")
                         break
                     if not (self.game.connected()):  # 1台のみ接続中
                         print("waiting for opponent")
-                        # pass
-                        # font = pygame.font.SysFont("comicsans", 80)
-                        # text = font.render("Waiting for Player...", 1, (255,0,0), True)
-                        # bg.blit(text, (width / 2 - text.get_width() / 2, height / 2 - text.get_height() / 2))
                     else:  # 両者が繋がったら
                         print("Game Id is", self.game.id)
-                        self.p1 = Player(self.game.bothPos[player][0], self.game.bothPos[player][1])
-                        # __init__(self.game.bothPos[player][0], self.game.bothPos[player][1]) #Player番号に合った初期位置を代入
                         self.idx = 1  # カウントダウンフェーズに移行
                         break
 
