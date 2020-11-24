@@ -25,7 +25,7 @@ class Pulse:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             # コネクションを試みる
             soc.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# ここで毎回切断
-            soc.bind(('192.168.11.7', self.PORT))
+            soc.bind(('192.168.100.112', self.PORT))
             soc.listen()
             (connection, client) = soc.accept()
 
