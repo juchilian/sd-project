@@ -3,6 +3,10 @@ import sys
 import math
 import random
 from pygame.locals import *
+# コメントby 福井
+# fujiishine
+# やっぱ藤井死んで
+# もっと死んでほしい
 
 WHITE = (255, 255, 255)
 BLACK = (  0,   0,   0)
@@ -39,7 +43,7 @@ PLCAR_Y = 10 # プレイヤーの車の表示位置　道路一番手前（画�
 LAPS = 3
 laptime =["0'00.00"]*LAPS
 
-
+# class Course():
 def make_course():
     for i in range(CLEN):
         lr1 = DATA_LR[i]
