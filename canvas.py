@@ -28,10 +28,10 @@ class Canvas:
             vertical -= 800                                          #800を引く
 
         #フィードの描画
-        screen.fill((0,56,255)) #上空の色                           #指定の色で画面を塗りつぶす
-        screen.blit(game.img_bg,[vertical-800,horizon-400])             #空と地面の画像を描画(左側)
-        screen.blit(game.img_bg,[vertical,horizon-400])                 #空と地面の画像を描画(右側)
-        screen.blit(game.img_sea,[board_x[C.BOARD-1]-780,sy])             #左手奥の海を描画
+        screen.fill((0,0,0)) #上空の色                           #指定の色で画面を塗りつぶす
+        screen.blit(game.img_bg,[vertical-800,horizon-500])             #空と地面の画像を描画(左側)
+        screen.blit(game.img_bg,[vertical,horizon-500])                 #空と地面の画像を描画(右側)
+        #screen.blit(game.img_sea,[board_x[C.BOARD-1]-780,sy])             #左手奥の海を描画
 
         #描画用データを基に道路を描く
         for i in range(C.BOARD-1,0,-1):                              #繰り返しで道路の板を描いていく
@@ -45,8 +45,11 @@ class Canvas:
             col = (160,160,160)                                    #colに板の色を代入
             if int(game.p1.y+i) % C.CMAX == game.p1.PLself + 10:                 #ゴールの位置なら
                 col = (192,0,0)                                         #赤線の色の値を代入
-            
+            side_w = uw * 0.5
+
             pygame.draw.polygon(screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+            pygame.draw.polygon(screen,C.BLACK,[[ux,uy],[bx,by],[bx-side_w,by],[ux-side_w,uy]])   #道路脇の板を描く(左)
+            pygame.draw.polygon(screen,C.BLACK,[[ux+uw,uy],[ux+uw+side_w,uy],[bx+bw+side_w,by],[bx+bw,by]])   #道路脇の板を描く(右)
 
             if int(game.p1.y+i)%10 <= 4:  #左右の黄色線を描画
                 pygame.draw.polygon(screen,C.YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])      #左
@@ -60,18 +63,21 @@ class Canvas:
 
             scale = 1.5*C.BOARD_W[i]/C.BOARD_W[0]    #道路横の物体のスケールを計算
             obj_l = object_left[int(game.p1.y+i)%C.CMAX]   #道路左の物体
+            
             if obj_l == 2: #ヤシの木
-                self.draw_obj(screen,game.img_obj[obj_l],ux-uw*0.05,uy,scale)
+                self.draw_obj(screen,game.img_obj[obj_l],ux-uw*0.2,uy,scale)
+            """
             if obj_l == 3: #ヨット
                 self.draw_obj(screen,game.img_obj[obj_l],ux-uw*0.5,uy,scale)
             if obj_l == 9: #海
                 screen.blit(game.img_sea,[ux-uw*0.5-780,uy])
+            """
 
             obj_r = object_right[int(game.p1.y+i)%C.CMAX]  #道路右の物体
-            """  #看板はいらないため描画しない
+              #看板はいらないため描画しない
             if obj_r == 1:  #看板
-                self.draw_obj(screen,img_obj[obj_r],ux+uw*1.3,uy,scale)
-            """
+                self.draw_obj(screen,game.img_obj[obj_r],ux+uw*1.2,uy,scale)
+            
 
             for c in range(1,C.CAR_NUM):                                      #繰り返しで
                 if int(game.com.y[c])%C.CMAX == int(game.p1.y+i)%C.CMAX:          #その板にCOMカーがあるかどうか調べ

@@ -146,8 +146,9 @@ class Game:
                 curve[pos]  = lr1*(C.BOARD-j)/C.BOARD + lr2*j/C.BOARD        #道が曲がる向きを計算し代入
                 updown[pos] = ud1*(C.BOARD-j)/C.BOARD + ud2*j/C.BOARD        #道の起伏を計算し代入
                 
-                if j == 60:
-                    object_right[pos] = 1 #看板
+                if i%8 < 7:
+                    if j%12 == 0 :
+                        object_right[pos] = 1 #看板
                 if i%8 < 7:
                     if j%12 == 0 :
                         object_left[pos] = 2 #ヤシの木
@@ -225,12 +226,12 @@ class Game:
 
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
-        self.img_bg = pygame.image.load("image_pr/bg.png").convert()            #背景(空と地面の絵)
+        self.img_bg = pygame.image.load("image_pr/tokyo_1.jpg").convert()            #背景(空と地面の絵)
         self.img_sea = pygame.image.load("image_pr/sea.png").convert_alpha()    #海
         self.img_obj = [
             None,                                                          #オブジェクト名との整合性をとるためにNoneを入れる
-            pygame.image.load("image_pr/board.png").convert_alpha(),       #看板(実際には表示していない)
-            pygame.image.load("image_pr/yashi.png").convert_alpha(),       #ヤシの木
+            pygame.image.load("image_pr/building_1.jpg").convert_alpha(),       #看板(実際には表示していない)
+            pygame.image.load("image_pr/building_1.jpg").convert_alpha(),       #ヤシの木
             pygame.image.load("image_pr/yacht.png").convert_alpha()        #ヨット
         ]
         self.img_car = [
