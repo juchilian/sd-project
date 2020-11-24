@@ -29,8 +29,8 @@ class Canvas:
 
         #フィードの描画
         screen.fill((0,0,0)) #上空の色                           #指定の色で画面を塗りつぶす
-        screen.blit(game.img_bg,[vertical-800,horizon-500])             #空と地面の画像を描画(左側)
-        screen.blit(game.img_bg,[vertical,horizon-500])                 #空と地面の画像を描画(右側)
+        screen.blit(game.img_bg[game.mylocation],[vertical-800,horizon-500])             #背景画像(左側)
+        screen.blit(game.img_bg[game.mylocation],[vertical,horizon-500])                 #背景画像(右側)
         #screen.blit(game.img_sea,[board_x[C.BOARD-1]-780,sy])             #左手奥の海を描画
 
         #描画用データを基に道路を描く
@@ -45,7 +45,7 @@ class Canvas:
             col = (160,160,160)                                    #colに板の色を代入
             if int(game.p1.y+i) % C.CMAX == game.p1.PLself + 10:                 #ゴールの位置なら
                 col = (192,0,0)                                         #赤線の色の値を代入
-            side_w = uw * 0.5
+            side_w = uw * 0.3
 
             pygame.draw.polygon(screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
             pygame.draw.polygon(screen,C.BLACK,[[ux,uy],[bx,by],[bx-side_w,by],[ux-side_w,uy]])   #道路脇の板を描く(左)
