@@ -137,6 +137,12 @@ class Canvas:
         txt_pl = fnt_s.render(pl,True,C.BLACK)
         bg.blit(txt_pl,[910,int(y)-10])
 
+    def draw_rival(self, game):  # 敵車の座標がlist出力 [400, 500] 確認してみて
+        if self.game.player == 0:
+            print(self.game.bothPos[1])
+        elif self.game.player == 1:
+            print(self.game.bothPos[0]) 
+
 
     @staticmethod
     def draw_obj(bg, img, x, y, sc):                        #座標とスケールを受け取り、物体を描く関数
