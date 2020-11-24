@@ -15,6 +15,7 @@ class Player():
         self.spd = 0   #車の速度を管理するリスト
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         self.pulse_spd = 0
+        self.data = 0
         
         # self.pls = Pulse()
         
