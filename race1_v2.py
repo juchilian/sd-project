@@ -312,7 +312,7 @@ class Game:
                 pygame.mixer.music.play(0)     
         if self.idx == 2:   #レース中
             if pygame.mixer.music.get_busy() == False:
-                pygame.mixer.music.load("sound_pr/bgm.ogg")                          #BGMを読み込み
+                pygame.mixer.music.load("sound_pr/yoasobi.mp3")                          #BGMを読み込み
                 pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
                 pygame.mixer.music.play(-1)     
         if self.idx == 3:   #ゴール画面
