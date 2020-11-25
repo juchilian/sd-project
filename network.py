@@ -26,7 +26,6 @@ class Network:
     def send(self, data):
         try:
             self.client.send(pickle.dumps(data))  #pickle形式で送信
-            print("x座標：", data.x)
-            return pickle.loads(self.client.recv(2048)) #バグ Multigame objectが返る
+            return pickle.loads(self.client.recv(2048))
         except socket.error as e:
             print(e)

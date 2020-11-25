@@ -28,10 +28,6 @@ class MultiGame:
     
     def play(self, player, move):  #moveに座標が入ったobjectが入る
         self.bothPos[player] = [move.x, move.y]
-        # if player == 0:
-        #     self.p1Goal = True
-        # else:
-        #     self.p2Goal = True
     
     def connected(self):
         return self.ready
