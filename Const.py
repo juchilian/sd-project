@@ -1,19 +1,18 @@
 from math import sin,radians
 
-# Constants
-WHITE  = (255,255,255)
-BLACK  = (  0,  0,  0)
-RED    = (255,  0,  0)
-YELLOW = (255,224,  0)
-GREEN  = (  0,255,  0)
-BLUE   = ( 30,  0,255)
 
-#車の最高スピード
+### 車に関して ###
+# 車の最高スピード
 CAR_SPD_MAX = 300
+
+
 #何周すればゴールかを定める定数
 LAPS = 2
 
-#コースの定義
+### サーバー設定 ###
+SERVER = '10.10.29.226'
+
+### コースの定義 ###
 #道路のカーブを作る基になるデータ
 DATA_LR = [
     0, 0, 1, 0, 1, 2, 4, 3, 2, 1,
@@ -40,4 +39,12 @@ BOARD_UP = [0]* BOARD                           #板の起伏用の値を代入�
 for i in range(BOARD):                         #繰り返しで
     BOARD_W[i] = 10 + (BOARD-i)*(BOARD-i)/12    #幅を計算
     BOARD_H[i] = 3.4*(BOARD-i)/BOARD            #高さを計算
-    BOARD_UP[i] = 2*sin(radians(i*1.5))         #起伏の値を三角関数で計算
+    BOARD_UP[i] = 2 * sin(radians(i * 1.5))  #起伏の値を三角関数で計算
+
+# 色情報の定義
+WHITE  = (255,255,255)
+BLACK  = (  0,  0,  0)
+RED    = (255,  0,  0)
+YELLOW = (255,224,  0)
+GREEN  = (  0,255,  0)
+BLUE   = ( 30,  0,255)

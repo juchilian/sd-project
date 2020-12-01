@@ -5,9 +5,9 @@ import Const as C
 
 class Player:
 
-    def __init__(self):
-        self.x = 400          #車の横方向の座標を管理するリスト
-        self.y = 0            #車のコース上の位置を管理するリスト
+    def __init__(self, startx, starty):
+        self.x = startx          #車の横方向の座標を管理するリスト
+        self.y = starty            #車のコース上の位置を管理するリスト
         self.lr = 0           #車の左右の向きを管理するリスト
         self.spd = 0          #車の速度を管理するリスト
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
