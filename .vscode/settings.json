@@ -3,5 +3,6 @@
     "python.linting.enabled": true,
     "python.linting.pylintArgs": [
         "--extension-pkg-whitelist=pygame"
-    ]
+    ],
+    "python.formatting.provider": "black"
 }
