@@ -82,22 +82,23 @@ class Game:
             if key[K_m] != 0:                                               #Mキーが押されたら
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
 
-        if self.idx == 1: #idxが1(カウントダウン)のとき
+        if self.idx == 1:  #idxが1(カウントダウン)のとき
             time_c = time.time()
             time_cd = 3 - int(time_c - self.time)
             self.music_play()
             self.cvs.draw_text(screen,str(time_cd),400,240,C.YELLOW,fnt_l)
-            if time_cd <= 0 :
+            if time_cd <= 0 :  # カウントダウンが終了したら
                 self.idx = 2  #idxを2にしてレースへ                
                 self.tmr = 0                                                              #tmrを0にする
                 self.time = time.time()                                                             #このときの時刻を計算
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
                 self.game = self.n.send(self.p1)
+                self.cvs.draw_rival(self)  # 対戦相手の描画
 
-        if self.idx == 2:                                                    #idxが2(レース中)のとき
-            if self.tmr < 60:                                                      #60フレームの間だけ
-                self.cvs.draw_text(screen,"Go!",400,240,C.RED,fnt_l)                     #GO!と表示 
+        if self.idx == 2:  #idxが2(レース中)のとき
+            if self.tmr < 60:  #60フレームの間だけ
+                self.cvs.draw_text(screen, "Go!", 400, 240, C.RED, fnt_l)  #GO!と表示 
             
             self.music_play()
             self.rec = self.rec + 1/60                                                 #走行時間をカウント
@@ -107,6 +108,7 @@ class Game:
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
                 self.game = self.n.send(self.p1)
+                self.cvs.draw_rival(self) # 対戦相手の描画
 
 
         if self.idx == 3:              #idxが3(ゴール)のとき
@@ -190,7 +192,7 @@ class Game:
             self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
 
 
-    def mode_select(self,bg,fnt_m,key):
+    def mode_select(self, bg, fnt_m, key):
         self.cvs.draw_text(bg,"Select mode",400,160,C.WHITE,fnt_m)          #Select mode を表示
         for i in range(2):                                                  #繰り返しで
             x = 200+400*i                                                       #xに選択用の枠のx座標を代入
@@ -227,7 +229,6 @@ class Game:
                 for i in range(self.laps):  #繰り返しで
                     self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
             if self.mymode == 1:  #multiモードが選択されたら
-                run = True
                 self.n = Network()
                 player = int(self.n.getP()) # プレイヤーNumをGet
                 print("You are player", player)
@@ -235,7 +236,12 @@ class Game:
                     self.p1 = Player(300, 0)
                 elif player == 1:
                     self.p1 = Player(500, 0)
-
+                self.time = time.time()  #このときの時刻を記録
+                self.tmr = 0  #タイマーを0に
+                self.laps = 0  #周回数を0に
+                self.rec = 0  #走行時間を0に
+                self.recbk = 0  #ラップタイム計算用の変数を0に
+                run = True
                 while run:
                     try:
                         self.game = self.n.send(self.p1)  # Game object全てが戻ってくる
@@ -245,10 +251,17 @@ class Game:
                         break
                     if not (self.game.connected()):  # 1台のみ接続中
                         print("waiting for opponent")
+                        self.cvs.draw_text(bg,"Waiting for rival...",400,160,C.WHITE,fnt_m)
+                        self.cvs.update_canvas(self, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
+                        pygame.display.update()  
                     else:  # 両者が繋がったら
                         print("Game Id is", self.game.id)
                         self.idx = 1  # カウントダウンフェーズに移行
-                        break
+                        break            
+
+                for i in range(self.laps):  #繰り返しで
+                    self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
+
 
         if key[K_b] != 0:
             self.idx = 0   #タイトル画面に戻る
