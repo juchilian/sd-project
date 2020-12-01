@@ -21,7 +21,7 @@ class MultiGame:
         self.start_game()
 
     def start_game(self):
-        self.time = time.time()
+        self.started_time = time.time()
 
 
     def reset_game(self):

@@ -83,8 +83,8 @@ class Game:
             self.cvs.draw_text(str(time_cd),400,240,C.YELLOW,self.cvs.fnt_l)
             if time_cd <= 0 :  # カウントダウンが終了したら
                 self.idx = 2  #idxを2にしてレースへ                
-                self.tmr = 0                                                              #tmrを0にする
-                self.time = time.time()                                                             #このときの時刻を計算
+                self.tmr = 0  #tmrを0にする
+                self.time = time.time()  #このときの時刻を計算
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
                 self.multiGame = self.n.send(self.p1)
@@ -93,6 +93,8 @@ class Game:
         if self.idx == 2:  #idxが2(レース中)のとき
             time_race = time.time()
             self.elapsed_time = time_race - self.time
+            if self.mymode == 1:
+                self.elapsed_time = time_race - self.multiGame.started_time
 
             if self.tmr < 60:  #60フレームの間だけ
                 self.cvs.draw_text("Go!", 400, 240, C.RED, self.cvs.fnt_l)  #GO!と表示 
