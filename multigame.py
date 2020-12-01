@@ -15,6 +15,7 @@ class MultiGame:
         self.p1Goal = False
         self.p2Goal = False
         self.ready = False
+        self.time = 0.0
         self.id = id
         self.bothPos = [[300, 0], [500, 0]]        
         self.wins = [0, 0]
