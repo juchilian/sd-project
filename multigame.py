@@ -18,7 +18,7 @@ class MultiGame:
         self.id = id
         self.bothPos = [[300, 0], [500, 0]]        
         self.wins = [0, 0]
-        self.start_game()
+        self.started_time = 0
 
     def start_game(self):
         self.started_time = time.time()
