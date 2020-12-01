@@ -220,10 +220,6 @@ class Game:
                     self.p1 = Player(300, 0)
                 elif self.player == 1:
                     self.p1 = Player(500, 0)
-                self.tmr = 0  #タイマーを0に
-                self.laps = 0  #周回数を0に
-                self.rec = 0  #走行時間を0に
-                self.recbk = 0  #ラップタイム計算用の変数を0に
                 run = True
                 while run:
                     try:
@@ -240,6 +236,10 @@ class Game:
                         print("Game Id is", self.multiGame.id)
                         self.idx = 1  # カウントダウンフェーズに移行
                         self.time = time.time()  #このときの時刻を記録
+                        self.tmr = 0  #タイマーを0に
+                        self.laps = 0  #周回数を0に
+                        self.rec = 0  #走行時間を0に
+                        self.recbk = 0  #ラップタイム計算用の変数を0に
                         for i in range(self.laps):  #繰り返しで
                             self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
                         break            
