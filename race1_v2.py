@@ -28,6 +28,7 @@ class Game:
         self.mycar = 0                         #車選択用の変数
         self.mymode = 0                        #モード選択用の変数
         self.mylocation = 0                    #場所選択用の変数
+        self.player = 0
         
 
     def run(self):
@@ -98,7 +99,7 @@ class Game:
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
                 self.game = self.n.send(self.p1)
-                self.cvs.draw_rival(self)  # 対戦相手の描画
+                #self.cvs.draw_rival(self,screen)  # 対戦相手の描画
 
         if self.idx == 2:  #idxが2(レース中)のとき
             if self.tmr < 60:  #60フレームの間だけ
@@ -112,7 +113,7 @@ class Game:
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
                 self.game = self.n.send(self.p1)
-                self.cvs.draw_rival(self) # 対戦相手の描画
+                #self.cvs.draw_rival(self,screen) # 対戦相手の描画
 
 
         if self.idx == 3:              #idxが3(ゴール)のとき
@@ -354,10 +355,11 @@ class Game:
                 pygame.mixer.music.set_volume(1.0)                                   #音を小さくして
                 pygame.mixer.music.play(0)     
         if self.idx == 2:   #レース中
-            if pygame.mixer.music.get_busy() == False:
-                pygame.mixer.music.load("sound_pr/yoasobi.mp3")                          #BGMを読み込み
-                pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
-                pygame.mixer.music.play(-1)     
+            pass
+            # if pygame.mixer.music.get_busy() == False:
+            #     pygame.mixer.music.load("sound_pr/yoasobi.mp3")                          #BGMを読み込み
+            #     pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
+            #     pygame.mixer.music.play(-1)     
         if self.idx == 3:   #ゴール画面
             if self.tmr == 1:                                                      #tmrが1なら
                 pygame.mixer.music.stop()                                             #bgmを停止

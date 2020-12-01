@@ -93,6 +93,9 @@ class Canvas:
             if i == game.p1.PLself: #PLAYERカー                                                                           #プレイヤーの車の位置なら
                 self.draw_shadow(screen, ux + game.p1.x * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
                 self.draw_obj(screen, game.img_car[3 + game.p1.lr + game.mycar*7], ux + game.p1.x * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])  #プレイヤーの車を描く
+
+            if game.mymode == 1:
+                self.draw_rival(game,screen,ux,uy)
         
         #右側の部分の表示
         pygame.draw.rect(screen,C.WHITE,[800,0,300,600]) 
@@ -108,6 +111,8 @@ class Canvas:
         self.draw_text(screen,"time "+game.p1.time_str(game.rec),100,80,C.GREEN,fnt_s)             #タイムを表示
         for i in range(game.laps):                                                  #繰り返しで
             self.draw_text(screen, game.laptime[i], 80, 130 + 40 * i, C.YELLOW, fnt_s)  #ラップタイムを表示
+
+        
 
     def update_object(self, game, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l):
         for i in range(C.CLEN):
@@ -171,11 +176,12 @@ class Canvas:
         txt_pl = fnt_s.render(pl,True,C.BLACK)
         bg.blit(txt_pl,[910,int(y)-10])
 
-    def draw_rival(self, game):  # 敵車の座標がlist出力 [400, 500] 確認してみて
-        if game.player == 0:
-            print(game.game.bothPos[1])
-        elif game.player == 1:
-            print(game.game.bothPos[0]) 
+    def draw_rival(self, game, bg,ux,uy):  # 敵車の座標がlist出力 [400, 500] 確認してみて
+            if game.player == 0:
+                print(game.game.bothPos[1][0])
+                self.draw_shadow(bg, ux + game.game.bothPos[1][0] * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
+            elif game.player == 1:
+                print(game.game.bothPos[0][0]) 
 
 
     @staticmethod
