@@ -230,11 +230,11 @@ class Game:
                     self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
             if self.mymode == 1:  #multiモードが選択されたら
                 self.n = Network()
-                player = int(self.n.getP()) # プレイヤーNumをGet
+                self.player = int(self.n.getP()) # プレイヤーNumをGet
                 print("You are player", player)
-                if player == 0:
+                if self.player == 0:
                     self.p1 = Player(300, 0)
-                elif player == 1:
+                elif self.player == 1:
                     self.p1 = Player(500, 0)
                 self.time = time.time()  #このときの時刻を記録
                 self.tmr = 0  #タイマーを0に
@@ -252,7 +252,7 @@ class Game:
                     if not (self.game.connected()):  # 1台のみ接続中
                         print("waiting for opponent")
                         self.cvs.draw_text(bg,"Waiting for rival...",400,160,C.WHITE,fnt_m)
-                        self.cvs.update_canvas(self, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
+                        # self.cvs.update_canvas(self, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
                         pygame.display.update()  
                     else:  # 両者が繋がったら
                         print("Game Id is", self.game.id)

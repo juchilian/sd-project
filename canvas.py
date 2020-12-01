@@ -138,10 +138,10 @@ class Canvas:
         bg.blit(txt_pl,[910,int(y)-10])
 
     def draw_rival(self, game):  # 敵車の座標がlist出力 [400, 500] 確認してみて
-        if self.game.player == 0:
-            print(self.game.bothPos[1])
-        elif self.game.player == 1:
-            print(self.game.bothPos[0]) 
+        if game.player == 0:
+            print(game.game.bothPos[1])
+        elif game.player == 1:
+            print(game.game.bothPos[0]) 
 
 
     @staticmethod
