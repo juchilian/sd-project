@@ -87,7 +87,7 @@ class Game:
                 self.time = time.time()                                                             #このときの時刻を計算
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
-                self.game = self.n.send(self.p1)
+                self.multiGame = self.n.send(self.p1)
                 #self.cvs.draw_rival(self,screen)  # 対戦相手の描画
 
         if self.idx == 2:  #idxが2(レース中)のとき
@@ -104,7 +104,7 @@ class Game:
             self.collision_judge(1)  #衝突判定
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
-                self.game = self.n.send(self.p1)
+                self.multiGame = self.n.send(self.p1)
                 #self.cvs.draw_rival(self,screen) # 対戦相手の描画
 
 
@@ -224,17 +224,17 @@ class Game:
                 run = True
                 while run:
                     try:
-                        self.game = self.n.send(self.p1)  # Game object全てが戻ってくる
+                        self.multiGame = self.n.send(self.p1)  # Game object全てが戻ってくる
                     except:
                         run = False
                         print("Couldn't get game")
                         break
-                    if not (self.game.connected()):  # 1台のみ接続中
+                    if not (self.multiGame.connected()):  # 1台のみ接続中
                         print("waiting for opponent")
                         self.cvs.draw_text("Waiting for rival...", 400, 160, C.WHITE, self.cvs.fnt_m)
                         pygame.display.update()
                     else:  # 両者が繋がったら
-                        print("Game Id is", self.game.id)
+                        print("Game Id is", self.multiGame.id)
                         self.idx = 1  # カウントダウンフェーズに移行
                         break            
 

@@ -15,12 +15,16 @@ class MultiGame:
         self.p1Goal = False
         self.p2Goal = False
         self.ready = False
-        self.time = 0.0
         self.id = id
         self.bothPos = [[300, 0], [500, 0]]        
         self.wins = [0, 0]
+        self.start_game()
 
-    def reset_game():
+    def start_game(self):
+        self.time = time.time()
+
+
+    def reset_game(self):
         self.p1set = False
         self.p2set = False
 
