@@ -46,11 +46,11 @@ class Player:
             self.spd = C.CAR_SPD_MAX  #最高速度にする
 
         self.x -= self.spd * curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
-        if self.x < 0:     #左の路肩に接触したら
-            self.x = 0      #横方向の座標を0にして
+        if self.x < 0 + 50:     #左の路肩に接触したら
+            self.x = 0 + 50      #横方向の座標を0にして
             self.spd *= 0.9 #減速する
-        if self.x > 800:   #右の路肩に接触したら
-            self.x = 800    #横方向の座標を800にして
+        if self.x > 800 - 50:   #右の路肩に接触したら
+            self.x = 800 - 50   #横方向の座標を800にして
             self.spd *= 0.9 #減速する
 
         self.y += self.spd/100                          #車の速度からコース上の位置を計算

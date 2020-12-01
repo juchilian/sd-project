@@ -28,11 +28,15 @@ class Canvas:
             vertical -= 800                                          #800を引く
 
         #フィードの描画
-        screen.fill((0,56,255)) #上空の色                           #指定の色で画面を塗りつぶす
-        screen.blit(game.img_bg,[vertical-800,horizon-400])             #空と地面の画像を描画(左側)
-        screen.blit(game.img_bg,[vertical,horizon-400])                 #空と地面の画像を描画(右側)
-        screen.blit(game.img_sea,[board_x[C.BOARD-1]-780,sy])             #左手奥の海を描画
+        screen.fill((0,0,0)) #上空の色                           #指定の色で画面を塗りつぶす
+        screen.blit(game.img_bg[game.mylocation],[vertical-800,horizon-500])             #背景画像(左側)
+        screen.blit(game.img_bg[game.mylocation],[vertical,horizon-500])                 #背景画像(右側)
+        #screen.blit(game.img_sea,[board_x[C.BOARD-1]-780,sy])             #左手奥の海を描画
 
+        self.update_object(game, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
+        
+        
+        
         #描画用データを基に道路を描く
         for i in range(C.BOARD-1,0,-1):                              #繰り返しで道路の板を描いていく
             ux = board_x[i]                                        #台形の上底のx座標をuxに代入
@@ -45,8 +49,11 @@ class Canvas:
             col = (160,160,160)                                    #colに板の色を代入
             if int(game.p1.y+i) % C.CMAX == game.p1.PLself + 10:                 #ゴールの位置なら
                 col = (192,0,0)                                         #赤線の色の値を代入
-            
+            side_w = uw * 0.3
+
             pygame.draw.polygon(screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+            pygame.draw.polygon(screen,C.BLACK,[[ux,uy],[bx,by],[bx-side_w,by],[ux-side_w,uy]])   #道路脇の板を描く(左)
+            pygame.draw.polygon(screen,C.BLACK,[[ux+uw,uy],[ux+uw+side_w,uy],[bx+bw+side_w,by],[bx+bw,by]])   #道路脇の板を描く(右)
 
             if int(game.p1.y+i)%10 <= 4:  #左右の黄色線を描画
                 pygame.draw.polygon(screen,C.YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])      #左
@@ -57,21 +64,22 @@ class Canvas:
                 pygame.draw.polygon(screen,C.WHITE,[[ux+uw*0.49,uy],[ux+uw*0.51,uy],[bx+bw*0.51,by],[bx+bw*0.49,by]])  #中央
                 pygame.draw.polygon(screen,C.WHITE,[[ux+uw*0.74,uy],[ux+uw*0.76,uy],[bx+bw*0.76,by],[bx+bw*0.74,by]])  #右
 
-
             scale = 1.5*C.BOARD_W[i]/C.BOARD_W[0]    #道路横の物体のスケールを計算
             obj_l = object_left[int(game.p1.y+i)%C.CMAX]   #道路左の物体
-            if obj_l == 2: #ヤシの木
-                self.draw_obj(screen,game.img_obj[obj_l],ux-uw*0.05,uy,scale)
-            if obj_l == 3: #ヨット
-                self.draw_obj(screen,game.img_obj[obj_l],ux-uw*0.5,uy,scale)
-            if obj_l == 9: #海
-                screen.blit(game.img_sea,[ux-uw*0.5-780,uy])
-
             obj_r = object_right[int(game.p1.y+i)%C.CMAX]  #道路右の物体
-            """  #看板はいらないため描画しない
-            if obj_r == 1:  #看板
-                self.draw_obj(screen,img_obj[obj_r],ux+uw*1.3,uy,scale)
-            """
+
+
+            if game.mylocation == 0:  #Tokyo
+                if obj_r == 1:  #ビル(右)
+                    self.draw_obj(screen,game.img_obj[obj_r],ux+uw*1.2,uy,scale)  
+                if obj_l == 2: #ビル(左)
+                    self.draw_obj(screen,game.img_obj[obj_l],ux-uw*0.2,uy,scale)
+                
+            if game.mylocation == 1:  #Space
+                if obj_r == 3:  #水星(右)
+                    self.draw_obj(screen,game.img_obj[obj_r],ux+uw*1.2,uy,scale)
+                if obj_l == 4: #金星(左)
+                    self.draw_obj(screen,game.img_obj[obj_l],ux-uw*0.2,uy,scale)
 
             for c in range(1,C.CAR_NUM):                                      #繰り返しで
                 if int(game.com.y[c])%C.CMAX == int(game.p1.y+i)%C.CMAX:          #その板にCOMカーがあるかどうか調べ
@@ -81,8 +89,7 @@ class Canvas:
                     if lr > 3:                                          #3より大きいなら3で
                         lr = 3
                     self.draw_obj(screen,game.img_car[(c%3)*7+3+lr],ux+game.com.x[c]*C.BOARD_W[i]/800,uy,0.05+C.BOARD_W[i]/C.BOARD_W[0])
-
-                
+  
             if i == game.p1.PLself: #PLAYERカー                                                                           #プレイヤーの車の位置なら
                 self.draw_shadow(screen, ux + game.p1.x * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
                 self.draw_obj(screen, game.img_car[3 + game.p1.lr + game.mycar*7], ux + game.p1.x * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])  #プレイヤーの車を描く
@@ -101,6 +108,33 @@ class Canvas:
         self.draw_text(screen,"time "+game.p1.time_str(game.rec),100,80,C.GREEN,fnt_s)             #タイムを表示
         for i in range(game.laps):                                                  #繰り返しで
             self.draw_text(screen, game.laptime[i], 80, 130 + 40 * i, C.YELLOW, fnt_s)  #ラップタイムを表示
+
+    def update_object(self, game, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l):
+        for i in range(C.CLEN):
+            for j in range(C.BOARD):
+                pos = j + C.BOARD*i  
+                if game.mylocation == 0: #Tokyo
+                    if i%8 < 7:
+                        if j%12 == 0 :
+                            object_right[pos] = 1 #右のビル
+                    if i%8 < 7:
+                        if j%12 == 0 :
+                            object_left[pos] = 2 #左のビル
+                    """
+                    else:
+                        if j%20 == 0:
+                            object_left[pos] = 3 #ヨット
+                    if j%12 == 6:
+                        object_left[pos] = 9 #海
+                    """
+
+                if game.mylocation == 1:  #Space
+                    if i%8 < 7:
+                        if j == 0 :
+                            object_right[pos] = 3 #水星
+                    if i%8 < 7:
+                        if j == 60 :
+                            object_left[pos] = 4 #金星
 
     
     def make_map(self,bg):

@@ -19,15 +19,15 @@ class Game:
         self.cvs = Canvas()
         # Parameters(Varaible)
         self.idx = 0
-        self.tmr = 0  #タイマーの変数
-        self.time = 0  #timeモジュールを使った時間の計測のための変数
-        self.laps = 0  #何周目かを管理する変数
-        self.rec = 0  #走行時間を測る変数
-        self.recbk = 0  #ラップタイム計算用の変数
-        self.laptime = ["0'00.00"] * C.LAPS  #ラップタイム表示用のリスト
-        self.mycar = 0  #車選択用の変数
-        self.mymode = 0  #モード選択用の変数
-        
+        self.tmr = 0                           #タイマーの変数
+        self.time = 0                          #timeモジュールを使った時間の計測のための変数
+        self.laps = 0                          #何周目かを管理する変数
+        self.rec = 0                           #走行時間を測る変数
+        self.recbk = 0                         #ラップタイム計算用の変数
+        self.laptime = ["0'00.00"] * C.LAPS #ラップタイム表示用のリスト
+        self.mycar = 0                         #車選択用の変数
+        self.mymode = 0                        #モード選択用の変数
+        self.mylocation = 0                    #場所選択用の変数
         
 
     def run(self):
@@ -68,11 +68,13 @@ class Game:
             3 => ゴール時
             4 => 車種選択の時
             5 => モード選択の時
+            6 => 場所選択の時
         '''
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             screen.blit(self.img_title,[120,120])                               #タイトルロゴを表示
             
             self.cvs.draw_text(screen,"[S] Select your car",400,320,C.WHITE,fnt_m)       #[S] Select your car の文字を表示
+            self.cvs.draw_text(screen,"[L] Select location",400,360,C.WHITE,fnt_m)
             self.cvs.draw_text(screen,"[M] Select mode",400,400,C.WHITE,fnt_m)
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)                                                #コンピュータの車を動かす
@@ -81,6 +83,8 @@ class Game:
                 self.idx = 4                                                         #idxを4にして車種選択に移行
             if key[K_m] != 0:                                               #Mキーが押されたら
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
+            if key[K_l] != 0:                                               #Lキーが押されたら
+                self.idx = 6                                                    #idxを6にして場所選択に移行
 
         if self.idx == 1:  #idxが1(カウントダウン)のとき
             time_c = time.time()
@@ -131,6 +135,12 @@ class Game:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.mode_select(screen,fnt_m,key)
+        
+        if self.idx == 6:
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
+            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
+            self.locate_select(screen,fnt_m,key)
+            
             
 
     def collision_judge(self,cs):
@@ -158,16 +168,6 @@ class Game:
                 curve[pos]  = lr1*(C.BOARD-j)/C.BOARD + lr2*j/C.BOARD        #道が曲がる向きを計算し代入
                 updown[pos] = ud1*(C.BOARD-j)/C.BOARD + ud2*j/C.BOARD        #道の起伏を計算し代入
                 
-                if j == 60:
-                    object_right[pos] = 1 #看板
-                if i%8 < 7:
-                    if j%12 == 0 :
-                        object_left[pos] = 2 #ヤシの木
-                else:
-                    if j%20 == 0:
-                        object_left[pos] = 3 #ヨット
-                if j%12 == 6:
-                    object_left[pos] = 9 #海
 
 
     def car_select(self,bg,fnt_m,key):
@@ -231,7 +231,7 @@ class Game:
             if self.mymode == 1:  #multiモードが選択されたら
                 self.n = Network()
                 self.player = int(self.n.getP()) # プレイヤーNumをGet
-                print("You are player", player)
+                print("You are player", self.player)
                 if self.player == 0:
                     self.p1 = Player(300, 0)
                 elif self.player == 1:
@@ -252,7 +252,7 @@ class Game:
                     if not (self.game.connected()):  # 1台のみ接続中
                         print("waiting for opponent")
                         self.cvs.draw_text(bg,"Waiting for rival...",400,160,C.WHITE,fnt_m)
-                        # self.cvs.update_canvas(self, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
+                        #self.cvs.update_canvas(self, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
                         pygame.display.update()  
                     else:  # 両者が繋がったら
                         print("Game Id is", self.game.id)
@@ -266,16 +266,49 @@ class Game:
         if key[K_b] != 0:
             self.idx = 0   #タイトル画面に戻る
 
+    def locate_select(self,bg,fnt_m,key):
+        self.cvs.draw_text(bg,"Select location",400,160,C.WHITE,fnt_m)          #Select location を表示
+        for i in range(2):                                                  #繰り返しで
+            x = 200+400*i                                                       #xに選択用の枠のx座標を代入
+            y = 300                                                             #yに選択用の枠のy座標を代入
+            col = C.BLACK                                                       #colにBLACkを代入
+            if i == self.mylocation:                                                    #選択している車種なら
+                col = (0,128,255)                                                   #colに明るい青の値を代入
+            pygame.draw.rect(bg,col,[x-120,y-120,240,240])                   #colの色で枠を描く
+            bg.blit(self.img_location[i],[x-100,y-100])                       #それぞれの場所を描画
+            self.cvs.draw_text(bg,"["+str(i+1)+"]",x,y-90,C.WHITE,fnt_m)        #[n]の文字を表示
+            if i == 0:
+                self.cvs.draw_text(bg,"Tokyo",x,y-40,C.WHITE,fnt_m)
+            if i == 1:
+                self.cvs.draw_text(bg,"Space",x,y-40,C.WHITE,fnt_m)
+            
+            #bg.blit(self.img_location[i],[x-100,y-100])                       #それぞれの場所を描画
+
+        self.cvs.draw_text(bg,"[Enter] OK!",400,460,C.GREEN,fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:
+            self.mylocation = 0  #mylocationに0を代入(Tokyo)
+        if key[K_2] == 1: #2キーが押されたら
+            self.mylocation = 1 #mylocationに1を代入(Space)
+        
+        if key[K_RETURN] != 0: 
+            self.idx = 0  #タイトル画面に戻る
+
 
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
-        self.img_bg = pygame.image.load("image_pr/bg.png").convert()            #背景(空と地面の絵)
+        self.img_bg = pygame.image.load("image_pr/tokyo_1.jpg").convert()            #背景(空と地面の絵)
+        self.img_bg = [
+            pygame.image.load("image_pr/tokyo_1.jpg").convert(),
+            pygame.image.load("image_pr/space_1.png").convert()
+        ]
+
         self.img_sea = pygame.image.load("image_pr/sea.png").convert_alpha()    #海
         self.img_obj = [
             None,                                                          #オブジェクト名との整合性をとるためにNoneを入れる
-            pygame.image.load("image_pr/board.png").convert_alpha(),       #看板(実際には表示していない)
-            pygame.image.load("image_pr/yashi.png").convert_alpha(),       #ヤシの木
-            pygame.image.load("image_pr/yacht.png").convert_alpha()        #ヨット
+            pygame.image.load("image_pr/building_1.jpg").convert_alpha(),       #ビル画像1
+            pygame.image.load("image_pr/building_2.png").convert_alpha(),       #ビル画像2
+            pygame.image.load("image_pr/mercury_1.png").convert_alpha(),        #水星
+            pygame.image.load("image_pr/venus_1.png").convert_alpha()        #金星
         ]
         self.img_car = [
             pygame.image.load("image_pr/car00.png").convert_alpha(),       #車(左3)_赤
@@ -305,6 +338,11 @@ class Game:
             pygame.image.load("image_pr/singlemode.png").convert_alpha(),
             pygame.image.load("image_pr/multimode.png").convert_alpha()
         ]
+
+        self.img_location = [
+            pygame.image.load("image_pr/tokyo_2.jpg").convert(),
+            pygame.image.load("image_pr/space_2.png").convert(),
+        ]
         
     
     def music_play(self):
@@ -317,7 +355,7 @@ class Game:
                 pygame.mixer.music.play(0)     
         if self.idx == 2:   #レース中
             if pygame.mixer.music.get_busy() == False:
-                pygame.mixer.music.load("sound_pr/bgm.ogg")                          #BGMを読み込み
+                pygame.mixer.music.load("sound_pr/yoasobi.mp3")                          #BGMを読み込み
                 pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
                 pygame.mixer.music.play(-1)     
         if self.idx == 3:   #ゴール画面
