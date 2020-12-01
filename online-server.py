@@ -41,18 +41,14 @@ def threaded_client(conn, p, gameId):
                 move => 
             """
             data = pickle.loads(conn.recv(4096))
-            print("pickle data:", data)
 
             if gameId in games:
                 game = games[gameId] 
                 if not data:
                     break
                 else:
-                    if data == "reset":
-                        game.reset_Goal()
-                    elif data != "get":
-                        game.play(p, data)
-                        print(game.bothPos)
+                    game.play(p, data)
+                    print(game.bothPos)
                     conn.sendall(pickle.dumps(game))
             else:
                 break
