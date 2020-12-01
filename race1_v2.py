@@ -26,6 +26,7 @@ class Game:
         self.mycar = 0                         #車選択用の変数
         self.mymode = 0                        #モード選択用の変数
         self.mylocation = 0                    #場所選択用の変数
+        self.elapsed_time = 0
         
 
     def run(self):
@@ -95,12 +96,14 @@ class Game:
                 self.time = time.time()                                                             #このときの時刻を計算
 
         if self.idx == 2:                                                    #idxが2(レース中)のとき
+            time_race = time.time()
+            self.elapsed_time = time_race - self.time
             if self.tmr < 60:                                                      #60フレームの間だけ
                 self.cvs.draw_text(screen,"Go!",400,240,C.RED,fnt_l)                     #GO!と表示 
             
             self.music_play()
             self.rec = self.rec + 1/60                                                 #走行時間をカウント
-            self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx) #プレイヤーの車を動かせるように
+            self.laptime, self.rec, self.recbk, self.tmr, self.laps, self.idx = self.p1.drive_car(self,key, curve, self.laptime, self.rec, self.recbk, self.tmr,self.laps,self.idx) #プレイヤーの車を動かせるように
             self.com.move_car(1, self.tmr)          #コンピュータの車を動かす
             self.collision_judge(1)       #衝突判定
 

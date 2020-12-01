@@ -21,7 +21,7 @@ class Player:
         mi  = int(sec/60)                            #分をmiに代入
         return "{}'{:02}.{:02}".format(mi,sec%60,ms)   # **'**.**という文字列を返す
     
-    def drive_car(self, key, curve, laptime, rec, recbk, tmr,laps,idx): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
+    def drive_car(self,game, key, curve, laptime, rec, recbk, tmr,laps,idx): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
         if key[K_LEFT] == 1:  #左キーが押されたら
             if self.lr > -3: #向きが-3より大きければ
                 self.lr -= 1  #向きを-1する
@@ -56,7 +56,8 @@ class Player:
         self.y += self.spd/100                          #車の速度からコース上の位置を計算
         if self.y > C.CMAX-1:                                         #コース終点を超えたら
             self.y -= C.CMAX  #コースを頭に戻す
-            laptime[laps] = self.time_str(rec-recbk)                            #ラップタイムを計算し代入
+            #laptime[laps] = self.time_str(rec-recbk)                            #ラップタイムを計算し代入
+            laptime[laps] = self.time_str(game.elapsed_time)                            #ラップタイムを計算し代入  
             recbk = rec           #現在のタイムを保持
             laps += 1             #周回数の値を1増やす
             if laps == C.LAPS:      #周回数がLAPSの値になったら
