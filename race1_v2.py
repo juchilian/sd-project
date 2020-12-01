@@ -57,17 +57,17 @@ class Game:
         object_right = [0] * C.CMAX  #道路右にある物体の番号を入れるリスト
         self.make_course(curve, updown, object_left, object_right) #コース設計 #修正箇所(returnで値の変更を反映)
 
-        while True:                                    #無限ループで処理を続ける
+        while True:                              #無限ループで処理を続ける
             for event in pygame.event.get():            #pygameのイベントを繰り返しで処理する
                 if event.type == QUIT:                   #ウインドウの×ボタンをクリックしたら
                     pygame.quit()                        #pygameモジュールの初期化を解除
-                    sys.exit()                           #プログラムを終了する
+                    sys.exit()                        #プログラムを終了する
             self.tmr += 1
             self.update_canvas(curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l)
             key = pygame.key.get_pressed()                       #keyに全てのキーの状態代入
             self.manage_game(key, curve, screen, fnt_s, fnt_m, fnt_l)
-            pygame.display.update()                      #画面を更新する
-            clock.tick(60)                               #フレームレートを指定
+            pygame.display.update()                     #画面を更新する
+            clock.tick(60)                              #フレームレートを指定
 
     def manage_game(self, key, curve, screen, fnt_s, fnt_m, fnt_l):
         '''
@@ -79,7 +79,8 @@ class Game:
             4 => 車種選択の時
             5 => モード選択の時
         '''
-        if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
+
+        if self.idx == 0:  #idxが0(タイトル画面)のとき
             screen.blit(self.img_title,[120,120])                               #タイトルロゴを表示
             
             self.draw_text(screen,"[S] Select your car",400,320,C.WHITE,fnt_m)       #[S] Select your car の文字を表示
@@ -132,8 +133,6 @@ class Game:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.mode_select(screen,fnt_m,key)
-            
-
 
     def update_canvas(self, curve, updown, vertical, screen, object_left, object_right, fnt_s, fnt_m, fnt_l):
         #描画用の道路のX座標と路面の高低を計算
@@ -450,8 +449,8 @@ class Game:
         scrn.blit(sur,[x,y])                                        #サーフェースを画面に転送
 
 
-
-
 if __name__ == '__main__':
     g = Game()
     g.run()
+
+ 

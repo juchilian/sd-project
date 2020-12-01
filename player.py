@@ -13,6 +13,7 @@ class Player():
         self.lr = 0           #車の左右の向きを管理するリスト
         self.pls = Pulse() #パルスを定義
         self.spd = 0   #車の速度を管理するリスト
+        self.spd_control()
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         self.pulse_spd = 0
         
@@ -33,13 +34,11 @@ class Player():
             if self.lr < 3:                                           #向きが3より小さければ-
                 self.lr += 1                                           #向きを+1する
             self.x +=(self.lr+3)*self.spd/100 + 5      #車の横方向の座標を計算
-        else:                                                          #そうでないなら
-            self.lr = int(self.lr*0.9)                              #正面向きに近づける
+        else:                                 #そうでないなら
+            self.lr = int(self.lr*0.9)                   #正面向きに近づける
         
         #速度制御
-        # while True:
         self.spd = self.spd_control()
-
 
         self.x -= self.spd * curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
         if self.x < 0:                                              #左の路肩に接触したら
@@ -59,7 +58,7 @@ class Player():
                 idx = 3                                                        #idxを3にしてゴール処理へ
                 tmr = 0                                                        #tmrを0にする
 
-        return  laptime, rec, recbk, tmr, laps, idx, self.spd
+        return laptime, rec, recbk, tmr, laps, idx
             
     #タイトル画面、ゲーム終了後の画面で車を動かす動きを定義
     def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
@@ -86,31 +85,33 @@ class Player():
                 laps = 0                                                       #lapsを0にする
         return tmr, laps
     
-    def pulse_control(self):
-        """
-        #通常の速度制御(Not 心拍)
-        if key[K_a] == 1: #アクセル                                   #Aキーが押されたら
-            self.spd += 10                                             #速度を増やす
-        elif key[K_z] == 1:  #ブレーキ                                  #そうでなくzキーが押されたら
-            self.spd -= 10                                            #速度を減らす
-        else:                                                          #そうでないなら
-            self.spd -= 0.25                                          #ゆっくり減速
-        if self.spd < 0:  #最低速度                                  #速度が0未満なら
-            self.spd = 0                                             #速度を0にする
-        if self.spd > C.CAR_SPD_MAX:  #最高速度                                #最高速度を超えたら
-            self.spd = C.CAR_SPD_MAX                                           #最高速度にする
-        """
-        self.pulse_spd = self.spd_control()
+    # def pulse_control(self):
+    #     """
+    #     #通常の速度制御(Not 心拍)
+    #     if key[K_a] == 1: #アクセル                                   #Aキーが押されたら
+    #         self.spd += 10                                             #速度を増やす
+    #     elif key[K_z] == 1:  #ブレーキ                                  #そうでなくzキーが押されたら
+    #         self.spd -= 10                                            #速度を減らす
+    #     else:                                                          #そうでないなら
+    #         self.spd -= 0.25                                          #ゆっくり減速
+    #     if self.spd < 0:  #最低速度                                  #速度が0未満なら
+    #         self.spd = 0                                             #速度を0にする
+    #     if self.spd > C.CAR_SPD_MAX:  #最高速度                                #最高速度を超えたら
+    #         self.spd = C.CAR_SPD_MAX                                           #最高速度にする
+    #     """
+    #     self.pulse_spd = self.spd_control()
 
     #ここは一つのデータしかありませーん
     def spd_control(self):  #心拍を速度に変換する関数
-        self.data = int(float(self.pls.data))
-        if 0 <= self.data and self.data <= 50:
+        self.pls_data = int(float(self.pls.data))
+        print("pls_data：", self.pls_data)
+        if 0 <= self.pls_data and self.pls_data <= 50:
             self.spd = 50
-        elif 50 < self.data and self.data <= 170:
-            self.spd = self.data
+        elif 50 < self.pls_data and self.pls_data <= 170:
+            self.spd = self.pls_data
         else:
             self.spd = 170
-        print(self.spd)
         return self.spd
 
+while True:
+    print(Player().spd)

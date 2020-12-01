@@ -20,8 +20,7 @@ class Pulse:
         # return self.data
 
 
-
-        #心拍が取れている場合のコード    
+        # 心拍が取れている場合のコード    
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             # コネクションを試みる
             soc.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# ここで毎回切断
@@ -41,4 +40,3 @@ class Pulse:
             
             finally:
                 connection.close()
-                
