@@ -116,6 +116,7 @@ class Game:
             self.com.move_car(1,self.tmr)                    #コンピュータの車を動かす
             if self.tmr > 60*8:                        #8秒経過したら
                 self.laps = 0
+                self.elapsed_time = 0
                 self.idx = 0                                 #idxを0にしてタイトルに戻る
 
         if self.idx == 4:                                                      #idxが4(車種選択)のとき
