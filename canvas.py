@@ -122,7 +122,10 @@ class Canvas:
                 self.draw_obj(game.img_car[3 + game.p1.lr + game.mycar*7], ux + game.p1.x * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])  #プレイヤーの車を描く
 
             if game.mymode == 1:
-                self.draw_rival(game,screen,ux,uy)
+                try:
+                    self.draw_rival(game, self.screen, ux, uy)
+                except:
+                    pass
         
         #右側の部分の表示
         pygame.draw.rect(self.screen,C.WHITE,[800,0,300,600]) 
