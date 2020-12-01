@@ -56,7 +56,7 @@ class Player:
         self.y += self.spd/100                          #車の速度からコース上の位置を計算
         if self.y > C.CMAX-1:                                         #コース終点を超えたら
             self.y -= C.CMAX  #コースを頭に戻す
-            game.laptime[game.laps] = self.time_str(game.rec - game.recbk)  #ラップタイムを計算し代入
+            game.laptime[game.laps] = self.time_str(game.elapsed_time)  #ラップタイムを計算し代入
             game.recbk = game.rec  #現在のタイムを保持
             game.laps += 1  #周回数の値を1増やす
             if game.laps == C.LAPS:      #周回数がLAPSの値になったら

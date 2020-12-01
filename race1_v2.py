@@ -91,6 +91,9 @@ class Game:
                 #self.cvs.draw_rival(self,screen)  # 対戦相手の描画
 
         if self.idx == 2:  #idxが2(レース中)のとき
+            time_race = time.time()
+            self.elapsed_time = time_race - self.time
+
             if self.tmr < 60:  #60フレームの間だけ
                 self.cvs.draw_text("Go!", 400, 240, C.RED, self.cvs.fnt_l)  #GO!と表示 
             

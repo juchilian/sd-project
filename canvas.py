@@ -138,7 +138,7 @@ class Canvas:
             self.draw_text("lap {}/{}".format(game.laps + 1, C.LAPS), 100, 30, C.WHITE, self.fnt_m)  #周回数を表示    
         if game.idx == 3:
             self.draw_text("lap {}/{}".format(game.laps, C.LAPS), 100, 30, C.WHITE, self.fnt_m)  #補正した周回数を表示    
-        self.draw_text("time " + game.p1.time_str(game.rec), 100, 80, C.GREEN, self.fnt_s)  #タイムを表示
+        self.draw_text("time " + game.p1.time_str(game.elapsed_time), 100, 80, C.GREEN, self.fnt_s)  #タイムを表示
         for i in range(game.laps):  #繰り返しで    
             self.draw_text(game.laptime[i], 80, 130 + 40 * i, C.YELLOW, self.fnt_s)  #ラップタイムを表示    
 
