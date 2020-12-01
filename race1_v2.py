@@ -30,6 +30,7 @@ class Game:
         self.mymode = 0                        #モード選択用の変数
         self.mylocation = 0                    #場所選択用の変数
         self.elapsed_time = 0
+        self.elapsed_time_lap = 0
         
 
     def run(self):
@@ -83,7 +84,6 @@ class Game:
             self.cvs.draw_text(str(time_cd),400,240,C.YELLOW,self.cvs.fnt_l)
             if time_cd <= 0 :  # カウントダウンが終了したら
                 self.idx = 2  #idxを2にしてレースへ                
-                self.tmr = 0                                                              #tmrを0にする
                 self.time = time.time()                                                             #このときの時刻を計算
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
@@ -109,6 +109,7 @@ class Game:
 
 
         if self.idx == 3:              #idxが3(ゴール)のとき
+            self.tmr = 0
             self.music_play()
             self.cvs.draw_text("GOAL!", 400, 240, C.GREEN, self.cvs.fnt_l)  #GOAL!と表示 
             self.p1.spd = self.p1.spd * 0.96 #プレイヤーの車の速度を落とす
@@ -203,7 +204,6 @@ class Game:
                 self.com.__init__()  #コンピュータの車を初期化
                 self.idx = 1  #idxを1にしてカウントダウンに
                 self.time = time.time()  #このときの時刻を記録
-                self.tmr = 0  #タイマーを0に
                 self.laps = 0  #周回数を0に
                 self.rec = 0  #走行時間を0に
                 self.recbk = 0  #ラップタイム計算用の変数を0に
@@ -218,7 +218,6 @@ class Game:
                 elif self.player == 1:
                     self.p1 = Player(500, 0)
                 self.time = time.time()  #このときの時刻を記録
-                self.tmr = 0  #タイマーを0に
                 self.laps = 0  #周回数を0に
                 self.rec = 0  #走行時間を0に
                 self.recbk = 0  #ラップタイム計算用の変数を0に
