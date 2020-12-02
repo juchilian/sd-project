@@ -18,11 +18,13 @@ class MultiGame:
         self.id = id
         self.bothPos = [[300, 0], [500, 0]]        
         self.wins = [0, 0]
-        self.started_time = 0
+        self.started_time = time.time()
 
     def start_game(self):
         self.started_time = time.time()
-
+        # new_started_time = time.time()
+        print("start_gameの実行: stated_time:", self.started_time)
+        # return new_started_time
 
     def reset_game(self):
         self.p1set = False

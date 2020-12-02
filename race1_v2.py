@@ -87,17 +87,20 @@ class Game:
                 self.tmr = 0  #tmrを0にする
                 self.time = time.time()  #このときの時刻を計算
                 if self.mymode == 1:
-                    self.multiGame.start_game()
+                    self.multiGame.started_time = time.time()
+                    # self.multiGame.start_game()
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
                 self.multiGame = self.n.send(self.p1)
-                #self.cvs.draw_rival(self,screen)  # 対戦相手の描画
 
         if self.idx == 2:  #idxが2(レース中)のとき
             time_race = time.time()
             self.elapsed_time = time_race - self.time
+            print("elapsed_time single: ",self.elapsed_time)
             if self.mymode == 1:
                 self.elapsed_time = time_race - self.multiGame.started_time
+                # print("self.multiGame.started_time: ", self.multiGame.started_time)
+                print("elapsed_time Multi: ",self.elapsed_time)
 
             if self.tmr < 60:  #60フレームの間だけ
                 self.cvs.draw_text("Go!", 400, 240, C.RED, self.cvs.fnt_l)  #GO!と表示 
@@ -214,6 +217,7 @@ class Game:
                 self.recbk = 0  #ラップタイム計算用の変数を0に
                 for i in range(self.laps):  #繰り返しで
                     self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
+
             if self.mymode == 1:  #multiモードが選択されたら
                 self.n = Network()
                 self.player = int(self.n.getP()) # プレイヤーNumをGet
@@ -222,6 +226,7 @@ class Game:
                     self.p1 = Player(300, 0)
                 elif self.player == 1:
                     self.p1 = Player(500, 0)
+
                 run = True
                 while run:
                     try:

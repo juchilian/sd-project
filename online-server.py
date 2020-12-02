@@ -47,8 +47,10 @@ def threaded_client(conn, p, gameId):
                 if not data:
                     break
                 else:
-                    game.play(p, data)
-                    print(game.bothPos)
+                    if type(data) == list
+                    if type(data) == Player: # Player Objectが送られたら
+                        game.play(p, data)
+                        print(game.bothPos)
                     conn.sendall(pickle.dumps(game))
             else:
                 break
