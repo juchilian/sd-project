@@ -70,12 +70,15 @@ class Game:
             self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             
-            if key[K_s] != 0:                                               #Sキーが押されたら         
-                self.idx = 4                                                         #idxを4にして車種選択に移行
-            if key[K_m] != 0:                                               #Mキーが押されたら
-                self.idx = 5                                                    #idxを5にしてモード選択に移行
-            if key[K_l] != 0:                                               #Lキーが押されたら
-                self.idx = 6                                                    #idxを6にして場所選択に移行
+            if key[K_s] != 0:  #Sキーが押されたら         
+                self.idx = 4  #idxを4にして車種選択に移行
+                
+            if key[K_m] != 0:  #Mキーが押されたら
+                self.idx = 5  #idxを5にしてモード選択に移行
+                
+            if key[K_l] != 0:  #Lキーが押されたら
+                self.idx = 6  #idxを6にして場所選択に移行
+                
 
         if self.idx == 1:  #idxが1(カウントダウン)のとき
             time_c = time.time()
@@ -87,11 +90,16 @@ class Game:
                 self.tmr = 0  #tmrを0にする
                 self.time = time.time()  #このときの時刻を計算
                 if self.mymode == 1:
-                    self.multiGame.start_game()
+                    self.n.send("reset-time")
             if self.mymode == 1:  #multiplaymodeなら
-                #オンライン通信にて敵位置取得＆自分位置送信
-                self.multiGame = self.n.send(self.p1)
-                #self.cvs.draw_rival(self,screen)  # 対戦相手の描画
+                try:
+                    #オンライン通信にて敵位置取得＆自分位置送信
+                    self.multiGame = self.n.send(self.p1)
+                except:
+                    self.cvs.draw_text("Lost Connection...", 400, 50, C.RED, self.cvs.fnt_m)
+                    pygame.display.update()
+                    pygame.time.delay(2000)
+                    self.idx = 0
 
         if self.idx == 2:  #idxが2(レース中)のとき
             time_race = time.time()
@@ -108,9 +116,14 @@ class Game:
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             self.collision_judge(1)  #衝突判定
             if self.mymode == 1:  #multiplaymodeなら
-                #オンライン通信にて敵位置取得＆自分位置送信
-                self.multiGame = self.n.send(self.p1)
-                #self.cvs.draw_rival(self,screen) # 対戦相手の描画
+                try:
+                    #オンライン通信にて敵位置取得＆自分位置送信
+                    self.multiGame = self.n.send(self.p1)
+                except:
+                    self.cvs.draw_text("Lost Connection...", 400, 50, C.RED, self.cvs.fnt_m)
+                    pygame.display.update()
+                    pygame.time.delay(2000)
+                    self.idx = 0
 
 
         if self.idx == 3:              #idxが3(ゴール)のとき
@@ -119,14 +132,14 @@ class Game:
             self.cvs.draw_text("GOAL!", 400, 240, C.GREEN, self.cvs.fnt_l)  #GOAL!と表示 
             self.p1.spd = self.p1.spd * 0.96 #プレイヤーの車の速度を落とす
             self.p1.y = self.p1.y + self.p1.spd/100 #コース上を進ませる
-            self.com.move_car(1,self.tmr)                    #コンピュータの車を動かす
+            self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             if self.tmr > 60*8:                        #8秒経過したら
                 self.laps = 0
                 self.elapsed_time = 0
-                self.idx = 0                                 #idxを0にしてタイトルに戻る
+                self.idx = 0  #idxを0にしてタイトルに戻る
 
-        if self.idx == 4:                                                      #idxが4(車種選択)のとき
-            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
+        if self.idx == 4:  #idxが4(車種選択)のとき
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)  #プレイヤーの車を動かす
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             self.car_select(key)
             
@@ -214,6 +227,7 @@ class Game:
                 self.recbk = 0  #ラップタイム計算用の変数を0に
                 for i in range(self.laps):  #繰り返しで
                     self.laptime[i] = "0'00.00"  #ラップタイムを0'00.00に
+
             if self.mymode == 1:  #multiモードが選択されたら
                 self.n = Network()
                 self.player = int(self.n.getP()) # プレイヤーNumをGet
@@ -222,6 +236,7 @@ class Game:
                     self.p1 = Player(300, 0)
                 elif self.player == 1:
                     self.p1 = Player(500, 0)
+
                 run = True
                 while run:
                     try:
@@ -231,8 +246,7 @@ class Game:
                         print("Couldn't get game")
                         break
                     if not (self.multiGame.connected()):  # 1台のみ接続中
-                        print("waiting for opponent")
-                        self.cvs.draw_text("Waiting for rival...", 400, 160, C.WHITE, self.cvs.fnt_m)
+                        self.cvs.draw_text("Waiting for rival...", 400, 50, C.RED, self.cvs.fnt_m)
                         pygame.display.update()
                     else:  # 両者が繋がったら
                         print("Game Id is", self.multiGame.id)
