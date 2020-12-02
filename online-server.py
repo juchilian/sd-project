@@ -45,7 +45,7 @@ def threaded_client(conn, p, gameId):
                 if not data:
                     break
                 else:
-                    if type(data) == str:
+                    if data == "reset-time":
                         game.start_game()
                     if type(data) == Player: # Player Objectが送られたら
                         game.play(p, data)
