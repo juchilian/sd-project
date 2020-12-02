@@ -114,7 +114,7 @@ class Game:
 
 
         if self.idx == 3:              #idxが3(ゴール)のとき
-            self.tmr = 0
+            #self.tmr = 0
             self.music_play()
             self.cvs.draw_text("GOAL!", 400, 240, C.GREEN, self.cvs.fnt_l)  #GOAL!と表示 
             self.p1.spd = self.p1.spd * 0.96 #プレイヤーの車の速度を落とす
