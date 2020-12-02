@@ -20,8 +20,6 @@ except socket.error as e:
 s.listen(2) #2人プレイを待つ
 print("Waiting for a connection, Server Started")
 
-# players = [Player(300, 0), Player(500, 0)]
-
 connected = set() # store ip adrress of connected client
 games = {}
 idCount = 0
@@ -47,7 +45,8 @@ def threaded_client(conn, p, gameId):
                 if not data:
                     break
                 else:
-                    if type(data) == list
+                    if type(data) == str:
+                        game.start_game()
                     if type(data) == Player: # Player Objectが送られたら
                         game.play(p, data)
                         print(game.bothPos)

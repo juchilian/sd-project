@@ -22,9 +22,6 @@ class MultiGame:
 
     def start_game(self):
         self.started_time = time.time()
-        # new_started_time = time.time()
-        print("start_gameの実行: stated_time:", self.started_time)
-        # return new_started_time
 
     def reset_game(self):
         self.p1set = False
