@@ -61,7 +61,7 @@ class Game:
             4 => 車種選択の時
             5 => モード選択の時
             6 => 場所選択の時
-        '''
+        '''        
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             self.cvs.screen.blit(self.img_title, [120, 120])  #タイトルロゴを表示
             self.cvs.draw_text("[C] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
@@ -94,6 +94,7 @@ class Game:
         if self.idx == 2:  #idxが2(レース中)のとき
             time_race = time.time()
             self.elapsed_time = time_race - self.time
+            self.music_pause(key)
 
             if self.tmr < 60:  #60フレームの間だけ
                 self.cvs.draw_text("Go!", 400, 240, C.RED, self.cvs.fnt_l)  #GO!と表示 
@@ -350,7 +351,15 @@ class Game:
         if self.idx == 5:   #モード選択画面
             pass   
 
+    def music_pause(self,key):
+        if pygame.mixer.music.get_busy() == True:
+            if key[K_F1] == 1:
+                pygame.mixer.music.pause()
+            if key[K_F2] == 1:
+                pygame.mixer.music.unpause()
 
+        
+        
     def load_sound(self):
         self.se_crash = pygame.mixer.Sound("sound_pr/crash.ogg")   #SE(衝突音)の読み込み
         self.se_crash.set_volume(0.2)                              #衝突音が大きすぎたので小さくする

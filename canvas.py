@@ -92,19 +92,27 @@ class Canvas:
                 col = (192,0,0)                                         #赤線の色の値を代入
             side_w = uw * 0.3
 
-            pygame.draw.polygon(self.screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+            if game.mylocation == 0:
+                pygame.draw.polygon(self.screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+                if int(game.p1.y+i)%10 <= 4:  #左右の黄色線を描画
+                    pygame.draw.polygon(self.screen,C.YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])      #左
+                    pygame.draw.polygon(self.screen,C.YELLOW,[[ux+uw*0.98,uy],[ux+uw,uy],[bx+bw,by],[bx+bw*0.98,by]])   #右
+
+                if int(game.p1.y+i)%20 <= 10:   #白線を描画
+                    pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.24,uy],[ux+uw*0.26,uy],[bx+bw*0.26,by],[bx+bw*0.24,by]])  #左
+                    pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.49,uy],[ux+uw*0.51,uy],[bx+bw*0.51,by],[bx+bw*0.49,by]])  #中央
+                    pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.74,uy],[ux+uw*0.76,uy],[bx+bw*0.76,by],[bx+bw*0.74,by]])  #右
+
+                pygame.draw.polygon(self.screen,C.BLACK,[[ux,uy],[bx,by],[bx-side_w,by],[ux-side_w,uy]])   #道路脇の板を描く(左)
+                pygame.draw.polygon(self.screen,C.BLACK,[[ux+uw,uy],[ux+uw+side_w,uy],[bx+bw+side_w,by],[bx+bw,by]])   #道路脇の板を描く(右)
+
+            if game.mylocation == 1:
+                pygame.draw.polygon(self.screen,self.road_color(game,game.p1.y+i,col),[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+            """
             pygame.draw.polygon(self.screen,C.BLACK,[[ux,uy],[bx,by],[bx-side_w,by],[ux-side_w,uy]])   #道路脇の板を描く(左)
             pygame.draw.polygon(self.screen,C.BLACK,[[ux+uw,uy],[ux+uw+side_w,uy],[bx+bw+side_w,by],[bx+bw,by]])   #道路脇の板を描く(右)
-
-            if int(game.p1.y+i)%10 <= 4:  #左右の黄色線を描画
-                pygame.draw.polygon(self.screen,C.YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])      #左
-                pygame.draw.polygon(self.screen,C.YELLOW,[[ux+uw*0.98,uy],[ux+uw,uy],[bx+bw,by],[bx+bw*0.98,by]])   #右
-
-            if int(game.p1.y+i)%20 <= 10:   #白線を描画
-                pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.24,uy],[ux+uw*0.26,uy],[bx+bw*0.26,by],[bx+bw*0.24,by]])  #左
-                pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.49,uy],[ux+uw*0.51,uy],[bx+bw*0.51,by],[bx+bw*0.49,by]])  #中央
-                pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.74,uy],[ux+uw*0.76,uy],[bx+bw*0.76,by],[bx+bw*0.74,by]])  #右
-
+"""
+            
             scale = 1.5*C.BOARD_W[i]/C.BOARD_W[0]    #道路横の物体のスケールを計算
             obj_l = self.object_left[int(game.p1.y+i)%C.CMAX]   #道路左の物体
             obj_r = self.object_right[int(game.p1.y+i)%C.CMAX]  #道路右の物体
@@ -145,6 +153,9 @@ class Canvas:
         pygame.draw.rect(self.screen,C.WHITE,[800,0,300,600]) 
         self.make_map()
         self.map_pl(game, 900)
+        if game.idx == 2:
+            self.draw_text2("[F1] : Pause BGM",950,550,C.BLACK,self.fnt_ss)
+            self.draw_text2("[F2] : Play BGM",950,580,C.BLACK,self.fnt_ss)
 
         
         self.draw_text(str(int(game.p1.spd)) + "km/h", 680, 30, C.RED, self.fnt_m)  #速度を表示
@@ -247,3 +258,24 @@ class Canvas:
         sur = fnt.render(txt, True, col)  #指定色で文字列を描いたサーフェースを作成
         self.screen.blit(sur, [x, y])  #サーフェースを画面に転送
 
+    def draw_text2(self, txt, x, y, col, fnt):
+        sur = fnt.render(txt, True, col)
+        self.screen.blit(sur,[x,y])
+
+    def road_color(self,game,i,col):
+        if game.mylocation == 1:
+            if 0 <= i%21 and i%21 <= 2:
+                col = C.RED
+            if 3 <= i%21 and i%21 <= 5:
+                col = C.ORANGE
+            if 6 <= i%21 and i%21 <= 8:
+                col = C.YELLOW
+            if 9 <= i%21 and i%21 <= 11:
+                col = C.LGREEN
+            if 12 <= i%21 and i%21 <= 14:
+                col = C.SKYBLUE
+            if 15 <= i%21 and i%21 <= 17:
+                col = C.BLUE
+            if 18 <= i%21 and i%21 <= 20:
+                col = C.PURPLE
+        return col
