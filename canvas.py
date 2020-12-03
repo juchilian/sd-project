@@ -203,7 +203,7 @@ class Canvas:
         if game.mycar == 0:
             map_car_col = C.RED
         if game.mycar == 1:
-            map_car_col = C.BLUE
+            map_car_col = C.GRAY
         if game.mycar == 2:
             map_car_col = C.YELLOW
         

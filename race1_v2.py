@@ -64,13 +64,13 @@ class Game:
         '''
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             self.cvs.screen.blit(self.img_title, [120, 120])  #タイトルロゴを表示
-            self.cvs.draw_text("[S] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
+            self.cvs.draw_text("[C] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
             self.cvs.draw_text("[L] Select location",400,360,C.WHITE,self.cvs.fnt_m)
             self.cvs.draw_text("[M] Select mode",400,400,C.WHITE,self.cvs.fnt_m)
             self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             
-            if key[K_s] != 0:                                               #Sキーが押されたら         
+            if key[K_c] != 0:                                               #Sキーが押されたら         
                 self.idx = 4                                                         #idxを4にして車種選択に移行
             if key[K_m] != 0:                                               #Mキーが押されたら
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
@@ -157,10 +157,10 @@ class Game:
         for i in range(3):
             x = 160+240*i                                                       #xに選択用の枠のx座標を代入
             y = 300                                                             #yに選択用の枠のy座標を代入
-            col = C.BLACK                                                       #colにBLACkを代入
+            col = C.GRAY                                                       #colにBLACkを代入
             if i == self.mycar:                                                    #選択している車種なら
                 col = (0,128,255)                                                   #colに明るい青の値を代入
-            pygame.draw.rect(self.cvs.screen,col,[x-100,y-80,200,160])                   #colの色で枠を描く
+            pygame.draw.rect(self.cvs.screen,col,[x-100,y-80,200,200])                   #colの色で枠を描く
             self.cvs.draw_text("["+str(i+1)+"]",x,y-50,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
             self.cvs.screen.blit(self.img_car[3+i*7],[x-100,y-20])                       #それぞれの車を描画
         self.cvs.draw_text("[Enter] OK!",400,440,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
@@ -290,27 +290,27 @@ class Game:
             pygame.image.load("image_pr/venus_1.png").convert_alpha()        #金星
         ]
         self.img_car = [
-            pygame.image.load("image_pr/car_30.png").convert_alpha(),       #車(左3)_赤
+            pygame.image.load("image_pr/car_41.png").convert_alpha(),       #車(左3)_赤
+            pygame.image.load("image_pr/car_41.png").convert_alpha(),       #車(左2)
+            pygame.image.load("image_pr/car_42.png").convert_alpha(),       #車(左1)
+            pygame.image.load("image_pr/car_43.png").convert_alpha(),       #車(正面)
+            pygame.image.load("image_pr/car_44.png").convert_alpha(),       #車(右1)
+            pygame.image.load("image_pr/car_45.png").convert_alpha(),       #車(右2)
+            pygame.image.load("image_pr/car_45.png").convert_alpha(),       #車(右3)
+            pygame.image.load("image_pr/car_30.png").convert_alpha(),       #車(左3)_青
             pygame.image.load("image_pr/car_31.png").convert_alpha(),       #車(左2)
             pygame.image.load("image_pr/car_32.png").convert_alpha(),       #車(左1)
             pygame.image.load("image_pr/car_33.png").convert_alpha(),       #車(正面)
             pygame.image.load("image_pr/car_34.png").convert_alpha(),       #車(右1)
             pygame.image.load("image_pr/car_35.png").convert_alpha(),       #車(右2)
             pygame.image.load("image_pr/car_36.png").convert_alpha(),       #車(右3)
-            pygame.image.load("image_pr/car10.png").convert_alpha(),       #車(左3)_青
-            pygame.image.load("image_pr/car11.png").convert_alpha(),       #車(左2)
-            pygame.image.load("image_pr/car12.png").convert_alpha(),       #車(左1)
-            pygame.image.load("image_pr/car13.png").convert_alpha(),       #車(正面)
-            pygame.image.load("image_pr/car14.png").convert_alpha(),       #車(右1)
-            pygame.image.load("image_pr/car15.png").convert_alpha(),       #車(右2)
-            pygame.image.load("image_pr/car16.png").convert_alpha(),       #車(右3)
-            pygame.image.load("image_pr/car20.png").convert_alpha(),       #車(左3)_黄色
-            pygame.image.load("image_pr/car21.png").convert_alpha(),       #車(左2)
-            pygame.image.load("image_pr/car22.png").convert_alpha(),       #車(左1)
-            pygame.image.load("image_pr/car23.png").convert_alpha(),       #車(正面)
-            pygame.image.load("image_pr/car24.png").convert_alpha(),       #車(右1)
-            pygame.image.load("image_pr/car25.png").convert_alpha(),       #車(右2)
-            pygame.image.load("image_pr/car26.png").convert_alpha()        #車(右3)
+            pygame.image.load("image_pr/car_51.png").convert_alpha(),       #車(左3)_黄色
+            pygame.image.load("image_pr/car_51.png").convert_alpha(),       #車(左2)
+            pygame.image.load("image_pr/car_52.png").convert_alpha(),       #車(左1)
+            pygame.image.load("image_pr/car_53.png").convert_alpha(),       #車(正面)
+            pygame.image.load("image_pr/car_54.png").convert_alpha(),       #車(右1)
+            pygame.image.load("image_pr/car_55.png").convert_alpha(),       #車(右2)
+            pygame.image.load("image_pr/car_55.png").convert_alpha()        #車(右3)
         ]
         
         self.img_mode = [
