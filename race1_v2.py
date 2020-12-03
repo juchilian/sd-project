@@ -84,7 +84,8 @@ class Game:
             self.cvs.draw_text(str(time_cd),400,240,C.YELLOW,self.cvs.fnt_l)
             if time_cd <= 0 :  # カウントダウンが終了したら
                 self.idx = 2  #idxを2にしてレースへ                
-                self.time = time.time()                                                             #このときの時刻を計算
+                self.time = time.time()              #このときの時刻を計算
+                self.tmr = 0
             if self.mymode == 1:  #multiplaymodeなら
                 #オンライン通信にて敵位置取得＆自分位置送信
                 self.multiGame = self.n.send(self.p1)
@@ -274,10 +275,10 @@ class Game:
 
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
-        self.img_bg = pygame.image.load("image_pr/tokyo_1.jpg").convert()            #背景(空と地面の絵)
+        #self.img_bg = pygame.image.load("image_pr/tokyo_1.jpg").convert()            #背景(空と地面の絵)
         self.img_bg = [
-            pygame.image.load("image_pr/tokyo_1.jpg").convert(),
-            pygame.image.load("image_pr/space_1.png").convert()
+            pygame.image.load("image_pr/tokyo_3.jpg").convert(),
+            pygame.image.load("image_pr/space_3.jpg").convert()
         ]
 
         self.img_sea = pygame.image.load("image_pr/sea.png").convert_alpha()    #海
@@ -289,13 +290,13 @@ class Game:
             pygame.image.load("image_pr/venus_1.png").convert_alpha()        #金星
         ]
         self.img_car = [
-            pygame.image.load("image_pr/car00.png").convert_alpha(),       #車(左3)_赤
-            pygame.image.load("image_pr/car01.png").convert_alpha(),       #車(左2)
-            pygame.image.load("image_pr/car02.png").convert_alpha(),       #車(左1)
-            pygame.image.load("image_pr/car03.png").convert_alpha(),       #車(正面)
-            pygame.image.load("image_pr/car04.png").convert_alpha(),       #車(右1)
-            pygame.image.load("image_pr/car05.png").convert_alpha(),       #車(右2)
-            pygame.image.load("image_pr/car06.png").convert_alpha(),       #車(右3)
+            pygame.image.load("image_pr/car_30.png").convert_alpha(),       #車(左3)_赤
+            pygame.image.load("image_pr/car_31.png").convert_alpha(),       #車(左2)
+            pygame.image.load("image_pr/car_32.png").convert_alpha(),       #車(左1)
+            pygame.image.load("image_pr/car_33.png").convert_alpha(),       #車(正面)
+            pygame.image.load("image_pr/car_34.png").convert_alpha(),       #車(右1)
+            pygame.image.load("image_pr/car_35.png").convert_alpha(),       #車(右2)
+            pygame.image.load("image_pr/car_36.png").convert_alpha(),       #車(右3)
             pygame.image.load("image_pr/car10.png").convert_alpha(),       #車(左3)_青
             pygame.image.load("image_pr/car11.png").convert_alpha(),       #車(左2)
             pygame.image.load("image_pr/car12.png").convert_alpha(),       #車(左1)

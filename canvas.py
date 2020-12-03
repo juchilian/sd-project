@@ -48,17 +48,31 @@ class Canvas:
         sy = horizon  #道路を描き始めるy座標をsyに代入
 
         self.vertical = self.vertical - int(game.p1.spd * di / 8000)  #背景の垂直位置を計算
-        #背景の垂直位置
-        if self.vertical < 0:  #それが0未満になったら
-            self.vertical += 800  #800を足す
-        if self.vertical >= 800:  #800以上になったら
-            self.vertical -= 800  #800を引く
 
         #フィードの描画
         self.screen.fill((0,0,0)) #上空の色  #指定の色で画面を塗りつぶす
-        self.screen.blit(game.img_bg[game.mylocation],[self.vertical-800,horizon-500])  #背景画像(左側)
-        self.screen.blit(game.img_bg[game.mylocation],[self.vertical,horizon-500])  #背景画像(右側)
-        #self.screen.blit(game.img_sea,[board_x[C.BOARD-1]-780,sy])             #左手奥の海を描画
+        bg_width = game.img_bg[game.mylocation].get_width()
+        bg_height = game.img_bg[game.mylocation].get_height()
+        img_otherside = pygame.transform.flip(game.img_bg[game.mylocation],1,0)
+        offset_y = 0
+        if game.mylocation == 0:
+            offset_y = 550
+        if game.mylocation == 1:
+            offset_y = 800
+
+        #背景の垂直位置
+        
+        # if self.vertical < 0:  #それが0未満になったら
+        #     self.vertical += 2754  #800を足す
+        if self.vertical >= 2*bg_width:  #800以上になったら
+            self.vertical -= 2*bg_width  #800を引く
+        self.screen.blit(img_otherside,[self.vertical-3*bg_width,horizon-offset_y]) 
+        self.screen.blit(game.img_bg[game.mylocation],[self.vertical-2*bg_width,horizon-offset_y]) 
+        self.screen.blit(img_otherside,[self.vertical-bg_width,horizon-offset_y]) 
+        self.screen.blit(game.img_bg[game.mylocation],[self.vertical,horizon-offset_y])
+        self.screen.blit(img_otherside,[self.vertical+bg_width,horizon-offset_y])  
+        self.screen.blit(game.img_bg[game.mylocation],[self.vertical+2*bg_width,horizon-offset_y])  
+        self.screen.blit(img_otherside,[self.vertical+3*bg_width,horizon-offset_y])  
 
         self.update_object(game)
         
