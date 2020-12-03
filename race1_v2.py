@@ -115,7 +115,7 @@ class Game:
             self.p1.spd = self.p1.spd * 0.96 #プレイヤーの車の速度を落とす
             self.p1.y = self.p1.y + self.p1.spd/100 #コース上を進ませる
             self.com.move_car(1,self.tmr)                    #コンピュータの車を動かす
-            if self.tmr > 60*8:                        #8秒経過したら
+            if self.tmr > 60*5:                        #8秒経過したら
                 self.laps = 0
                 self.elapsed_time = 0
                 self.idx = 0                                 #idxを0にしてタイトルに戻る
@@ -339,7 +339,8 @@ class Game:
                 pygame.mixer.music.play(-1)     
         if self.idx == 3:   #ゴール画面
             if self.tmr == 1:                                                      #tmrが1なら
-                pygame.mixer.music.stop()                                             #bgmを停止
+                #pygame.mixer.music.stop()                                             #bgmを停止
+                pygame.mixer.music.fadeout(1000)
             if self.tmr == 30:                                                     #tmrが30になったら
                 pygame.mixer.music.load("sound_pr/goal.ogg")                          #BGMを読み込み
                 pygame.mixer.music.set_volume(0.2)                                   #音を小さくして

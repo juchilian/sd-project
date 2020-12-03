@@ -64,8 +64,8 @@ class Canvas:
         
         # if self.vertical < 0:  #それが0未満になったら
         #     self.vertical += 2754  #800を足す
-        if self.vertical >= 2*bg_width:  #800以上になったら
-            self.vertical -= 2*bg_width  #800を引く
+        # if self.vertical >= 2*bg_width:  #800以上になったら
+        #     self.vertical -= 2*bg_width  #800を引く
         self.screen.blit(img_otherside,[self.vertical-3*bg_width,horizon-offset_y]) 
         self.screen.blit(game.img_bg[game.mylocation],[self.vertical-2*bg_width,horizon-offset_y]) 
         self.screen.blit(img_otherside,[self.vertical-bg_width,horizon-offset_y]) 
