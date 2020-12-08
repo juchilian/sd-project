@@ -121,9 +121,10 @@ class Canvas:
                 self.draw_shadow(ux + game.p1.x * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
                 self.draw_obj(game.img_car[3 + game.p1.lr + game.mycar*7], ux + game.p1.x * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])  #プレイヤーの車を描く
 
-            if game.mymode == 1:  # Multiplay mode なら
-                # オンラインに必要なものの描画
-                self.draw_multi_stuff(game, ux, uy)
+        # Multiplay modeの時の描画
+        if game.mymode == 1:  
+            # オンラインに必要なものの描画
+            self.draw_multi_stuff(game, ux, uy)
         
         #右側の部分の表示
         pygame.draw.rect(self.screen,C.WHITE,[800,0,300,600]) 
@@ -146,33 +147,24 @@ class Canvas:
         game.multiGame.bothPos[0][1] == プレイヤー0のy座標
         """
         
+        com = lambda x: 0 if x == 1 else 1
         try:
-            self.draw_rival(game, ux, uy)
-            self.draw_rank(game)
+            # 対戦相手の車を表示
+            # self.draw_rival(game, com, ux, uy)
+
+            # 自分の順位を表示
+            if game.multiGame.bothPos[game.player][1] >= game.multiGame.bothPos[com(game.player)][1]:  # 自分が勝ってたら
+                rank = 1
+            else:  # 自分が負けていたら
+                rank = 2
+            self.draw_text("Rank:" + str(rank), 680, 70, C.GREEN, self.fnt_s)  #順位を表示
+
         except:
             pass
 
-    def draw_rival(self, game, ux, uy):  # 敵車の座標がlist出力 [400, 500] 確認してみて
-        if game.player == 0:
-            print(game.multiGame.bothPos[1][1])
-            # self.draw_shadow(self.screen, ux + game.multiGame.bothPos[1][0] * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
-        elif game.player == 1:
-            print(game.multiGame.bothPos[0][1]) 
-
-    def draw_rank(self, game):
-        rank = 1
-        if game.player == 0:  # 自分がPlayer 0なら
-            if game.multiGame.bothPos[0][1] >= game.multiGame.bothPos[1][1]:  # 自分が勝ってたら
-                rank = 1
-            else:  # 自分がまけていたら
-                rank = 2
-        else:  # 自分がPlayer 1 なら
-            if game.multiGame.bothPos[1][1] >= game.multiGame.bothPos[0][1]:
-                rank = 1
-            else:
-                rank = 2
-        print("Rank:", rank)
-        self.draw_text("Rank:" + str(rank), 680, 70, C.GREEN, self.fnt_s)  #順位を表示
+    def draw_rival(self, game, com, ux, uy):  # 敵車の座標がlist出力 [400, 500] 確認してみて
+        print("対戦相手の座標: " + str(game.multiGame.bothPos[com(game.player)]))
+        # self.draw_shadow(self.screen, ux + game.multiGame.bothPos[1][0] * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
 
     def update_object(self, game):
         for i in range(C.CLEN):
@@ -225,14 +217,21 @@ class Canvas:
         if game.mycar == 2:
             map_car_col = C.YELLOW
         
-        y = 100 + (C.CMAX * (C.LAPS - game.laps) - game.p1.y) * 400 / (C.CMAX * C.LAPS) #マップ上のy座標を計算
-        pygame.draw.circle(self.screen, map_car_col, [x, int(y)], 8, 0) #マップ上に円を描画
+        y = 100 + (C.CMAX * (C.LAPS - game.laps) - game.p1.y) * 400 / (C.CMAX * C.LAPS)  #マップ上のy座標を計算
+        pygame.draw.circle(self.screen, map_car_col, [x, int(y)], 8, 0)  #マップ上に円を描画
+        txt_pl = self.fnt_ss.render("you",True,C.BLACK)
+        self.screen.blit(txt_pl, [890, int(y) - 10])
+        if game.mymode == 1:
+            try:
+                com = lambda x: 0 if x == 1 else 1
+                # 右のマップに対戦相手を描画
+                rival_y = 100 + (C.CMAX * (C.LAPS - game.laps) - game.multiGame.bothPos[com(game.player)][1]) * 400 / (C.CMAX * C.LAPS)  #マップ上のy座標を計算
+                pygame.draw.circle(self.screen, C.YELLOW, [920, int(rival_y)], 8, 0)  #マップ上に対戦相手の円を描画
+                txt_pl = self.fnt_ss.render("com", True, C.BLACK)
+                self.screen.blit(txt_pl, [930, int(rival_y) - 10])
+            except:
+                pass
 
-        pl = ""           #プレイヤーがどちらなのかを入れる変数
-        if game.p1 == game.p1: # ??どういう意味？
-            pl = "1p"
-        txt_pl = self.fnt_ss.render(pl,True,C.BLACK)
-        self.screen.blit(txt_pl,[910,int(y)-10])
 
 
     def draw_obj(self, img, x, y, sc):                        #座標とスケールを受け取り、物体を描く関数
