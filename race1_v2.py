@@ -29,6 +29,7 @@ class Game:
         self.mycar = 0                         #車選択用の変数
         self.mymode = 0                        #モード選択用の変数
         self.mylocation = 0                    #場所選択用の変数
+        self.mybgm = 0
         self.elapsed_time = 0
         self.elapsed_time_lap = 0
         
@@ -37,6 +38,7 @@ class Game:
         pygame.display.set_caption("Pygame Racer")  #ウインドウに表示するタイトルを指定
         clock = pygame.time.Clock()
         self.load_image() # 画像取り込み
+        self.load_bgm()   #bgm取り込み
         self.load_sound() # サウンド取り込み
 
         while True:                                    #無限ループで処理を続ける
@@ -66,7 +68,8 @@ class Game:
             self.cvs.screen.blit(self.img_title, [120, 120])  #タイトルロゴを表示
             self.cvs.draw_text("[C] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
             self.cvs.draw_text("[L] Select location",400,360,C.WHITE,self.cvs.fnt_m)
-            self.cvs.draw_text("[M] Select mode",400,400,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[B] Select BGM",400,400,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[M] Select mode",400,440,C.WHITE,self.cvs.fnt_m)
             self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             
@@ -76,6 +79,8 @@ class Game:
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
             if key[K_l] != 0:                                               #Lキーが押されたら
                 self.idx = 6                                                    #idxを6にして場所選択に移行
+            if key[K_b] != 0:                                               #Lキーが押されたら
+                self.idx = 7                                                    #idxを6にして場所選択に移行
 
         if self.idx == 1:  #idxが1(カウントダウン)のとき
             time_c = time.time()
@@ -137,6 +142,10 @@ class Game:
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.locate_select(self.cvs.screen, key)
             
+        if self.idx == 7:
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
+            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
+            self.bgm_select(self.cvs.screen, key)
             
 
     def collision_judge(self,cs):
@@ -273,6 +282,28 @@ class Game:
         if key[K_RETURN] != 0: 
             self.idx = 0  #タイトル画面に戻る
 
+    def bgm_select(self, bg, key):
+        self.cvs.draw_text("Select BGM", 400, 160, C.WHITE, self.cvs.fnt_m)  #Select location を表示
+        for i in range(3):
+            x = 160                                                       #xに選択用の枠のx座標を代入
+            y = 250+40*i                                                             #yに選択用の枠のy座標を代入
+            col = C.WHITE                                                       #colにBLACkを代入
+            if i == self.mybgm:                                                    #選択している車種なら
+                col = (0,128,255)                                                   #colに明るい青の値を代入
+            #pygame.draw.rect(self.cvs.screen,col,[x-100,y-80,200,200])                   #colの色で枠を描く
+            #self.cvs.draw_text("["+str(i+1)+"]",x,y-50,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
+            #self.cvs.screen.blit(self.img_car[3+i*7],[x-100,y-20])                       #それぞれの車を描画
+            self.cvs.draw_text("["+str(i+1)+"] : ",x,y,col,self.cvs.fnt_m)
+            self.cvs.draw_text(self.bgm_race[i],x+250,y,col,self.cvs.fnt_m)
+        self.cvs.draw_text("[Enter] OK!",400,440,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:                                                   #1キーが押されたら
+            self.mybgm = 0                                                         #mycarに0を代入(赤い車)
+        if key[K_2] == 1:                                                   #2キーが押されたら
+            self.mybgm = 1                                                         #mycarに1を代入(青い車)
+        if key[K_3] == 1:                                                   #3キーが押されたら
+            self.mybgm = 2                                                         #mycarに2を代入(黄色の車)
+        if key[K_RETURN] == 1:                                              #Enterキーが押されたら
+            self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
 
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
@@ -333,11 +364,12 @@ class Game:
                 pygame.mixer.music.load("sound_pr/countdown.mp3")                          #BGMを読み込み
                 pygame.mixer.music.set_volume(1.0)                                   #音を小さくして
                 pygame.mixer.music.play(0)     
-        if self.idx == 2:   #レース中            
+        if self.idx == 2:   #レース中      
             if pygame.mixer.music.get_busy() == False:
-                pygame.mixer.music.load("sound_pr/yoasobi.mp3")                          #BGMを読み込み
+                pygame.mixer.music.load(self.bgm_race[self.mybgm])                          #BGMを読み込み 
                 pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
-                pygame.mixer.music.play(-1)     
+                pygame.mixer.music.play(-1)          
+            
         if self.idx == 3:   #ゴール画面
             if self.tmr == 1:                                                      #tmrが1なら
                 #pygame.mixer.music.stop()                                             #bgmを停止
@@ -359,7 +391,13 @@ class Game:
                 pygame.mixer.music.unpause()
 
         
-        
+    def load_bgm(self):
+        self.bgm_race = [
+            "sound_pr/yoasobi.mp3",
+            "sound_pr/kanzen.mp3",
+            "sound_pr/ultrasoul.mp3"
+        ]
+    
     def load_sound(self):
         self.se_crash = pygame.mixer.Sound("sound_pr/crash.ogg")   #SE(衝突音)の読み込み
         self.se_crash.set_volume(0.2)                              #衝突音が大きすぎたので小さくする
