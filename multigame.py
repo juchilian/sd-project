@@ -23,10 +23,6 @@ class MultiGame:
     def start_game(self):
         self.started_time = time.time()
 
-    def reset_game(self):
-        self.p1set = False
-        self.p2set = False
-
     def bothGoal(self):
         return self.p1Goal and self.p2Goal
     

@@ -34,7 +34,7 @@ def threaded_client(conn, p, gameId):
         try:
             """
                 send "reset" or "get" or "move"
-                reset => reset game
+                reset-time => ゲームの開始時刻を記録
                 get => get Game info from server
                 move => 
             """
