@@ -5,6 +5,7 @@ import Const as C
 from pulse import Pulse
 import copy
 import time
+import KCF_python as kcf
 
 class Player():
     def __init__(self):

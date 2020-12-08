@@ -1,84 +1,79 @@
-#使用手順
-#①検索範囲を指定
-#②Enterで実行
 import cv2
+import numpy as np
 
-def frame_resize(frame, n=2):
-    """
-    スクリーンショットを撮りたい関係で1/4サイズに縮小
-    """
-    return cv2.resize(frame, (int(frame.shape[1]/2), int(frame.shape[0]/2)))
+class Facedetection():  
+    def __init__(self):
+        self.tracker = cv2.TrackerKCF_create()
+        self.cap = cv2.VideoCapture(0)
 
-if __name__ == '__main__':
+    def frame_resize(self,frame,n=2):
+        return cv2.resize(frame, (int(frame.shape[1]*1/2), int(frame.shape[0]*1/2)))
 
-    # KCF
-    tracker = cv2.TrackerKCF_create()
+    def key_decide(self,x,threshold):
+        K_LEFT=0
+        K_RIGHT=0
+        if x < threshold/3:
+            K_RIGHT = 1
+        if x > threshold*2/3:
+            K_LEFT=1
+        return [K_RIGHT,K_LEFT]
 
-    # TLD #GPUコンパイラのエラーが出ているっぽい
-    # tracker = cv2.TrackerTLD_create()
+    def make_bbox(self):
+        #webカメラ取り込み
+        ret, frame = self.cap.read()
+        # if not ret:
+        #     continue
+        # frame = frame_resize(frame)
 
-    # MedianFlow
-    # tracker = cv2.TrackerMedianFlow_create()
-
-    # GOTURN # モデルが無いよって怒られた
-    # https://github.com/opencv/opencv_contrib/issues/941#issuecomment-343384500
-    # https://github.com/Auron-X/GOTURN-Example
-    # http://cs.stanford.edu/people/davheld/public/GOTURN/trained_model/tracker.caffemodel
-    # tracker = cv2.TrackerGOTURN_create()
-
-    cap = cv2.VideoCapture(0)
-
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            continue
-        frame = frame_resize(frame)
-        bbox = (0,0,10,10)
-        bbox = cv2.selectROI(frame, False)
-        ok = tracker.init(frame, bbox)
+        # bbox = (0,0,10,0)
+        #選択した部分をBounding Boxとする
+        bbox = cv2.selectROI(windowName="Make Bounding Box", img = frame,showCrosshair=False, fromCenter=False)
+        self.tracker.init(frame, bbox)
         cv2.destroyAllWindows()
-        break
 
-    while True:
-        # VideoCaptureから1フレーム読み込む
-        ret, frame = cap.read()
-        frame = frame_resize(frame)
-        if not ret:
-            k = cv2.waitKey(1)
-            if k == 27 :
-                break
-            continue
+    def tracking_face(self):
+        ret, frame = self.cap.read()
+        # if not ret:
+        #     # k = cv2.waitKey(1)
+        #     # if k == 27 :
+        #     #     break
+        #     continue
 
-        # Start timer
-        timer = cv2.getTickCount()
+        track, bbox = self.tracker.update(frame)
+        fps = cv2.CAP_PROP_FPS
 
-        # トラッカーをアップデートする
-        track, bbox = tracker.update(frame)
-
-        # FPSを計算する
-        fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer);
-
-        # 検出した場所に四角を書く
         if track:
-            # Tracking success
+            #p1が左上の点、つまりbboxは
+            #bbox = [x座標,y座標,x軸方向での変位,y軸方向での変位]
+            threshold = frame.shape[1]#閾値はウィンドウサイズが基準
             p1 = (int(bbox[0]), int(bbox[1]))
             p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
             cv2.rectangle(frame, p1, p2, (0,255,0), 2, 1)
+            bbox_center_x = int(bbox[0] + 1/2*bbox[2])
+            #キー操作の値を変数に入れてる
+            K_RIGHT, K_LEFT = self.key_decide(bbox_center_x,threshold)
+        
         else :
-            # トラッキングが外れたら警告を表示する
             cv2.putText(frame, "Failure", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1, cv2.LINE_AA);
+            [K_RIGHT, K_LEFT] = [0,0]
 
-        # FPSを表示する
         cv2.putText(frame, "FPS : " + str(int(fps)), (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1, cv2.LINE_AA);
-
-        # 加工済の画像を表示する
         cv2.imshow("Tracking", frame)
 
-        # キー入力を1ms待って、k が27（ESC）だったらBreakする
+        return K_RIGHT, K_LEFT
+
+
+if __name__ == '__main__':
+    face = Facedetection()
+    while True:
+        face.make_bbox()
+        break
+
+    while True:
+        print(face.tracking_face())
         k = cv2.waitKey(1)
         if k == 27 :
             break
 
-# キャプチャをリリースして、ウィンドウをすべて閉じる
-cap.release()
-cv2.destroyAllWindows()
+    face.cap.release()
+    cv2.destroyAllWindows()
