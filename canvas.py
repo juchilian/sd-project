@@ -121,18 +121,16 @@ class Canvas:
                 self.draw_shadow(ux + game.p1.x * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
                 self.draw_obj(game.img_car[3 + game.p1.lr + game.mycar*7], ux + game.p1.x * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])  #プレイヤーの車を描く
 
-            if game.mymode == 1:
-                try:
-                    self.draw_rival(game, self.screen, ux, uy)
-                except:
-                    pass
+            if game.mymode == 1:  # Multiplay mode なら
+                # オンラインに必要なものの描画
+                self.draw_multi_stuff(game, ux, uy)
         
         #右側の部分の表示
         pygame.draw.rect(self.screen,C.WHITE,[800,0,300,600]) 
         self.make_map()
         self.map_pl(game, 900)
 
-        
+        # 車の速度, 時間, ラップ数の表示
         self.draw_text(str(int(game.p1.spd)) + "km/h", 680, 30, C.RED, self.fnt_m)  #速度を表示
         if game.idx != 3:
             self.draw_text("lap {}/{}".format(game.laps + 1, C.LAPS), 100, 30, C.WHITE, self.fnt_m)  #周回数を表示    
@@ -141,6 +139,40 @@ class Canvas:
         self.draw_text("time " + game.p1.time_str(game.elapsed_time), 100, 80, C.GREEN, self.fnt_s)  #タイムを表示
         for i in range(game.laps):  #繰り返しで    
             self.draw_text(game.laptime[i], 80, 130 + 40 * i, C.YELLOW, self.fnt_s)  #ラップタイムを表示    
+
+    def draw_multi_stuff(self, game, ux, uy):
+        """
+        game.player は自分のプレイヤー番号 0 or 1
+        game.multiGame.bothPos[0][1] == プレイヤー0のy座標
+        """
+        
+        try:
+            self.draw_rival(game, ux, uy)
+            self.draw_rank(game)
+        except:
+            pass
+
+    def draw_rival(self, game, ux, uy):  # 敵車の座標がlist出力 [400, 500] 確認してみて
+        if game.player == 0:
+            print(game.multiGame.bothPos[1][1])
+            # self.draw_shadow(self.screen, ux + game.multiGame.bothPos[1][0] * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
+        elif game.player == 1:
+            print(game.multiGame.bothPos[0][1]) 
+
+    def draw_rank(self, game):
+        rank = 1
+        if game.player == 0:  # 自分がPlayer 0なら
+            if game.multiGame.bothPos[0][1] >= game.multiGame.bothPos[1][1]:  # 自分が勝ってたら
+                rank = 1
+            else:  # 自分がまけていたら
+                rank = 2
+        else:  # 自分がPlayer 1 なら
+            if game.multiGame.bothPos[1][1] >= game.multiGame.bothPos[0][1]:
+                rank = 1
+            else:
+                rank = 2
+        print("Rank:", rank)
+        self.draw_text("Rank:" + str(rank), 680, 70, C.GREEN, self.fnt_s)  #順位を表示
 
     def update_object(self, game):
         for i in range(C.CLEN):
@@ -201,13 +233,6 @@ class Canvas:
             pl = "1p"
         txt_pl = self.fnt_ss.render(pl,True,C.BLACK)
         self.screen.blit(txt_pl,[910,int(y)-10])
-
-    def draw_rival(self, game, bg,ux,uy):  # 敵車の座標がlist出力 [400, 500] 確認してみて
-            if game.player == 0:
-                print(game.game.bothPos[1][0])
-                self.draw_shadow(bg, ux + game.game.bothPos[1][0] * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
-            elif game.player == 1:
-                print(game.game.bothPos[0][0]) 
 
 
     def draw_obj(self, img, x, y, sc):                        #座標とスケールを受け取り、物体を描く関数
