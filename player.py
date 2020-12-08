@@ -62,7 +62,7 @@ class Player:
             game.laps += 1  #周回数の値を1増やす
             if game.laps == C.LAPS:      #周回数がLAPSの値になったら
                 game.idx = 3               #idxを3にしてゴール処理へ
-
+                game.tmr = 0
 
 
     def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
