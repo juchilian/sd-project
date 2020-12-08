@@ -290,9 +290,6 @@ class Game:
             col = C.WHITE                                                       #colにBLACkを代入
             if i == self.mybgm:                                                    #選択している車種なら
                 col = (0,128,255)                                                   #colに明るい青の値を代入
-            #pygame.draw.rect(self.cvs.screen,col,[x-100,y-80,200,200])                   #colの色で枠を描く
-            #self.cvs.draw_text("["+str(i+1)+"]",x,y-50,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
-            #self.cvs.screen.blit(self.img_car[3+i*7],[x-100,y-20])                       #それぞれの車を描画
             self.cvs.draw_text("["+str(i+1)+"] : ",x,y,col,self.cvs.fnt_m)
             self.cvs.draw_text(self.bgm_race[i],x+250,y,col,self.cvs.fnt_m)
         self.cvs.draw_text("[Enter] OK!",400,440,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
