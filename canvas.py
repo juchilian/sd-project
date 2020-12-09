@@ -90,10 +90,13 @@ class Canvas:
             col = (160,160,160)                                    #colに板の色を代入
             if int(game.p1.y+i) % C.CMAX == game.p1.PLself + 10:                 #ゴールの位置なら
                 col = (192,0,0)                                         #赤線の色の値を代入
+                pygame.draw.rect(self.screen,C.RED,[ux,uy-400,uw,400],2)   #道路の板を描く
+                pygame.draw.rect(self.screen,C.RED,[ux,uy-400,uw,100],5)   #道路の板を描く
             side_w = uw * 0.3
 
             if game.mylocation == 0:
                 pygame.draw.polygon(self.screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+                
                 if int(game.p1.y+i)%10 <= 4:  #左右の黄色線を描画
                     pygame.draw.polygon(self.screen,C.YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])      #左
                     pygame.draw.polygon(self.screen,C.YELLOW,[[ux+uw*0.98,uy],[ux+uw,uy],[bx+bw,by],[bx+bw*0.98,by]])   #右

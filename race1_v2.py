@@ -63,12 +63,13 @@ class Game:
             4 => 車種選択の時
             5 => モード選択の時
             6 => 場所選択の時
+            7 => BGM選択の時
         '''        
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             self.cvs.screen.blit(self.img_title, [120, 120])  #タイトルロゴを表示
             self.cvs.draw_text("[C] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
             self.cvs.draw_text("[L] Select location",400,360,C.WHITE,self.cvs.fnt_m)
-            self.cvs.draw_text("[B] Select BGM",400,400,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[G] Select BGM",400,400,C.WHITE,self.cvs.fnt_m)
             self.cvs.draw_text("[M] Select mode",400,440,C.WHITE,self.cvs.fnt_m)
             self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
@@ -79,7 +80,7 @@ class Game:
                 self.idx = 5                                                    #idxを5にしてモード選択に移行
             if key[K_l] != 0:                                               #Lキーが押されたら
                 self.idx = 6                                                    #idxを6にして場所選択に移行
-            if key[K_b] != 0:                                               #Lキーが押されたら
+            if key[K_g] != 0:                                               #Lキーが押されたら
                 self.idx = 7                                                    #idxを6にして場所選択に移行
 
         if self.idx == 1:  #idxが1(カウントダウン)のとき
