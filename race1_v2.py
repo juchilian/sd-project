@@ -125,6 +125,7 @@ class Game:
             if self.tmr > 60*5:                        #8秒経過したら
                 self.laps = 0
                 self.elapsed_time = 0
+                self.elapsed_time_lap = 0
                 self.idx = 0                                 #idxを0にしてタイトルに戻る
 
         if self.idx == 4:                                                      #idxが4(車種選択)のとき
@@ -285,7 +286,7 @@ class Game:
 
     def bgm_select(self, bg, key):
         self.cvs.draw_text("Select BGM", 400, 160, C.WHITE, self.cvs.fnt_m)  #Select location を表示
-        for i in range(3):
+        for i in range(len(self.bgm_race)):
             x = 160                                                       #xに選択用の枠のx座標を代入
             y = 250+40*i                                                             #yに選択用の枠のy座標を代入
             col = C.WHITE                                                       #colにBLACkを代入
@@ -293,13 +294,19 @@ class Game:
                 col = (0,128,255)                                                   #colに明るい青の値を代入
             self.cvs.draw_text("["+str(i+1)+"] : ",x,y,col,self.cvs.fnt_m)
             self.cvs.draw_text(self.bgm_race[i],x+250,y,col,self.cvs.fnt_m)
-        self.cvs.draw_text("[Enter] OK!",400,440,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
+        self.cvs.draw_text("[Enter] OK!",400,500,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
         if key[K_1] == 1:                                                   #1キーが押されたら
             self.mybgm = 0                                                         #mycarに0を代入(赤い車)
         if key[K_2] == 1:                                                   #2キーが押されたら
             self.mybgm = 1                                                         #mycarに1を代入(青い車)
         if key[K_3] == 1:                                                   #3キーが押されたら
             self.mybgm = 2                                                         #mycarに2を代入(黄色の車)
+        if key[K_4] == 1:                                                   #3キーが押されたら
+            self.mybgm = 3                                                         #mycarに2を代入(黄色の車)
+        if key[K_5] == 1:                                                   #3キーが押されたら
+            self.mybgm = 4                                                         #mycarに2を代入(黄色の車)
+        if key[K_6] == 1:                                                   #3キーが押されたら
+            self.mybgm = 5                                                         #mycarに2を代入(黄色の車)
         if key[K_RETURN] == 1:                                              #Enterキーが押されたら
             self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
 
@@ -365,7 +372,7 @@ class Game:
         if self.idx == 2:   #レース中      
             if pygame.mixer.music.get_busy() == False:
                 pygame.mixer.music.load(self.bgm_race[self.mybgm])                          #BGMを読み込み 
-                pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
+                pygame.mixer.music.set_volume(0.6)                                   #音を小さくして
                 pygame.mixer.music.play(-1)          
             
         if self.idx == 3:   #ゴール画面
@@ -391,9 +398,12 @@ class Game:
         
     def load_bgm(self):
         self.bgm_race = [
-            "sound_pr/yoasobi.mp3",
+            "sound_pr/usseewa.mp3",
             "sound_pr/kanzen.mp3",
-            "sound_pr/ultrasoul.mp3"
+            "sound_pr/ultrasoul.mp3",
+            "sound_pr/edm1.mp3",
+            "sound_pr/yoasobi.mp3",
+            "sound_pr/music1.mp3"
         ]
     
     def load_sound(self):
