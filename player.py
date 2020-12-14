@@ -8,19 +8,19 @@ import time
 from KCF_python import Kcf_python
 import cv2
 
-
-class Player():
-    def __init__(self):
-        self.x = 400          #車の横方向の座標を管理するリスト
-        self.y = 0            #車のコース上の位置を管理するリスト
+class Player:
+    def __init__(self, startx, starty):
+        self.x = startx          #車の横方向の座標を管理するリスト
+        self.y = starty            #車のコース上の位置を管理するリスト
         self.lr = 0           #車の左右の向きを管理するリスト
         self.pls = Pulse() #パルスを定義
         self.spd = 0   #車の速度を管理するリスト
         self.spd_control()#スピードが表示される
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         self.pulse_spd = 0
-        self.data = 0
-        self.kcf = Kcf_python()
+        # self.data = 0
+        self.kcf = Kcf_python()#KCFのインスタンス生成
+        self.value = 0
 
     def time_str(self,val):                               # **'**.**という時間の文字列を作る関数
         sec = int(val)                               #引数を整数の秒数にしてsecに代入
@@ -28,9 +28,18 @@ class Player():
         mi  = int(sec/60)                            #分をmiに代入
         return "{}'{:02}.{:02}".format(mi,sec%60,ms)   # **'**.**という文字列を返す
 
-    def drive_car(self, key, curve, laptime, rec, recbk, tmr,laps,idx): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
-        #顔認識と合体
-        # key[K_RIGHT],key[K_LEFT] = self.kcf.tracking_face()
+    def drive_car(self, key, game,cvs): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
+        #tupleをlistに変換
+        key = list(key)
+
+        #バウンディングボックス作成
+        while self.value == 0:
+            self.kcf.make_bbox()
+            self.value += 1
+        #顔の位置を車両の移動に変換
+        key[K_RIGHT] = int(self.kcf.tracking_face()[0])
+        key[K_LEFT] = int(self.kcf.tracking_face()[1])
+        print("RIGHT:{},LEFT:{}".format(key[K_RIGHT],key[K_LEFT]))
 
         if key[K_LEFT] == 1:  #左キーが押されたら
             if self.lr > -3: #向きが-3より大きければ
@@ -46,7 +55,7 @@ class Player():
         #速度制御
         self.spd = self.spd_control()
 
-        self.x -= self.spd * curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
+        self.x -= self.spd * cvs.curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
         if self.x < 0 + 50:     #左の路肩に接触したら
             self.x = 0 + 50      #横方向の座標を0にして
             self.spd *= 0.9 #減速する
@@ -57,14 +66,14 @@ class Player():
         self.y += self.spd/100                          #車の速度からコース上の位置を計算
         if self.y > C.CMAX-1:                                         #コース終点を超えたら
             self.y -= C.CMAX  #コースを頭に戻す
-            laptime[laps] = self.time_str(rec-recbk)                            #ラップタイムを計算し代入
-            recbk = rec           #現在のタイムを保持
-            laps += 1             #周回数の値を1増やす
-            if laps == C.LAPS:      #周回数がLAPSの値になったら
-                idx = 3               #idxを3にしてゴール処理へ
-                tmr = 0               #tmrを0にする
+            game.laptime[game.laps] = self.time_str(game.elapsed_time - game.elapsed_time_lap)  #ラップタイムを計算し代入
+            game.elapsed_time_lap = game.elapsed_time
+            game.recbk = game.rec  #現在のタイムを保持
+            game.laps += 1  #周回数の値を1増やす
+            if game.laps == C.LAPS:      #周回数がLAPSの値になったら
+                game.idx = 3               #idxを3にしてゴール処理へ
+                game.tmr = 0
 
-        return laptime, rec, recbk, tmr, laps, idx
             
     #タイトル画面、ゲーム終了後の画面で車を動かす動きを定義
     def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
@@ -94,7 +103,7 @@ class Player():
     #ここは一つのデータしかありませーん
     def spd_control(self):  #心拍を速度に変換する関数
         self.pls_data = int(float(self.pls.data))
-        print("pls_data：", self.pls_data)
+        # print("pls_data：", self.pls_data)
         if 0 <= self.pls_data and self.pls_data <= 50:
             self.spd = 50
         elif 50 < self.pls_data and self.pls_data <= 170:
@@ -104,7 +113,7 @@ class Player():
         return self.spd
 
 # if __name__ == '__main__':
-#     player = Player()
+#     player = Player(300,0)
 #     player.kcf.make_bbox()
 #     while True:
 #         print(player.kcf.tracking_face())#make_bboxは最初の写真#tracking_faceは後のどうがの部分
@@ -113,4 +122,3 @@ class Player():
 #             break
 #     player.kcf.cap.release()
 #     cv2.destroyAllWindows()
-    

@@ -10,7 +10,7 @@ class Pulse:
         #assign buffer size as 1024
         self.BUFFER_SIZE = 1024
         self.time = 0
-        self.data = self.pulse_socket()     
+        self.data = self.pulse_socket()    
         #IPアドレスへの接続のためのレッスン状態
 
     #心拍数を計測してself.dataに格納
