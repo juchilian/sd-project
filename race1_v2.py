@@ -294,7 +294,7 @@ class Game:
                 col = (0,128,255)                                                   #colに明るい青の値を代入
             self.cvs.draw_text("["+str(i+1)+"] : ",x,y,col,self.cvs.fnt_m)
             self.cvs.draw_text(self.bgm_race[i],x+250,y,col,self.cvs.fnt_m)
-        self.cvs.draw_text("[Enter] OK!",400,500,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
+        self.cvs.draw_text("[Enter] OK!",400,540,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
         if key[K_1] == 1:                                                   #1キーが押されたら
             self.mybgm = 0                                                         #mycarに0を代入(赤い車)
         if key[K_2] == 1:                                                   #2キーが押されたら
@@ -307,6 +307,8 @@ class Game:
             self.mybgm = 4                                                         #mycarに2を代入(黄色の車)
         if key[K_6] == 1:                                                   #3キーが押されたら
             self.mybgm = 5                                                         #mycarに2を代入(黄色の車)
+        if key[K_7] == 1:                                                   #3キーが押されたら
+            self.mybgm = 6                                                         #mycarに2を代入(黄色の車)
         if key[K_RETURN] == 1:                                              #Enterキーが押されたら
             self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
 
@@ -380,8 +382,8 @@ class Game:
                 #pygame.mixer.music.stop()                                             #bgmを停止
                 pygame.mixer.music.fadeout(1000)
             if self.tmr == 30:                                                     #tmrが30になったら
-                pygame.mixer.music.load("sound_pr/goal.ogg")                          #BGMを読み込み
-                pygame.mixer.music.set_volume(0.2)                                   #音を小さくして
+                pygame.mixer.music.load("sound_pr/goal2.mp3")                          #BGMを読み込み
+                pygame.mixer.music.set_volume(0.6)                                   #音を小さくして
                 pygame.mixer.music.play(0)     
         if self.idx == 4:   #車種選択画面
             pass
@@ -398,12 +400,13 @@ class Game:
         
     def load_bgm(self):
         self.bgm_race = [
-            "sound_pr/usseewa.mp3",
-            "sound_pr/kanzen.mp3",
+            "sound_pr/goldenrule.mp3",
+            "sound_pr/yoasobi.mp3",
             "sound_pr/ultrasoul.mp3",
             "sound_pr/edm1.mp3",
-            "sound_pr/yoasobi.mp3",
-            "sound_pr/music1.mp3"
+            "sound_pr/kirby.mp3",
+            "sound_pr/music1.mp3",
+            "sound_pr/seeyouagain.mp3"
         ]
     
     def load_sound(self):
