@@ -30,3 +30,10 @@ git commitしたらpushも同時にしていいよ
 
  参考 Youtube-The gitflow workflow - in less than 5 mins.  
  [https://youtube.com/watch?v=1SXpE08hvGs]
+ 
+## オンライン機能をローカルで試す方法
+1.ターミナルで`ipconfig`と打つ  
+2.Wireless LAN adapter Wi-Fiの中のIPv4 アドレス(例:192.168.0.13)をConst.pyのserverに代入  
+3.ターミナルで`python online-server.py`を打ってサーバーを立ち上げる  
+4.race1_v2.pyを実行してmultiplay modeを選択  
+ 
