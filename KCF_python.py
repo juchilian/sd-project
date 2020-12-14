@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-class Facedetection():  
+class Kcf_python():  
     def __init__(self):
         self.tracker = cv2.TrackerKCF_create()
         self.cap = cv2.VideoCapture(0)
@@ -18,14 +18,10 @@ class Facedetection():
             K_LEFT=1
         return [K_RIGHT,K_LEFT]
 
+    #一枚の写真を撮影してバウンディングボックスを作成
     def make_bbox(self):
         #webカメラ取り込み
         ret, frame = self.cap.read()
-        # if not ret:
-        #     continue
-        # frame = frame_resize(frame)
-
-        # bbox = (0,0,10,0)
         #選択した部分をBounding Boxとする
         bbox = cv2.selectROI(windowName="Make Bounding Box", img = frame,showCrosshair=False, fromCenter=False)
         self.tracker.init(frame, bbox)
@@ -33,11 +29,6 @@ class Facedetection():
 
     def tracking_face(self):
         ret, frame = self.cap.read()
-        # if not ret:
-        #     # k = cv2.waitKey(1)
-        #     # if k == 27 :
-        #     #     break
-        #     continue
 
         track, bbox = self.tracker.update(frame)
         fps = cv2.CAP_PROP_FPS
@@ -63,17 +54,3 @@ class Facedetection():
         return K_RIGHT, K_LEFT
 
 
-if __name__ == '__main__':
-    face = Facedetection()
-    while True:
-        face.make_bbox()
-        break
-
-    while True:
-        print(face.tracking_face())
-        k = cv2.waitKey(1)
-        if k == 27 :
-            break
-
-    face.cap.release()
-    cv2.destroyAllWindows()
