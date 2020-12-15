@@ -124,6 +124,7 @@ class Game:
                     pygame.display.update()
                     pygame.time.delay(2000)
                     self.idx = 0
+                    self.mymode = 0
 
 
         if self.idx == 3:              #idxが3(ゴール)のとき

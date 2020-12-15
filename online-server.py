@@ -7,11 +7,12 @@ import Const as C
 from player import Player
 from multigame import MultiGame
 
-server = C.SERVER # メモだから気にしないで => 'ipconfig' in Terminal => write value of ipv4 
-port = 5555
-
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+server = '' # メモだから気にしないで => 'ipconfig' in Terminal => write value of ipv4 
+port = 5555
+
+server_ip = socket.gethostbyname(server)
 try:
     s.bind((server, port))
 except socket.error as e:
