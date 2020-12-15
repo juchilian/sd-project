@@ -10,7 +10,7 @@ from network import Network
 from multigame import MultiGame
 from canvas import Canvas
 import time
-
+from KCF_python import Kcf_python
 
 class Game:
     def __init__(self):
@@ -18,6 +18,7 @@ class Game:
         self.p1 = Player(300, 0) # Player1定義
         self.com = Computer()
         self.cvs = Canvas()
+        # self.kcf = Kcf_python()
         # Parameters(Varaible)
         self.idx = 0
         self.tmr = 0                           #タイマーの変数
@@ -32,20 +33,21 @@ class Game:
         self.mybgm = 0
         self.elapsed_time = 0
         self.elapsed_time_lap = 0
+        self.kcf = Kcf_python()
         
-
+    #ファイル実行
     def run(self):
         pygame.display.set_caption("Pygame Racer")  #ウインドウに表示するタイトルを指定
         clock = pygame.time.Clock()
         self.load_image() # 画像取り込み
         self.load_bgm()   #bgm取り込み
         self.load_sound() # サウンド取り込み
-
-        while True:                                    #無限ループで処理を続ける
+        player = Player(300,0)
+        while True:                              #無限ループで処理を続ける
             for event in pygame.event.get():            #pygameのイベントを繰り返しで処理する
                 if event.type == QUIT:                   #ウインドウの×ボタンをクリックしたら
                     pygame.quit()                        #pygameモジュールの初期化を解除
-                    sys.exit()                           #プログラムを終了する
+                    sys.exit()                        #プログラムを終了する
             self.tmr += 1
             self.cvs.update_canvas(self)
             key = pygame.key.get_pressed()  #keyに全てのキーの状態代入
@@ -56,6 +58,7 @@ class Game:
     def manage_game(self, key):
         '''
             indexの説明
+            -1 => 画像撮影
             0 => タイトル画面
             1 => カウントダウン時
             2 => レース中
@@ -64,7 +67,8 @@ class Game:
             5 => モード選択の時
             6 => 場所選択の時
             7 => BGM選択の時
-        '''        
+        '''       
+
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             self.cvs.screen.blit(self.img_title, [120, 120])  #タイトルロゴを表示
             self.cvs.draw_text("[C] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
@@ -108,6 +112,7 @@ class Game:
             self.music_play()
             self.rec = self.rec + 1 / 60  #走行時間をカウント
             self.p1.drive_car(key, self, self.cvs) #プレイヤーの車を動かせるように
+            
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             self.collision_judge(1)  #衝突判定
             if self.mymode == 1:  #multiplaymodeなら
@@ -414,8 +419,8 @@ class Game:
         self.se_crash.set_volume(0.2)                              #衝突音が大きすぎたので小さくする
 
 
-
-
 if __name__ == '__main__':
     g = Game()
     g.run()
+
+ 

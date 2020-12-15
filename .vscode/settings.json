@@ -4,5 +4,9 @@
     "python.linting.pylintArgs": [
         "--extension-pkg-whitelist=pygame"
     ],
+<<<<<<< HEAD
+    "editor.tabSize": 8
+=======
     "python.formatting.provider": "black"
+>>>>>>> develop
 }
