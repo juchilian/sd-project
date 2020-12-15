@@ -102,7 +102,7 @@ class Player:
 
     #ここは一つのデータしかありませーん
     def spd_control(self):  #心拍を速度に変換する関数
-        self.pls_data = int(float(self.pls.data))
+        self.pls_data = int(float(self.pls.pulse_socket()))
         # print("pls_data：", self.pls_data)
         if 0 <= self.pls_data and self.pls_data <= 50:
             self.spd = 50
