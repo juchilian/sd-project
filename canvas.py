@@ -124,7 +124,8 @@ class Canvas:
         # Multiplay modeの時の描画
         if game.mymode == 1:  
             # オンラインに必要なものの描画
-            self.draw_multi_stuff(game, ux, uy)
+            for i in range(C.BOARD-1,0,-1):                              #繰り返しで道路の板を描いていく
+                self.draw_multi_stuff(game, ux, uy,i)
         
         #右側の部分の表示
         pygame.draw.rect(self.screen,C.WHITE,[800,0,300,600]) 
@@ -141,7 +142,7 @@ class Canvas:
         for i in range(game.laps):  #繰り返しで    
             self.draw_text(game.laptime[i], 80, 130 + 40 * i, C.YELLOW, self.fnt_s)  #ラップタイムを表示    
 
-    def draw_multi_stuff(self, game, ux, uy):
+    def draw_multi_stuff(self, game, ux, uy,i):
         """
         game.player は自分のプレイヤー番号 0 or 1
         game.multiGame.bothPos[0][1] == プレイヤー0のy座標
@@ -150,7 +151,7 @@ class Canvas:
         com = lambda x: 0 if x == 1 else 1
         try:
             # 対戦相手の車を表示
-            # self.draw_rival(game, com, ux, uy)
+            # self.draw_rival(game, com, ux, uy,i)
 
             # 自分の順位を表示
             if game.multiGame.bothPos[game.player][1] >= game.multiGame.bothPos[com(game.player)][1]:  # 自分が勝ってたら
@@ -174,6 +175,13 @@ class Canvas:
 
         print("対戦相手の座標: " + str(game.multiGame.bothPos[com(game.player)]))
         # self.draw_shadow(self.screen, ux + game.multiGame.bothPos[1][0] * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
+        if int(game.multiGame.bothPos[com(game.player)][1])%C.CMAX == int(game.multiGame.bothPos[game.player][1]+i)%C.CMAX:          #その板にCOMカーがあるかどうか調べ
+            lr = int(4*(game.multiGame.bothPos[game.player][0]-game.multiGame.bothPos[com(game.player)][0])/800)                 #プレイヤーから見たCOMカーの向きを計算し
+            if lr < -3:                                         #-3より小さいなら-3で
+                lr = -3
+            if lr > 3:                                          #3より大きいなら3で
+                lr = 3
+            self.draw_obj(game.img_car[14+3+lr],ux+game.multiGame.bothPos[com(game.player)][0]*C.BOARD_W[i]/800,uy,0.05+C.BOARD_W[i]/C.BOARD_W[0])
 
     def update_object(self, game):
         for i in range(C.CLEN):
