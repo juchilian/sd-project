@@ -121,10 +121,9 @@ class Canvas:
                 self.draw_shadow(ux + game.p1.x * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
                 self.draw_obj(game.img_car[3 + game.p1.lr + game.mycar*7], ux + game.p1.x * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])  #プレイヤーの車を描く
 
-        # Multiplay modeの時の描画
-        if game.mymode == 1:  
-            # オンラインに必要なものの描画
-            for i in range(C.BOARD-1,0,-1):                              #繰り返しで道路の板を描いていく
+                # Multiplay modeの時の描画
+            if game.mymode == 1:  
+                # オンラインに必要なものの描画
                 self.draw_multi_stuff(game, ux, uy,i)
         
         #右側の部分の表示
@@ -166,7 +165,7 @@ class Canvas:
     def draw_rival(self, game, com, ux, uy,i):  # 敵車の座標がlist出力 [400, 500] 確認してみて
         print("対戦相手の座標: " + str(game.multiGame.bothPos[com(game.player)]))
         # self.draw_shadow(self.screen, ux + game.multiGame.bothPos[1][0] * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
-        if int(game.multiGame.bothPos[com(game.player)][1])%C.CMAX == int(game.multiGame.bothPos[game.player][1]+i)%C.CMAX:          #その板にCOMカーがあるかどうか調べ
+        if int(game.multiGame.bothPos[com(game.player)][1])%C.CMAX == int(game.p1.y+i)%C.CMAX:          #その板にCOMカーがあるかどうか調べ
             lr = int(4*(game.multiGame.bothPos[game.player][0]-game.multiGame.bothPos[com(game.player)][0])/800)                 #プレイヤーから見たCOMカーの向きを計算し
             if lr < -3:                                         #-3より小さいなら-3で
                 lr = -3
