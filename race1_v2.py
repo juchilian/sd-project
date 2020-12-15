@@ -20,7 +20,7 @@ class Game:
         self.cvs = Canvas()
         # self.kcf = Kcf_python()
         # Parameters(Varaible)
-        self.idx = 0
+        self.idx = 8
         self.tmr = 0                           #タイマーの変数
         self.time = 0                          #timeモジュールを使った時間の計測のための変数
         self.laps = 0                          #何周目かを管理する変数
@@ -34,6 +34,7 @@ class Game:
         self.elapsed_time = 0
         self.elapsed_time_lap = 0
         self.kcf = Kcf_python()
+        # self.value = 0
         
     #ファイル実行
     def run(self):
@@ -42,7 +43,7 @@ class Game:
         self.load_image() # 画像取り込み
         self.load_bgm()   #bgm取り込み
         self.load_sound() # サウンド取り込み
-        player = Player(300,0)
+        
         while True:                              #無限ループで処理を続ける
             for event in pygame.event.get():            #pygameのイベントを繰り返しで処理する
                 if event.type == QUIT:                   #ウインドウの×ボタンをクリックしたら
@@ -51,14 +52,15 @@ class Game:
             self.tmr += 1
             self.cvs.update_canvas(self)
             key = pygame.key.get_pressed()  #keyに全てのキーの状態代入
-            self.manage_game(key)
+            key = list(key)
+            right ,left = self.direction_change()
+            self.manage_game(key,right,left)
             pygame.display.update()  #画面を更新する
             clock.tick(60)  #フレームレートを指定
 
-    def manage_game(self, key):
+    def manage_game(self, key,right,left):
         '''
             indexの説明
-            -1 => 画像撮影
             0 => タイトル画面
             1 => カウントダウン時
             2 => レース中
@@ -67,6 +69,7 @@ class Game:
             5 => モード選択の時
             6 => 場所選択の時
             7 => BGM選択の時
+            8 => 画像撮影
         '''       
 
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
@@ -111,7 +114,7 @@ class Game:
             
             self.music_play()
             self.rec = self.rec + 1 / 60  #走行時間をカウント
-            self.p1.drive_car(key, self, self.cvs) #プレイヤーの車を動かせるように
+            self.p1.drive_car(key, self, self.cvs,right,left) #プレイヤーの車を動かせるように
             
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             self.collision_judge(1)  #衝突判定
@@ -136,7 +139,6 @@ class Game:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             self.car_select(key)
-            
 
         if self.idx == 5:  #idxが5(モード選択)のとき
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
@@ -152,7 +154,18 @@ class Game:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.bgm_select(self.cvs.screen, key)
-            
+
+    def direction_change(self):
+        #バウンディングボックス作成
+        while self.idx == 8:
+            self.kcf.make_bbox()
+            self.idx = 0#写真撮影を終了
+
+        #顔の位置を車両の移動に変換
+        right = int(self.kcf.tracking_face()[0])
+        left = int(self.kcf.tracking_face()[1])
+        # print("RIGHT:{},LEFT:{}".format(right,left))
+        return right,left
 
     def collision_judge(self,cs):
         if self.idx == 2:

@@ -54,11 +54,11 @@ class Kcf_python():
 
         return [K_RIGHT, K_LEFT]
 
-if __name__ == '__main__':
-    kcf = Kcf_python()
-    kcf.make_bbox()
-    while True:
-        print(kcf.tracking_face())#make_bboxは最初の写真#tracking_faceは後のどうがの部分
-        k = cv2.waitKey(1)
-        if k == 27 :
-            break
+# if __name__ == '__main__':
+#     kcf = Kcf_python()
+#     kcf.make_bbox()
+#     while True:
+#         print(kcf.tracking_face())#make_bboxは最初の写真#tracking_faceは後のどうがの部分
+#         k = cv2.waitKey(1)
+#         if k == 27 :
+#             break
