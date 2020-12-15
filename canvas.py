@@ -163,6 +163,15 @@ class Canvas:
             pass
 
     def draw_rival(self, game, com, ux, uy):  # 敵車の座標がlist出力 [400, 500] 確認してみて
+        game.multiGame.bothPos[com(game.player)]
+        if int(game.com.y[c]) % C.CMAX == int(game.p1.y + i) % C.CMAX:  #その板にCOMカーがあるかどうか調べ
+            lr = int(4 * (game.p1.x - game.com.x[c]) / 800)  #プレイヤーから見たCOMカーの向きを計算し
+            if lr < -3:  #-3より小さいなら-3で
+                lr = -3
+            if lr > 3:  #3より大きいなら3で
+                lr = 3
+            self.draw_obj(game.img_car[(c % 3) * 7 + 3 + lr], ux + game.com.x[c] * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])
+
         print("対戦相手の座標: " + str(game.multiGame.bothPos[com(game.player)]))
         # self.draw_shadow(self.screen, ux + game.multiGame.bothPos[1][0] * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
 
