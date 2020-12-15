@@ -12,7 +12,6 @@ from canvas import Canvas
 import time
 from KCF_python import Kcf_python
 
-
 class Game:
     def __init__(self):
         pygame.init() #pygameモジュールの初期化                                                
