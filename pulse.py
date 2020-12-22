@@ -21,13 +21,13 @@ class Pulse:
         return self.data
 
 
-        #心拍が取れている場合のコード    
-<<<<<<< HEAD
+        # #心拍が取れている場合のコード    
         # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #     # コネクションを試みる
         #     s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# ここで毎回切断
-        #     s.bind(('192.168.100.112', self.PORT))
+        #     s.bind(('192.168.100.113', self.PORT))
         #     s.listen()
+        #     print("Listen Now...")
         #     (connection, client) = s.accept()
 
         #     # try:
@@ -39,28 +39,9 @@ class Pulse:
         #     #このデータが心拍データ。関数の返り値にできれば藤井のやつと簡単に組み合わせられる！！
         #     # connection.send(data)
         #         return self.data
-=======
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            # コネクションを試みる
-            s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# ここで毎回切断
-            s.bind(('192.168.100.113', self.PORT))
-            s.listen()
-            print("Listen Now...")
-            (connection, client) = s.accept()
-
-            # try:
-            print('Client connected', client)
-            #receive data from server
-            #データがリアルタイムに変化する
-            try:
-                self.data = connection.recv(self.BUFFER_SIZE)
-            #このデータが心拍データ。関数の返り値にできれば藤井のやつと簡単に組み合わせられる！！
-            # connection.send(data)
-                return self.data
->>>>>>> 0aef2cb66eef7539aeb65950d983198cbb46ad71
             
-        #     finally:
-        #         connection.close()
+        # #     finally:
+        # #         connection.close()
 
 
 
