@@ -32,6 +32,7 @@ class Game:
         self.mylocation = 0                    #場所選択用の変数
         self.mybgm = 0
         self.myoperation = 0
+        self.myspd_control = 0
         self.elapsed_time = 0
         self.elapsed_time_lap = 0
         self.kcf = Kcf_python()
@@ -72,7 +73,8 @@ class Game:
             5 => モード選択の時
             6 => 場所選択の時
             7 => BGM選択の時
-            8 => 画像撮影
+            8 => 操作方法選択画面
+            9 => スピードコントロール選択画面
         '''       
 
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
@@ -81,7 +83,8 @@ class Game:
             self.cvs.draw_text("[L] Select location",400,360,C.WHITE,self.cvs.fnt_m)
             self.cvs.draw_text("[G] Select BGM",400,400,C.WHITE,self.cvs.fnt_m)
             self.cvs.draw_text("[O] Select operation",400,440,C.WHITE,self.cvs.fnt_m)
-            self.cvs.draw_text("[M] Select mode",400,480,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[S] Select speed control",400,480,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[M] Select mode",400,520,C.WHITE,self.cvs.fnt_m)
             self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             
@@ -95,6 +98,8 @@ class Game:
                 self.idx = 7                                                    #idxを6にして場所選択に移行
             if key[K_o] != 0:
                 self.idx = 8
+            if key[K_s] != 0:
+                self.idx = 9
 
         if self.idx == 1:  #idxが1(カウントダウン)のとき
             time_c = time.time()
@@ -165,6 +170,12 @@ class Game:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.operation_select(self.cvs.screen, key)
+
+        if self.idx == 9:
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
+            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
+            self.speed_operation(self.cvs.screen,key)
+            
 
     def direction_change(self,key):
         if self.myoperation == 0:
@@ -361,6 +372,33 @@ class Game:
             if self.myoperation == 1:
                 self.kcf.make_bbox()
                 self.idx = 0  #写真撮影を終了
+
+    def speed_operation(self,bg,key):
+        self.cvs.draw_text("Select speed control", 400, 160, C.WHITE, self.cvs.fnt_m)  #Select location を表示
+        for i in range(2):
+            x = 200 + 400 * i  #xに選択用の枠のx座標を代入
+            y = 300  #yに選択用の枠のy座標を代入
+            col = C.BLACK  #colにBLACkを代入
+            if i == self.myspd_control:  #選択している車種なら    
+                col = (0, 128, 255)  #colに明るい青の値を代入    
+            pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
+            bg.blit(self.img_location[i], [x - 100, y - 100])  #それぞれの場所を描画
+            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
+            if i == 0:
+                self.cvs.draw_text("Nomal",x,y-40,C.WHITE,self.cvs.fnt_m)
+            if i == 1:
+                self.cvs.draw_text("Pulse",x,y-40,C.WHITE,self.cvs.fnt_m)
+            
+
+        self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:
+            self.myspd_control = 0  
+        if key[K_2] == 1: 
+            self.myspd_control = 1 
+        
+        if key[K_RETURN] != 0: 
+            self.idx = 0  #タイトル画面に戻る
+
             
 
 
