@@ -48,17 +48,31 @@ class Canvas:
         sy = horizon  #道路を描き始めるy座標をsyに代入
 
         self.vertical = self.vertical - int(game.p1.spd * di / 8000)  #背景の垂直位置を計算
-        #背景の垂直位置
-        if self.vertical < 0:  #それが0未満になったら
-            self.vertical += 800  #800を足す
-        if self.vertical >= 800:  #800以上になったら
-            self.vertical -= 800  #800を引く
 
         #フィードの描画
         self.screen.fill((0,0,0)) #上空の色  #指定の色で画面を塗りつぶす
-        self.screen.blit(game.img_bg[game.mylocation],[self.vertical-800,horizon-500])  #背景画像(左側)
-        self.screen.blit(game.img_bg[game.mylocation],[self.vertical,horizon-500])  #背景画像(右側)
-        #self.screen.blit(game.img_sea,[board_x[C.BOARD-1]-780,sy])             #左手奥の海を描画
+        bg_width = game.img_bg[game.mylocation].get_width()
+        bg_height = game.img_bg[game.mylocation].get_height()
+        img_otherside = pygame.transform.flip(game.img_bg[game.mylocation],1,0)
+        offset_y = 0
+        if game.mylocation == 0:
+            offset_y = 550
+        if game.mylocation == 1:
+            offset_y = 800
+
+        #背景の垂直位置
+        
+        # if self.vertical < 0:  #それが0未満になったら
+        #     self.vertical += 2754  #800を足す
+        # if self.vertical >= 2*bg_width:  #800以上になったら
+        #     self.vertical -= 2*bg_width  #800を引く
+        self.screen.blit(img_otherside,[self.vertical-3*bg_width,horizon-offset_y]) 
+        self.screen.blit(game.img_bg[game.mylocation],[self.vertical-2*bg_width,horizon-offset_y]) 
+        self.screen.blit(img_otherside,[self.vertical-bg_width,horizon-offset_y]) 
+        self.screen.blit(game.img_bg[game.mylocation],[self.vertical,horizon-offset_y])
+        self.screen.blit(img_otherside,[self.vertical+bg_width,horizon-offset_y])  
+        self.screen.blit(game.img_bg[game.mylocation],[self.vertical+2*bg_width,horizon-offset_y])  
+        self.screen.blit(img_otherside,[self.vertical+3*bg_width,horizon-offset_y])  
 
         self.update_object(game)
         
@@ -76,21 +90,34 @@ class Canvas:
             col = (160,160,160)                                    #colに板の色を代入
             if int(game.p1.y+i) % C.CMAX == game.p1.PLself + 10:                 #ゴールの位置なら
                 col = (192,0,0)                                         #赤線の色の値を代入
+                pygame.draw.rect(self.screen,C.RED,[ux,uy-uw*0.5,uw,uw*0.5],2)   
+                pygame.draw.rect(self.screen,C.RED,[ux,uy-uw*0.5,uw,uw*0.1],5)
+                pygame.draw.rect(self.screen,C.WHITE,[ux,uy-uw*0.5,uw,uw*0.1],)  
+                #self.draw_text("START & GOAL",ux+uw/2,uy-20-uw*0.5,C.BLACK,self.fnt_l) 
             side_w = uw * 0.3
 
-            pygame.draw.polygon(self.screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+            if game.mylocation == 0:
+                pygame.draw.polygon(self.screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+                
+                if int(game.p1.y+i)%10 <= 4:  #左右の黄色線を描画
+                    pygame.draw.polygon(self.screen,C.YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])      #左
+                    pygame.draw.polygon(self.screen,C.YELLOW,[[ux+uw*0.98,uy],[ux+uw,uy],[bx+bw,by],[bx+bw*0.98,by]])   #右
+
+                if int(game.p1.y+i)%20 <= 10:   #白線を描画
+                    pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.24,uy],[ux+uw*0.26,uy],[bx+bw*0.26,by],[bx+bw*0.24,by]])  #左
+                    pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.49,uy],[ux+uw*0.51,uy],[bx+bw*0.51,by],[bx+bw*0.49,by]])  #中央
+                    pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.74,uy],[ux+uw*0.76,uy],[bx+bw*0.76,by],[bx+bw*0.74,by]])  #右
+
+                pygame.draw.polygon(self.screen,C.BLACK,[[ux,uy],[bx,by],[bx-side_w,by],[ux-side_w,uy]])   #道路脇の板を描く(左)
+                pygame.draw.polygon(self.screen,C.BLACK,[[ux+uw,uy],[ux+uw+side_w,uy],[bx+bw+side_w,by],[bx+bw,by]])   #道路脇の板を描く(右)
+
+            if game.mylocation == 1:
+                pygame.draw.polygon(self.screen,self.road_color(game,game.p1.y+i,col),[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+            """
             pygame.draw.polygon(self.screen,C.BLACK,[[ux,uy],[bx,by],[bx-side_w,by],[ux-side_w,uy]])   #道路脇の板を描く(左)
             pygame.draw.polygon(self.screen,C.BLACK,[[ux+uw,uy],[ux+uw+side_w,uy],[bx+bw+side_w,by],[bx+bw,by]])   #道路脇の板を描く(右)
-
-            if int(game.p1.y+i)%10 <= 4:  #左右の黄色線を描画
-                pygame.draw.polygon(self.screen,C.YELLOW,[[ux,uy],[ux+uw*0.02,uy],[bx+bw*0.02,by],[bx,by]])      #左
-                pygame.draw.polygon(self.screen,C.YELLOW,[[ux+uw*0.98,uy],[ux+uw,uy],[bx+bw,by],[bx+bw*0.98,by]])   #右
-
-            if int(game.p1.y+i)%20 <= 10:   #白線を描画
-                pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.24,uy],[ux+uw*0.26,uy],[bx+bw*0.26,by],[bx+bw*0.24,by]])  #左
-                pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.49,uy],[ux+uw*0.51,uy],[bx+bw*0.51,by],[bx+bw*0.49,by]])  #中央
-                pygame.draw.polygon(self.screen,C.WHITE,[[ux+uw*0.74,uy],[ux+uw*0.76,uy],[bx+bw*0.76,by],[bx+bw*0.74,by]])  #右
-
+"""
+            
             scale = 1.5*C.BOARD_W[i]/C.BOARD_W[0]    #道路横の物体のスケールを計算
             obj_l = self.object_left[int(game.p1.y+i)%C.CMAX]   #道路左の物体
             obj_r = self.object_right[int(game.p1.y+i)%C.CMAX]  #道路右の物体
@@ -107,6 +134,8 @@ class Canvas:
                     self.draw_obj(game.img_obj[obj_r],ux+uw*1.2,uy,scale)
                 if obj_l == 4: #金星(左)
                     self.draw_obj(game.img_obj[obj_l],ux-uw*0.2,uy,scale)
+                # if obj_l == 4: #金星(左)
+                #     self.draw_obj(game.img_obj[obj_l],ux+uw/2,uy-uw,scale)
 
             for c in range(1,C.CAR_NUM):                                      #繰り返しで
                 if int(game.com.y[c])%C.CMAX == int(game.p1.y+i)%C.CMAX:          #その板にCOMカーがあるかどうか調べ
@@ -131,6 +160,9 @@ class Canvas:
         pygame.draw.rect(self.screen,C.WHITE,[800,0,300,600]) 
         self.make_map()
         self.map_pl(game, 900)
+        if game.idx == 2:
+            self.draw_text2("[F1] : Pause BGM",950,550,C.BLACK,self.fnt_ss)
+            self.draw_text2("[F2] : Play BGM",950,580,C.BLACK,self.fnt_ss)
 
         
         self.draw_text(str(int(game.p1.spd)) + "km/h", 680, 30, C.RED, self.fnt_m)  #速度を表示
@@ -189,7 +221,7 @@ class Canvas:
         if game.mycar == 0:
             map_car_col = C.RED
         if game.mycar == 1:
-            map_car_col = C.BLUE
+            map_car_col = C.GRAY
         if game.mycar == 2:
             map_car_col = C.YELLOW
         
@@ -233,3 +265,24 @@ class Canvas:
         sur = fnt.render(txt, True, col)  #指定色で文字列を描いたサーフェースを作成
         self.screen.blit(sur, [x, y])  #サーフェースを画面に転送
 
+    def draw_text2(self, txt, x, y, col, fnt):
+        sur = fnt.render(txt, True, col)
+        self.screen.blit(sur,[x,y])
+
+    def road_color(self,game,i,col):
+        if game.mylocation == 1:
+            if 0 <= i%21 and i%21 <= 2:
+                col = C.RED
+            if 3 <= i%21 and i%21 <= 5:
+                col = C.ORANGE
+            if 6 <= i%21 and i%21 <= 8:
+                col = C.YELLOW
+            if 9 <= i%21 and i%21 <= 11:
+                col = C.LGREEN
+            if 12 <= i%21 and i%21 <= 14:
+                col = C.SKYBLUE
+            if 15 <= i%21 and i%21 <= 17:
+                col = C.BLUE
+            if 18 <= i%21 and i%21 <= 20:
+                col = C.PURPLE
+        return col
