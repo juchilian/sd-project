@@ -39,7 +39,7 @@ def threaded_client(conn, p, gameId):
                 get => get Game info from server
                 move => 
             """
-            data = pickle.loads(conn.recv(4096))
+            data = pickle.loads(conn.recv(2048))
 
             if gameId in games:
                 game = games[gameId] 
