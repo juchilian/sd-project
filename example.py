@@ -7,7 +7,7 @@ def connection():
             #listen 
             #wait for access
             #接続しているwifi次第で変える！
-        s.bind(('192.168.11.7', 50000))
+        s.bind(('192.168.100.112', 50000))
         s.listen()
 
         while True:
@@ -32,7 +32,4 @@ def connection():
             finally:
                 connection.close()
 
-    
-
-while True:
-    connection()
+connection()
