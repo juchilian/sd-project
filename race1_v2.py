@@ -57,8 +57,9 @@ class Game:
             self.cvs.update_canvas(self)
             key = pygame.key.get_pressed()  #keyに全てのキーの状態代入
             key = list(key)
-            self.direction_change(key)
             self.manage_game(key)
+            self.re_recognition(key)
+            self.direction_change(key)
             pygame.display.update()  #画面を更新する
             clock.tick(60)  #フレームレートを指定
 
@@ -74,7 +75,7 @@ class Game:
             6 => 場所選択の時
             7 => BGM選択の時
             8 => 操作方法選択画面
-            9 => スピードコントロール選択画面
+            9 => 速度制御方法選択画面
         '''       
 
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
@@ -184,7 +185,7 @@ class Game:
             self.left = key[K_LEFT]
 
         #顔の位置を車両の移動に変換
-        if self.myoperation == 1:
+        if self.myoperation == 1 and self.kcf.value == 1:
             if self.idx != 8:
                 self.right = int(self.kcf.tracking_face()[0])
                 self.left = int(self.kcf.tracking_face()[1])
@@ -334,7 +335,7 @@ class Game:
             if i == self.mybgm:                                                    #選択している車種なら
                 col = (0,128,255)                                                   #colに明るい青の値を代入
             self.cvs.draw_text("["+str(i+1)+"] : ",x,y,col,self.cvs.fnt_m)
-            self.cvs.draw_text(self.bgm_race[i],x+250,y,col,self.cvs.fnt_m)
+            self.cvs.draw_text(self.bgm_name[i],x+250,y,col,self.cvs.fnt_m)
         self.cvs.draw_text("[Enter] OK!",400,540,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
         if key[K_1] == 1:                                                   #1キーが押されたら
             self.mybgm = 0                                                         #mycarに0を代入(赤い車)
@@ -408,6 +409,15 @@ class Game:
         if key[K_RETURN] != 0: 
             self.idx = 0  #タイトル画面に戻る
 
+    def re_recognition(self,key):
+        if self.myoperation == 1 and self.kcf.value == 0:
+            pygame.draw.rect(self.cvs.screen,C.BLACK,[100,250,600,150],5)
+            pygame.draw.rect(self.cvs.screen,C.WHITE,[102,252,596,146])
+            self.cvs.draw_text("Please recognize your face...",400,300,C.RED,self.cvs.fnt_m)
+            self.cvs.draw_text("[Enter] capture your face",400,340,C.RED,self.cvs.fnt_m)
+            if key[K_RETURN] == 1:
+                self.kcf.__init__()
+                self.kcf.make_bbox()
             
 
 
@@ -515,6 +525,15 @@ class Game:
             "sound_pr/kirby.mp3",
             "sound_pr/music1.mp3",
             "sound_pr/seeyouagain.mp3"
+        ]
+        self.bgm_name = [
+            "Goldenrule",
+            "Yorunikakeru",
+            "Ultrasoul",
+            "EDM medley",
+            "Kirby",
+            "Music medley",
+            "See you again"
         ]
     
     def load_sound(self):

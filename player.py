@@ -30,14 +30,14 @@ class Player:
 
     def drive_car(self, key, game,cvs,right,left): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
         #顔の位置を車両の移動に変換
-        key[K_RIGHT] = right
-        key[K_LEFT] = left
+        # key[K_RIGHT] = right
+        # key[K_LEFT] = left
 
-        if key[K_LEFT] == 1:  #左キーが押されたら
+        if left == 1:  #左キーが押されたら
             if self.lr > -3: #向きが-3より大きければ
                 self.lr -= 1  #向きを-1する
             self.x += (self.lr-3)*self.spd/100 - 5      #車の横方向の座標を計算
-        elif key[K_RIGHT] == 1:                                        #そうでなく右キーが押されたら
+        elif right == 1:                                        #そうでなく右キーが押されたら
             if self.lr < 3:                                           #向きが3より小さければ-
                 self.lr += 1                                           #向きを+1する
             self.x +=(self.lr+3)*self.spd/100 + 5      #車の横方向の座標を計算
@@ -104,17 +104,16 @@ class Player:
                 self.spd = 0
             if self.spd >= C.CAR_SPD_MAX:
                 self.spd = C.CAR_SPD_MAX
-            #self.spd = 300
 
         if game.myspd_control == 1:
             self.pls_data = int(float(self.pls.pulse_socket()))
             # print("pls_data：", self.pls_data)
             if 0 <= self.pls_data and self.pls_data <= 50:
                 self.spd = 50
-            elif 50 < self.pls_data and self.pls_data <= 170:
+            elif 50 < self.pls_data and self.pls_data <= 300:
                 self.spd = self.pls_data
             else:
-                self.spd = 170
+                self.spd = 300
         return self.spd
 
 # if __name__ == '__main__':
