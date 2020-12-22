@@ -7,11 +7,12 @@ import Const as C
 from player import Player
 from multigame import MultiGame
 
-server = C.SERVER # メモだから気にしないで => 'ipconfig' in Terminal => write value of ipv4 
-port = 5555
-
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+server = '' # メモだから気にしないで => 'ipconfig' in Terminal => write value of ipv4 
+port = 5555
+
+server_ip = socket.gethostbyname(server)
 try:
     s.bind((server, port))
 except socket.error as e:
@@ -19,8 +20,6 @@ except socket.error as e:
 
 s.listen(2) #2人プレイを待つ
 print("Waiting for a connection, Server Started")
-
-# players = [Player(300, 0), Player(500, 0)]
 
 connected = set() # store ip adrress of connected client
 games = {}
@@ -36,19 +35,22 @@ def threaded_client(conn, p, gameId):
         try:
             """
                 send "reset" or "get" or "move"
-                reset => reset game
+                reset-time => ゲームの開始時刻を記録
                 get => get Game info from server
                 move => 
-            """
-            data = pickle.loads(conn.recv(4096))
+            ""
+            data = pickle.loads(conn.recv(2048))
 
             if gameId in games:
                 game = games[gameId] 
                 if not data:
                     break
                 else:
-                    game.play(p, data)
-                    print(game.bothPos)
+                    if data == "reset-time":
+                        game.start_game()
+                    if type(data) == Player: # Player Objectが送られたら
+                        game.play(p, data)
+                        print(game.bothPos)
                     conn.sendall(pickle.dumps(game))
             else:
                 break

@@ -16,17 +16,18 @@ class Pulse:
     #心拍数を計測してself.dataに格納
     def pulse_socket(self):
         #試したい場合のコード
-        self.data = random.randint(0,200)
+        self.data = random.randint(200,300)
         print(self.data)
         return self.data
 
 
-        # 心拍が取れている場合のコード    
+        # #心拍が取れている場合のコード    
         # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #     # コネクションを試みる
         #     s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# ここで毎回切断
-        #     s.bind(('192.168.11.7', self.PORT))
+        #     s.bind(('192.168.100.111', self.PORT))
         #     s.listen()
+        #     print("Listen Now...")
         #     (connection, client) = s.accept()
 
         #     # try:
@@ -44,18 +45,5 @@ class Pulse:
 
 
 
-# with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-#     s.bind(('192.168.11.7',50000))
-#     print("clear bind")
-#     s.listen()
-#     print("clear listen")
-#     while True:
-#         (connection, client) = s.accept()
-#         print("clear accept")
-#         try:
-#             print('Client connected', client)
-#             data = connection.recv(1024)
-#             # connection.send(data.upper())
-#             print(data)
-#         finally:
-#             connection.close()
+pulse = Pulse()
+pulse.pulse_socket()

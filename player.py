@@ -28,18 +28,10 @@ class Player:
         mi  = int(sec/60)                            #分をmiに代入
         return "{}'{:02}.{:02}".format(mi,sec%60,ms)   # **'**.**という文字列を返す
 
-    def drive_car(self, key, game,cvs): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
-        #tupleをlistに変換
-        key = list(key)
-
-        #バウンディングボックス作成
-        while self.value == 0:
-            self.kcf.make_bbox()
-            self.value += 1
+    def drive_car(self, key, game,cvs,right,left): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
         #顔の位置を車両の移動に変換
-        key[K_RIGHT] = int(self.kcf.tracking_face()[0])
-        key[K_LEFT] = int(self.kcf.tracking_face()[1])
-        print("RIGHT:{},LEFT:{}".format(key[K_RIGHT],key[K_LEFT]))
+        key[K_RIGHT] = right
+        key[K_LEFT] = left
 
         if key[K_LEFT] == 1:  #左キーが押されたら
             if self.lr > -3: #向きが-3より大きければ
@@ -74,7 +66,6 @@ class Player:
                 game.idx = 3               #idxを3にしてゴール処理へ
                 game.tmr = 0
 
-            
     #タイトル画面、ゲーム終了後の画面で車を動かす動きを定義
     def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
         if self.spd < 200:                                    #速度が100より小さいなら
