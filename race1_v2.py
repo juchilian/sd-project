@@ -31,6 +31,7 @@ class Game:
         self.mymode = 0                        #モード選択用の変数
         self.mylocation = 0                    #場所選択用の変数
         self.mybgm = 0
+        self.myoperation = 0
         self.elapsed_time = 0
         self.elapsed_time_lap = 0
         self.kcf = Kcf_python()
@@ -77,7 +78,8 @@ class Game:
             self.cvs.draw_text("[C] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
             self.cvs.draw_text("[L] Select location",400,360,C.WHITE,self.cvs.fnt_m)
             self.cvs.draw_text("[G] Select BGM",400,400,C.WHITE,self.cvs.fnt_m)
-            self.cvs.draw_text("[M] Select mode",400,440,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[O] Select operation",400,440,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[M] Select mode",400,480,C.WHITE,self.cvs.fnt_m)
             self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             
@@ -89,6 +91,8 @@ class Game:
                 self.idx = 6                                                    #idxを6にして場所選択に移行
             if key[K_g] != 0:                                               #Lキーが押されたら
                 self.idx = 7                                                    #idxを6にして場所選択に移行
+            if key[K_o] != 0:
+                self.idx = 9
 
         if self.idx == 1:  #idxが1(カウントダウン)のとき
             time_c = time.time()
@@ -154,6 +158,11 @@ class Game:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.bgm_select(self.cvs.screen, key)
+
+        if self.idx == 9:
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
+            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
+            self.operation_select(self.cvs.screen, key)
 
     def direction_change(self):
         #バウンディングボックス作成
@@ -294,9 +303,9 @@ class Game:
 
         self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
         if key[K_1] == 1:
-            self.mylocation = 0  #mylocationに0を代入(Tokyo)
-        if key[K_2] == 1: #2キーが押されたら
-            self.mylocation = 1 #mylocationに1を代入(Space)
+            self.mylocation = 0  
+        if key[K_2] == 1: 
+            self.mylocation = 1 
         
         if key[K_RETURN] != 0: 
             self.idx = 0  #タイトル画面に戻る
@@ -320,6 +329,32 @@ class Game:
             self.mybgm = 2                                                         #mycarに2を代入(黄色の車)
         if key[K_RETURN] == 1:                                              #Enterキーが押されたら
             self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
+
+    def operation_select(self,bg,key):
+        self.cvs.draw_text("Select operation method", 400, 160, C.WHITE, self.cvs.fnt_m)  #Select location を表示
+        for i in range(2):
+            x = 200 + 400 * i  #xに選択用の枠のx座標を代入
+            y = 300  #yに選択用の枠のy座標を代入
+            col = C.BLACK  #colにBLACkを代入
+            if i == self.myoperation:  #選択している車種なら    
+                col = (0, 128, 255)  #colに明るい青の値を代入    
+            pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
+            bg.blit(self.img_operation[i], [x - 100, y - 100])  #それぞれの場所を描画
+            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.GRAY,self.cvs.fnt_m)        #[n]の文字を表示
+            if i == 0:
+                self.cvs.draw_text("Key",x,y-40,C.GRAY,self.cvs.fnt_m)
+            if i == 1:
+                self.cvs.draw_text("Face image",x,y-40,C.GRAY,self.cvs.fnt_m)
+
+        self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:
+            self.myoperation = 0  #mylocationに0を代入(Tokyo)
+        if key[K_2] == 1: #2キーが押されたら
+            self.myoperation = 1 #mylocationに1を代入(Space)
+        
+        if key[K_RETURN] != 0: 
+            self.idx = 0  #タイトル画面に戻る
+
 
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
@@ -369,6 +404,11 @@ class Game:
         self.img_location = [
             pygame.image.load("image_pr/tokyo_2.jpg").convert(),
             pygame.image.load("image_pr/space_2.png").convert(),
+        ]
+
+        self.img_operation = [
+            pygame.image.load("image_pr/keyboard.jpg").convert(),
+            pygame.image.load("image_pr/face.jpg").convert()
         ]
         
     
