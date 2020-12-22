@@ -27,6 +27,7 @@ class Pulse:
             s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# ここで毎回切断
             s.bind(('192.168.100.112', self.PORT))
             s.listen()
+            print("Listen Now...")
             (connection, client) = s.accept()
 
             # try:
