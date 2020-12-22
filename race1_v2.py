@@ -20,7 +20,7 @@ class Game:
         self.cvs = Canvas()
         # self.kcf = Kcf_python()
         # Parameters(Varaible)
-        self.idx = 8
+        self.idx = 0
         self.tmr = 0                           #タイマーの変数
         self.time = 0                          #timeモジュールを使った時間の計測のための変数
         self.laps = 0                          #何周目かを管理する変数
@@ -35,6 +35,8 @@ class Game:
         self.elapsed_time = 0
         self.elapsed_time_lap = 0
         self.kcf = Kcf_python()
+        self.right = 0
+        self.left = 0
         # self.value = 0
         
     #ファイル実行
@@ -54,12 +56,12 @@ class Game:
             self.cvs.update_canvas(self)
             key = pygame.key.get_pressed()  #keyに全てのキーの状態代入
             key = list(key)
-            right ,left = self.direction_change()
-            self.manage_game(key,right,left)
+            self.direction_change(key)
+            self.manage_game(key)
             pygame.display.update()  #画面を更新する
             clock.tick(60)  #フレームレートを指定
 
-    def manage_game(self, key,right,left):
+    def manage_game(self, key):
         '''
             indexの説明
             0 => タイトル画面
@@ -92,7 +94,7 @@ class Game:
             if key[K_g] != 0:                                               #Lキーが押されたら
                 self.idx = 7                                                    #idxを6にして場所選択に移行
             if key[K_o] != 0:
-                self.idx = 9
+                self.idx = 8
 
         if self.idx == 1:  #idxが1(カウントダウン)のとき
             time_c = time.time()
@@ -118,7 +120,7 @@ class Game:
             
             self.music_play()
             self.rec = self.rec + 1 / 60  #走行時間をカウント
-            self.p1.drive_car(key, self, self.cvs,right,left) #プレイヤーの車を動かせるように
+            self.p1.drive_car(key, self, self.cvs,self.right,self.left) #プレイヤーの車を動かせるように
             
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             self.collision_judge(1)  #衝突判定
@@ -159,28 +161,29 @@ class Game:
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.bgm_select(self.cvs.screen, key)
 
-        if self.idx == 9:
+        if self.idx == 8:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.operation_select(self.cvs.screen, key)
 
-    def direction_change(self):
-        #バウンディングボックス作成
-        while self.idx == 8:
-            self.kcf.make_bbox()
-            self.idx = 0#写真撮影を終了
+    def direction_change(self,key):
+        if self.myoperation == 0:
+            self.right = key[K_RIGHT]
+            self.left = key[K_LEFT]
 
         #顔の位置を車両の移動に変換
-        right = int(self.kcf.tracking_face()[0])
-        left = int(self.kcf.tracking_face()[1])
+        if self.myoperation == 1:
+            if self.idx != 8:
+                self.right = int(self.kcf.tracking_face()[0])
+                self.left = int(self.kcf.tracking_face()[1])
         # print("RIGHT:{},LEFT:{}".format(right,left))
-        return right,left
+
+
 
     def collision_judge(self,cs):
         if self.idx == 2:
             for i in range(cs,C.CAR_NUM):
                 cx = self.com.x[i] - self.p1.x  #プレイヤーの車との横方向の距離
-                
                 cy = self.com.y[i]-(self.p1.y+self.p1.PLself) % C.CMAX                         #プレイヤーの車とのコース上の距離
                 if -100 <= cx and cx <= 100 and -10 <= cy and cy <= 10:       #それらがこの範囲内なら
                     #衝突時の座標変化、速度の入れ替えと減速
@@ -348,17 +351,21 @@ class Game:
 
         self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
         if key[K_1] == 1:
-            self.myoperation = 0  #mylocationに0を代入(Tokyo)
+            self.myoperation = 0  #キー操作
         if key[K_2] == 1: #2キーが押されたら
-            self.myoperation = 1 #mylocationに1を代入(Space)
+            self.myoperation = 1 #顔認識
         
         if key[K_RETURN] != 0: 
-            self.idx = 0  #タイトル画面に戻る
+            if self.myoperation == 0:
+                self.idx = 0
+            if self.myoperation == 1:
+                self.kcf.make_bbox()
+                self.idx = 0  #写真撮影を終了
+            
 
 
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
-        #self.img_bg = pygame.image.load("image_pr/tokyo_1.jpg").convert()            #背景(空と地面の絵)
         self.img_bg = [
             pygame.image.load("image_pr/tokyo_3.jpg").convert(),
             pygame.image.load("image_pr/space_3.jpg").convert()
