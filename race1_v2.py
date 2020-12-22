@@ -363,11 +363,11 @@ class Game:
                 col = (0, 128, 255)  #colに明るい青の値を代入    
             pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
             bg.blit(self.img_operation[i], [x - 100, y - 100])  #それぞれの場所を描画
-            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.GRAY,self.cvs.fnt_m)        #[n]の文字を表示
+            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.ORANGE,self.cvs.fnt_m)        #[n]の文字を表示
             if i == 0:
-                self.cvs.draw_text("Key",x,y-40,C.GRAY,self.cvs.fnt_m)
+                self.cvs.draw_text("Key",x,y-40,C.ORANGE,self.cvs.fnt_m)
             if i == 1:
-                self.cvs.draw_text("Face image",x,y-40,C.GRAY,self.cvs.fnt_m)
+                self.cvs.draw_text("Face image",x,y-40,C.ORANGE,self.cvs.fnt_m)
 
         self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
         if key[K_1] == 1:
@@ -392,11 +392,11 @@ class Game:
                 col = (0, 128, 255)  #colに明るい青の値を代入    
             pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
             bg.blit(self.img_speed[i], [x - 100, y - 100])  #それぞれの場所を描画
-            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
+            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.ORANGE,self.cvs.fnt_m)        #[n]の文字を表示
             if i == 0:
-                self.cvs.draw_text("Normal",x,y-40,C.WHITE,self.cvs.fnt_m)
+                self.cvs.draw_text("Normal",x,y-40,C.ORANGE,self.cvs.fnt_m)
             if i == 1:
-                self.cvs.draw_text("Pulse",x,y-40,C.WHITE,self.cvs.fnt_m)
+                self.cvs.draw_text("Pulse",x,y-40,C.ORANGE,self.cvs.fnt_m)
             
 
         self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示

@@ -15,7 +15,7 @@ class Player:
         self.lr = 0           #車の左右の向きを管理するリスト
         self.pls = Pulse() #パルスを定義
         self.spd = 0   #車の速度を管理するリスト
-        self.spd_control()#スピードが表示される
+        #self.spd_control()#スピードが表示される
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         self.pulse_spd = 0
         # self.data = 0
@@ -45,7 +45,7 @@ class Player:
             self.lr = int(self.lr*0.9)                   #正面向きに近づける
         
         #速度制御
-        self.spd = self.spd_control()
+        self.spd = self.spd_control(game,key)
 
         self.x -= self.spd * cvs.curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
         if self.x < 0 + 50:     #左の路肩に接触したら
@@ -92,15 +92,29 @@ class Player:
         return tmr, laps
 
     #ここは一つのデータしかありませーん
-    def spd_control(self):  #心拍を速度に変換する関数
-        self.pls_data = int(float(self.pls.pulse_socket()))
-        # print("pls_data：", self.pls_data)
-        if 0 <= self.pls_data and self.pls_data <= 50:
-            self.spd = 50
-        elif 50 < self.pls_data and self.pls_data <= 170:
-            self.spd = self.pls_data
-        else:
-            self.spd = 170
+    def spd_control(self,game,key):  #心拍を速度に変換する関数
+        if game.myspd_control == 0:
+            if key[K_a] == 1:
+                self.spd += 3
+            elif key[K_z] == 1:
+                self.spd -= 10
+            else:
+                self.spd -= 0.25
+            if self.spd < 0:
+                self.spd = 0
+            if self.spd >= C.CAR_SPD_MAX:
+                self.spd = C.CAR_SPD_MAX
+            #self.spd = 300
+
+        if game.myspd_control == 1:
+            self.pls_data = int(float(self.pls.pulse_socket()))
+            # print("pls_data：", self.pls_data)
+            if 0 <= self.pls_data and self.pls_data <= 50:
+                self.spd = 50
+            elif 50 < self.pls_data and self.pls_data <= 170:
+                self.spd = self.pls_data
+            else:
+                self.spd = 170
         return self.spd
 
 # if __name__ == '__main__':
