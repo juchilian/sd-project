@@ -103,13 +103,8 @@ class Player:
             self.spd = 170
         return self.spd
 
-# if __name__ == '__main__':
-#     player = Player(300,0)
-#     player.kcf.make_bbox()
-#     while True:
-#         print(player.kcf.tracking_face())#make_bboxは最初の写真#tracking_faceは後のどうがの部分
-#         k = cv2.waitKey(1)
-#         if k == 27 :
-#             break
-#     player.kcf.cap.release()
-#     cv2.destroyAllWindows()
+if __name__ == '__main__':
+    player = Player(300,0)
+    while True:
+        print(player.spd_control())
+    
