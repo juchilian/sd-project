@@ -30,6 +30,7 @@ class Game:
         self.mycar = 0                         #車選択用の変数
         self.mymode = 0                        #モード選択用の変数
         self.mylocation = 0                    #場所選択用の変数
+        self.l_page = 0
         self.mybgm = 0
         self.myoperation = 0
         self.myspd_control = 0
@@ -56,7 +57,7 @@ class Game:
             self.tmr += 1
             self.cvs.update_canvas(self)
             key = pygame.key.get_pressed()  #keyに全てのキーの状態代入
-            key = list(key)
+            # key = list(key)
             self.manage_game(key)
             self.re_recognition(key)
             self.direction_change(key)
@@ -181,8 +182,15 @@ class Game:
 
     def direction_change(self,key):
         if self.myoperation == 0:
-            self.right = key[K_RIGHT]
-            self.left = key[K_LEFT]
+            if key[K_RIGHT] != 0:
+                self.right = 1
+            elif key[K_LEFT] != 0:
+                self.left = 1
+            else:
+                self.right = 0
+                self.left = 0
+            # self.right = key[K_RIGHT]
+            # self.left = key[K_LEFT]
 
         #顔の位置を車両の移動に変換
         if self.myoperation == 1 and self.kcf.value == 1:
@@ -301,27 +309,50 @@ class Game:
 
     def locate_select(self, bg, key):
         self.cvs.draw_text("Select location", 400, 160, C.WHITE, self.cvs.fnt_m)  #Select location を表示
-        for i in range(2):
-            x = 200 + 400 * i  #xに選択用の枠のx座標を代入
-            y = 300  #yに選択用の枠のy座標を代入
-            col = C.BLACK  #colにBLACkを代入
-            if i == self.mylocation:  #選択している車種なら    
-                col = (0, 128, 255)  #colに明るい青の値を代入    
-            pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
-            bg.blit(self.img_location[i], [x - 100, y - 100])  #それぞれの場所を描画
-            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
-            if i == 0:
-                self.cvs.draw_text("Tokyo",x,y-40,C.WHITE,self.cvs.fnt_m)
-            if i == 1:
-                self.cvs.draw_text("Space",x,y-40,C.WHITE,self.cvs.fnt_m)
-            
-            #bg.blit(self.img_location[i],[x-100,y-100])                       #それぞれの場所を描画
+        if key[K_RIGHT] == 1:
+            self.mylocation = 2
+            self.l_page = 1
+        elif key[K_LEFT] == 1:
+            self.mylocation = 0
+            self.l_page = 0
+        if self.l_page == 0:
+            for i in range(2):
+                x = 250 + 300 * i  #xに選択用の枠のx座標を代入
+                y = 300  #yに選択用の枠のy座標を代入
+                col = C.BLACK  #colにBLACkを代入
+                if i == self.mylocation:  #選択している車種なら    
+                    col = (0, 128, 255)  #colに明るい青の値を代入    
+                pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
+                bg.blit(self.img_location[i], [x - 100, y - 100])  #それぞれの場所を描画
+                self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
+                if i == 0:
+                    self.cvs.draw_text("Tokyo",x,y-40,C.WHITE,self.cvs.fnt_m)
+                if i == 1:
+                    self.cvs.draw_text("Space",x,y-40,C.WHITE,self.cvs.fnt_m)
+        if self.l_page == 1:
+            for i in range(2,3):
+                x = 250 + 300 * i - 600 #xに選択用の枠のx座標を代入
+                y = 300  #yに選択用の枠のy座標を代入
+                col = C.BLACK  #colにBLACkを代入
+                if i == self.mylocation:  #選択している車種なら    
+                    col = (0, 128, 255)  #colに明るい青の値を代入    
+                pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
+                bg.blit(self.img_location[i], [x - 100, y - 100])  #それぞれの場所を描画
+                self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
+                if i == 2:
+                    self.cvs.draw_text("?????",x,y-40,C.WHITE,self.cvs.fnt_m)
+                # if i == 1:
+                #     self.cvs.draw_text("Space",x,y-40,C.WHITE,self.cvs.fnt_m)
 
         self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
-        if key[K_1] == 1:
-            self.mylocation = 0  
-        if key[K_2] == 1: 
-            self.mylocation = 1 
+        if self.l_page == 0:
+            if key[K_1] == 1:
+                self.mylocation = 0  
+            if key[K_2] == 1: 
+                self.mylocation = 1
+        if self.l_page == 1:
+            if key[K_3] == 1: 
+                self.mylocation = 2
         
         if key[K_RETURN] != 0: 
             self.idx = 0  #タイトル画面に戻る
@@ -425,6 +456,7 @@ class Game:
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
         self.img_bg = [
             pygame.image.load("image_pr/tokyo_3.jpg").convert(),
+            pygame.image.load("image_pr/space_3.jpg").convert(),
             pygame.image.load("image_pr/space_3.jpg").convert()
         ]
 
@@ -468,6 +500,7 @@ class Game:
         self.img_location = [
             pygame.image.load("image_pr/tokyo_2.jpg").convert(),
             pygame.image.load("image_pr/space_2.png").convert(),
+            pygame.image.load("image_pr/space_2.png").convert()
         ]
 
         self.img_operation = [
