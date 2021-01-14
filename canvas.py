@@ -138,6 +138,12 @@ class Canvas:
                     self.draw_obj(game.img_obj[obj_l],ux-uw*0.2,uy,scale)
                 # if obj_l == 4: #金星(左)
                 #     self.draw_obj(game.img_obj[obj_l],ux+uw/2,uy-uw,scale)
+            
+            if game.mylocation == 2:  #Space
+                if obj_r == 1:  #ビル(右)
+                    self.draw_obj(game.img_obj[obj_r],ux+uw*1.2,uy,scale)  
+                if obj_l == 2: #ビル(左)
+                    self.draw_obj(game.img_obj[obj_l],ux-uw*0.2,uy,scale)
 
             for c in range(1,C.CAR_NUM):                                      #繰り返しで
                 if int(game.com.y[c])%C.CMAX == int(game.p1.y+i)%C.CMAX:          #その板にCOMカーがあるかどうか調べ

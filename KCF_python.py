@@ -1,11 +1,13 @@
 import cv2
 import numpy as np
+import time
 
 class Kcf_python():  
     def __init__(self):
         self.tracker = cv2.TrackerKCF_create()
         self.cap = cv2.VideoCapture(0)
         self.value = 1
+        self.re_time = 0
 
     def frame_resize(self,frame,n=2):
         return cv2.resize(frame, (int(frame.shape[1]*1/2), int(frame.shape[0]*1/2)))
@@ -48,6 +50,7 @@ class Kcf_python():
         
         else :
             self.value = 0
+            self.re_time = time.time()
             cv2.putText(frame, "Failure", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1, cv2.LINE_AA)
             [K_RIGHT, K_LEFT] = [0,0]
 
