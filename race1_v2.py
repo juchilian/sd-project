@@ -30,10 +30,16 @@ class Game:
         self.mycar = 0                         #車選択用の変数
         self.mymode = 0                        #モード選択用の変数
         self.mylocation = 0                    #場所選択用の変数
+        self.l_page = 0
         self.mybgm = 0
+        self.myoperation = 0
+        self.myspd_control = 0
         self.elapsed_time = 0
         self.elapsed_time_lap = 0
         self.kcf = Kcf_python()
+        self.right = 0
+        self.left = 0
+        # self.value = 0
         
     #ファイル実行
     def run(self):
@@ -42,7 +48,7 @@ class Game:
         self.load_image() # 画像取り込み
         self.load_bgm()   #bgm取り込み
         self.load_sound() # サウンド取り込み
-        player = Player(300,0)
+        
         while True:                              #無限ループで処理を続ける
             for event in pygame.event.get():            #pygameのイベントを繰り返しで処理する
                 if event.type == QUIT:                   #ウインドウの×ボタンをクリックしたら
@@ -51,14 +57,16 @@ class Game:
             self.tmr += 1
             self.cvs.update_canvas(self)
             key = pygame.key.get_pressed()  #keyに全てのキーの状態代入
+            # key = list(key)
             self.manage_game(key)
+            self.re_recognition(key)
+            self.direction_change(key)
             pygame.display.update()  #画面を更新する
             clock.tick(60)  #フレームレートを指定
 
     def manage_game(self, key):
         '''
             indexの説明
-            -1 => 画像撮影
             0 => タイトル画面
             1 => カウントダウン時
             2 => レース中
@@ -67,6 +75,8 @@ class Game:
             5 => モード選択の時
             6 => 場所選択の時
             7 => BGM選択の時
+            8 => 操作方法選択画面
+            9 => 速度制御方法選択画面
         '''       
 
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
@@ -74,7 +84,9 @@ class Game:
             self.cvs.draw_text("[C] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
             self.cvs.draw_text("[L] Select location",400,360,C.WHITE,self.cvs.fnt_m)
             self.cvs.draw_text("[G] Select BGM",400,400,C.WHITE,self.cvs.fnt_m)
-            self.cvs.draw_text("[M] Select mode",400,440,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[O] Select operation",400,440,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[S] Select speed control",400,480,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[M] Select mode",400,520,C.WHITE,self.cvs.fnt_m)
             self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             
@@ -86,6 +98,10 @@ class Game:
                 self.idx = 6                                                    #idxを6にして場所選択に移行
             if key[K_g] != 0:                                               #Lキーが押されたら
                 self.idx = 7                                                    #idxを6にして場所選択に移行
+            if key[K_o] != 0:
+                self.idx = 8
+            if key[K_s] != 0:
+                self.idx = 9
 
         if self.idx == 1:  #idxが1(カウントダウン)のとき
             time_c = time.time()
@@ -111,7 +127,7 @@ class Game:
             
             self.music_play()
             self.rec = self.rec + 1 / 60  #走行時間をカウント
-            self.p1.drive_car(key, self, self.cvs) #プレイヤーの車を動かせるように
+            self.p1.drive_car(key, self, self.cvs,self.right,self.left) #プレイヤーの車を動かせるように
             
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             self.collision_judge(1)  #衝突判定
@@ -137,7 +153,6 @@ class Game:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
             self.car_select(key)
-            
 
         if self.idx == 5:  #idxが5(モード選択)のとき
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
@@ -153,13 +168,43 @@ class Game:
             self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
             self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
             self.bgm_select(self.cvs.screen, key)
+
+        if self.idx == 8:
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
+            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
+            self.operation_select(self.cvs.screen, key)
+
+        if self.idx == 9:
+            self.tmr, self.laps = self.p1.move_player(self.tmr, self.laps)               #プレイヤーの車を動かす                                   #プレイヤーの車をただ動かすだけ
+            self.com.move_car(1,self.tmr)                                                #コンピュータの車を動かす
+            self.speed_operation(self.cvs.screen,key)
             
+
+    def direction_change(self,key):
+        if self.myoperation == 0:
+            if key[K_RIGHT] != 0:
+                self.right = 1
+            elif key[K_LEFT] != 0:
+                self.left = 1
+            else:
+                self.right = 0
+                self.left = 0
+            # self.right = key[K_RIGHT]
+            # self.left = key[K_LEFT]
+
+        #顔の位置を車両の移動に変換
+        if self.myoperation == 1 and self.kcf.value == 1:
+            if self.idx != 8:
+                self.right = int(self.kcf.tracking_face()[0])
+                self.left = int(self.kcf.tracking_face()[1])
+        # print("RIGHT:{},LEFT:{}".format(right,left))
+
+
 
     def collision_judge(self,cs):
         if self.idx == 2:
             for i in range(cs,C.CAR_NUM):
                 cx = self.com.x[i] - self.p1.x  #プレイヤーの車との横方向の距離
-                
                 cy = self.com.y[i]-(self.p1.y+self.p1.PLself) % C.CMAX                         #プレイヤーの車とのコース上の距離
                 if -100 <= cx and cx <= 100 and -10 <= cy and cy <= 10:       #それらがこの範囲内なら
                     #衝突時の座標変化、速度の入れ替えと減速
@@ -264,27 +309,50 @@ class Game:
 
     def locate_select(self, bg, key):
         self.cvs.draw_text("Select location", 400, 160, C.WHITE, self.cvs.fnt_m)  #Select location を表示
-        for i in range(2):
-            x = 200 + 400 * i  #xに選択用の枠のx座標を代入
-            y = 300  #yに選択用の枠のy座標を代入
-            col = C.BLACK  #colにBLACkを代入
-            if i == self.mylocation:  #選択している車種なら    
-                col = (0, 128, 255)  #colに明るい青の値を代入    
-            pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
-            bg.blit(self.img_location[i], [x - 100, y - 100])  #それぞれの場所を描画
-            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
-            if i == 0:
-                self.cvs.draw_text("Tokyo",x,y-40,C.WHITE,self.cvs.fnt_m)
-            if i == 1:
-                self.cvs.draw_text("Space",x,y-40,C.WHITE,self.cvs.fnt_m)
-            
-            #bg.blit(self.img_location[i],[x-100,y-100])                       #それぞれの場所を描画
+        if key[K_RIGHT] == 1:
+            self.mylocation = 2
+            self.l_page = 1
+        elif key[K_LEFT] == 1:
+            self.mylocation = 0
+            self.l_page = 0
+        if self.l_page == 0:
+            for i in range(2):
+                x = 250 + 300 * i  #xに選択用の枠のx座標を代入
+                y = 300  #yに選択用の枠のy座標を代入
+                col = C.BLACK  #colにBLACkを代入
+                if i == self.mylocation:  #選択している車種なら    
+                    col = (0, 128, 255)  #colに明るい青の値を代入    
+                pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
+                bg.blit(self.img_location[i], [x - 100, y - 100])  #それぞれの場所を描画
+                self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
+                if i == 0:
+                    self.cvs.draw_text("Tokyo",x,y-40,C.WHITE,self.cvs.fnt_m)
+                if i == 1:
+                    self.cvs.draw_text("Space",x,y-40,C.WHITE,self.cvs.fnt_m)
+        if self.l_page == 1:
+            for i in range(2,3):
+                x = 250 + 300 * i - 600 #xに選択用の枠のx座標を代入
+                y = 300  #yに選択用の枠のy座標を代入
+                col = C.BLACK  #colにBLACkを代入
+                if i == self.mylocation:  #選択している車種なら    
+                    col = (0, 128, 255)  #colに明るい青の値を代入    
+                pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
+                bg.blit(self.img_location[i], [x - 100, y - 100])  #それぞれの場所を描画
+                self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.WHITE,self.cvs.fnt_m)        #[n]の文字を表示
+                if i == 2:
+                    self.cvs.draw_text("?????",x,y-40,C.WHITE,self.cvs.fnt_m)
+                # if i == 1:
+                #     self.cvs.draw_text("Space",x,y-40,C.WHITE,self.cvs.fnt_m)
 
         self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
-        if key[K_1] == 1:
-            self.mylocation = 0  #mylocationに0を代入(Tokyo)
-        if key[K_2] == 1: #2キーが押されたら
-            self.mylocation = 1 #mylocationに1を代入(Space)
+        if self.l_page == 0:
+            if key[K_1] == 1:
+                self.mylocation = 0  
+            if key[K_2] == 1: 
+                self.mylocation = 1
+        if self.l_page == 1:
+            if key[K_3] == 1: 
+                self.mylocation = 2
         
         if key[K_RETURN] != 0: 
             self.idx = 0  #タイトル画面に戻る
@@ -298,7 +366,7 @@ class Game:
             if i == self.mybgm:                                                    #選択している車種なら
                 col = (0,128,255)                                                   #colに明るい青の値を代入
             self.cvs.draw_text("["+str(i+1)+"] : ",x,y,col,self.cvs.fnt_m)
-            self.cvs.draw_text(self.bgm_race[i],x+250,y,col,self.cvs.fnt_m)
+            self.cvs.draw_text(self.bgm_name[i],x+250,y,col,self.cvs.fnt_m)
         self.cvs.draw_text("[Enter] OK!",400,540,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
         if key[K_1] == 1:                                                   #1キーが押されたら
             self.mybgm = 0                                                         #mycarに0を代入(赤い車)
@@ -317,11 +385,78 @@ class Game:
         if key[K_RETURN] == 1:                                              #Enterキーが押されたら
             self.idx = 0                                                           #idxを0にしてタイトル画面に戻る
 
+    def operation_select(self,bg,key):
+        self.cvs.draw_text("Select operation method", 400, 160, C.WHITE, self.cvs.fnt_m)  #Select location を表示
+        for i in range(2):
+            x = 200 + 400 * i  #xに選択用の枠のx座標を代入
+            y = 300  #yに選択用の枠のy座標を代入
+            col = C.BLACK  #colにBLACkを代入
+            if i == self.myoperation:  #選択している車種なら    
+                col = (0, 128, 255)  #colに明るい青の値を代入    
+            pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
+            bg.blit(self.img_operation[i], [x - 100, y - 100])  #それぞれの場所を描画
+            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.ORANGE,self.cvs.fnt_m)        #[n]の文字を表示
+            if i == 0:
+                self.cvs.draw_text("Key",x,y-40,C.ORANGE,self.cvs.fnt_m)
+            if i == 1:
+                self.cvs.draw_text("Face image",x,y-40,C.ORANGE,self.cvs.fnt_m)
+
+        self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:
+            self.myoperation = 0  #キー操作
+        if key[K_2] == 1: #2キーが押されたら
+            self.myoperation = 1 #顔認識
+        
+        if key[K_RETURN] != 0: 
+            if self.myoperation == 0:
+                self.idx = 0
+            if self.myoperation == 1:
+                self.kcf.make_bbox()
+                self.idx = 0  #写真撮影を終了
+
+    def speed_operation(self,bg,key):
+        self.cvs.draw_text("Select speed control", 400, 160, C.WHITE, self.cvs.fnt_m)  #Select location を表示
+        for i in range(2):
+            x = 200 + 400 * i  #xに選択用の枠のx座標を代入
+            y = 300  #yに選択用の枠のy座標を代入
+            col = C.BLACK  #colにBLACkを代入
+            if i == self.myspd_control:  #選択している車種なら    
+                col = (0, 128, 255)  #colに明るい青の値を代入    
+            pygame.draw.rect(bg, col, [x - 120, y - 120, 240, 240])  #colの色で枠を描く
+            bg.blit(self.img_speed[i], [x - 100, y - 100])  #それぞれの場所を描画
+            self.cvs.draw_text("["+str(i+1)+"]",x,y-90,C.ORANGE,self.cvs.fnt_m)        #[n]の文字を表示
+            if i == 0:
+                self.cvs.draw_text("Normal",x,y-40,C.ORANGE,self.cvs.fnt_m)
+            if i == 1:
+                self.cvs.draw_text("Pulse",x,y-40,C.ORANGE,self.cvs.fnt_m)
+            
+
+        self.cvs.draw_text("[Enter] OK!",400,460,C.GREEN,self.cvs.fnt_m)          #[Enter] OK! を表示
+        if key[K_1] == 1:
+            self.myspd_control = 0  
+        if key[K_2] == 1: 
+            self.myspd_control = 1 
+        
+        if key[K_RETURN] != 0: 
+            self.idx = 0  #タイトル画面に戻る
+
+    def re_recognition(self,key):
+        if self.myoperation == 1 and self.kcf.value == 0:
+            pygame.draw.rect(self.cvs.screen,C.BLACK,[100,250,600,150],5)
+            pygame.draw.rect(self.cvs.screen,C.WHITE,[102,252,596,146])
+            self.cvs.draw_text("Please recognize your face...",400,300,C.RED,self.cvs.fnt_m)
+            self.cvs.draw_text("[Enter] capture your face",400,340,C.RED,self.cvs.fnt_m)
+            if key[K_RETURN] == 1:
+                self.kcf.__init__()
+                self.kcf.make_bbox()
+            
+
+
     def load_image(self): #画像の読み込み
         self.img_title = pygame.image.load("image_pr/title_sd.png").convert_alpha()    #タイトルロゴ
-        #self.img_bg = pygame.image.load("image_pr/tokyo_1.jpg").convert()            #背景(空と地面の絵)
         self.img_bg = [
             pygame.image.load("image_pr/tokyo_3.jpg").convert(),
+            pygame.image.load("image_pr/space_3.jpg").convert(),
             pygame.image.load("image_pr/space_3.jpg").convert()
         ]
 
@@ -365,6 +500,17 @@ class Game:
         self.img_location = [
             pygame.image.load("image_pr/tokyo_2.jpg").convert(),
             pygame.image.load("image_pr/space_2.png").convert(),
+            pygame.image.load("image_pr/space_2.png").convert()
+        ]
+
+        self.img_operation = [
+            pygame.image.load("image_pr/keyboard.jpg").convert(),
+            pygame.image.load("image_pr/face.jpg").convert()
+        ]
+
+        self.img_speed = [
+            pygame.image.load("image_pr/normal.jpg").convert(),
+            pygame.image.load("image_pr/pulse.jpg").convert()
         ]
         
     
@@ -412,6 +558,15 @@ class Game:
             "sound_pr/kirby.mp3",
             "sound_pr/music1.mp3",
             "sound_pr/seeyouagain.mp3"
+        ]
+        self.bgm_name = [
+            "Goldenrule",
+            "Yorunikakeru",
+            "Ultrasoul",
+            "EDM medley",
+            "Kirby",
+            "Music medley",
+            "See you again"
         ]
     
     def load_sound(self):

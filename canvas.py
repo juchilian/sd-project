@@ -59,6 +59,8 @@ class Canvas:
             offset_y = 550
         if game.mylocation == 1:
             offset_y = 800
+        if game.mylocation == 2:
+            offset_y = 800
 
         #背景の垂直位置
         

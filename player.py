@@ -15,7 +15,7 @@ class Player:
         self.lr = 0           #車の左右の向きを管理するリスト
         self.pls = Pulse() #パルスを定義
         self.spd = 0   #車の速度を管理するリスト
-        self.spd_control()#スピードが表示される
+        #self.spd_control()#スピードが表示される
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         self.pulse_spd = 0
         # self.data = 0
@@ -28,24 +28,16 @@ class Player:
         mi  = int(sec/60)                            #分をmiに代入
         return "{}'{:02}.{:02}".format(mi,sec%60,ms)   # **'**.**という文字列を返す
 
-    def drive_car(self, key, game,cvs): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
-        #tupleをlistに変換
-        key = list(key)
-
-        #バウンディングボックス作成
-        while self.value == 0:
-            self.kcf.make_bbox()
-            self.value += 1
+    def drive_car(self, key, game,cvs,right,left): #プレイヤーの車の操作、制御する関数 #修正箇所(returnで値の変更を反映)
         #顔の位置を車両の移動に変換
-        key[K_RIGHT] = int(self.kcf.tracking_face()[0])
-        key[K_LEFT] = int(self.kcf.tracking_face()[1])
-        print("RIGHT:{},LEFT:{}".format(key[K_RIGHT],key[K_LEFT]))
+        # key[K_RIGHT] = right
+        # key[K_LEFT] = left
 
-        if key[K_LEFT] == 1:  #左キーが押されたら
+        if left == 1:  #左キーが押されたら
             if self.lr > -3: #向きが-3より大きければ
                 self.lr -= 1  #向きを-1する
             self.x += (self.lr-3)*self.spd/100 - 5      #車の横方向の座標を計算
-        elif key[K_RIGHT] == 1:                                        #そうでなく右キーが押されたら
+        elif right == 1:                                        #そうでなく右キーが押されたら
             if self.lr < 3:                                           #向きが3より小さければ-
                 self.lr += 1                                           #向きを+1する
             self.x +=(self.lr+3)*self.spd/100 + 5      #車の横方向の座標を計算
@@ -53,7 +45,7 @@ class Player:
             self.lr = int(self.lr*0.9)                   #正面向きに近づける
         
         #速度制御
-        self.spd = self.spd_control()
+        self.spd = self.spd_control(game,key)
 
         self.x -= self.spd * cvs.curve[int(self.y + self.PLself) % C.CMAX] / 50 #車の速度と道の曲がりから横方向の座標を計算
         if self.x < 0 + 50:     #左の路肩に接触したら
@@ -74,7 +66,6 @@ class Player:
                 game.idx = 3               #idxを3にしてゴール処理へ
                 game.tmr = 0
 
-            
     #タイトル画面、ゲーム終了後の画面で車を動かす動きを定義
     def move_player(self, tmr, laps):                                #プレイヤーの車を勝手に動かすための関数
         if self.spd < 200:                                    #速度が100より小さいなら
@@ -101,15 +92,28 @@ class Player:
         return tmr, laps
 
     #ここは一つのデータしかありませーん
-    def spd_control(self):  #心拍を速度に変換する関数
-        self.pls_data = int(float(self.pls.pulse_socket()))
-        # print("pls_data：", self.pls_data)
-        if 0 <= self.pls_data and self.pls_data <= 50:
-            self.spd = 50
-        elif 50 < self.pls_data and self.pls_data <= 170:
-            self.spd = self.pls_data
-        else:
-            self.spd = 170
+    def spd_control(self,game,key):  #心拍を速度に変換する関数
+        if game.myspd_control == 0:
+            if key[K_a] == 1:
+                self.spd += 3
+            elif key[K_z] == 1:
+                self.spd -= 10
+            else:
+                self.spd -= 0.25
+            if self.spd < 0:
+                self.spd = 0
+            if self.spd >= C.CAR_SPD_MAX:
+                self.spd = C.CAR_SPD_MAX
+
+        if game.myspd_control == 1:
+            self.pls_data = int(float(self.pls.pulse_socket()))
+            # print("pls_data：", self.pls_data)
+            if 0 <= self.pls_data and self.pls_data <= 50:
+                self.spd = 50
+            elif 50 < self.pls_data and self.pls_data <= 300:
+                self.spd = self.pls_data
+            else:
+                self.spd = 300
         return self.spd
 
 # if __name__ == '__main__':
