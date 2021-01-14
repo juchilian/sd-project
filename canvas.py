@@ -120,7 +120,8 @@ class Canvas:
             if i == game.p1.PLself: #PLAYERカー                                                                           #プレイヤーの車の位置なら
                 self.draw_shadow(ux + game.p1.x * C.BOARD_W[i] / 800, uy, 200 * C.BOARD_W[i] / C.BOARD_W[0])  #車の影を描く
                 self.draw_obj(game.img_car[3 + game.p1.lr + game.mycar*7], ux + game.p1.x * C.BOARD_W[i] / 800, uy, 0.05+ C.BOARD_W[i] / C.BOARD_W[0])  #プレイヤーの車を描く
-
+                self.draw_text("your car", ux + game.p1.x * C.BOARD_W[i] / 800, uy-100,C.WHITE,self.fnt_s)
+                
                 # Multiplay modeの時の描画
             if game.mymode == 1:  
                 # オンラインに必要なものの描画
@@ -181,6 +182,7 @@ class Canvas:
             if lr > 3:                                          #3より大きいなら3で
                 lr = 3
             self.draw_obj(game.img_car[14+3+lr],ux+game.multiGame.bothPos[com(game.player)][0]*C.BOARD_W[i]/800,uy,0.05+C.BOARD_W[i]/C.BOARD_W[0])
+            self.draw_text("Opponent",ux+game.multiGame.bothPos[com(game.player)][0]*C.BOARD_W[i]/800,uy-100,self.fnt_s)
 
     def update_object(self, game):
         for i in range(C.CLEN):
@@ -243,7 +245,7 @@ class Canvas:
                 # 右のマップに対戦相手を描画
                 rival_y = 100 + (C.CMAX * (C.LAPS - game.laps) - game.multiGame.bothPos[com(game.player)][1]) * 400 / (C.CMAX * C.LAPS)  #マップ上のy座標を計算
                 pygame.draw.circle(self.screen, C.YELLOW, [920, int(rival_y)], 8, 0)  #マップ上に対戦相手の円を描画
-                txt_pl = self.fnt_ss.render("com", True, C.BLACK)
+                txt_pl = self.fnt_ss.render("Opponent", True, C.BLACK)
                 self.screen.blit(txt_pl, [930, int(rival_y) - 10])
             except:
                 pass
