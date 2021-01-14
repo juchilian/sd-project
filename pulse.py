@@ -11,19 +11,17 @@ class Pulse:
         self.BUFFER_SIZE = 1024
         self.time = 0
         self.ip_adress = '192.168.11.7'
-        # self.data = self.pulse_socket()    
-        #IPアドレスへの接続のためのレッスン状態
 
     #心拍数を計測してself.dataに格納
     def pulse_socket(self):
         test = False
         #試したい場合のコード
-        while test:
+        if test:
             self.data = random.randint(0,200)
             print(self.data)
             return self.data
 
-        while not test:
+        if not test:
         #心拍が取れている場合のコード    
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 # コネクションを試みる
@@ -33,7 +31,6 @@ class Pulse:
                 # print("Listen Now...")
 
                 (connection, client) = s.accept()
-
                 # try:
                 # print('Client connected', client)
                 #receive data from server
@@ -46,4 +43,3 @@ class Pulse:
                 
                 finally:
                     connection.close()
-

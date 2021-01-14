@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-class Kcf_python():  
+class Kcf_python:  
     def __init__(self):
         self.tracker = cv2.TrackerKCF_create()
         self.cap = cv2.VideoCapture(0)
@@ -44,12 +44,12 @@ class Kcf_python():
             K_RIGHT, K_LEFT = self.key_decide(bbox_center_x,threshold)
         
         else :
-            cv2.putText(frame, "Failure", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1, cv2.LINE_AA)
+            # cv2.putText(frame, "Failure", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1, cv2.LINE_AA)
             [K_RIGHT, K_LEFT] = [0,0]
 
-        cv2.putText(frame, "FPS : " + str(int(fps)), (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1, cv2.LINE_AA)
         frame = np.array(frame)
         frame = np.fliplr(frame)
+        # cv2.putText(frame, "FPS : " + str(int(fps)), (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1, cv2.LINE_AA)
         cv2.imshow("Tracking", frame)
 
         return [K_RIGHT, K_LEFT]

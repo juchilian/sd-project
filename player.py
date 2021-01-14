@@ -5,7 +5,6 @@ import Const as C
 from pulse import Pulse
 import copy
 import time
-from KCF_python import Kcf_python
 import cv2
 
 class Player:
@@ -14,12 +13,10 @@ class Player:
         self.y = starty            #車のコース上の位置を管理するリスト
         self.lr = 0           #車の左右の向きを管理するリスト
         self.pls = Pulse() #パルスを定義
-        self.spd = 0   #車の速度を管理するリスト
-        self.spd_control()#スピードが表示される
+        self.spd = 0   #車の速度を管理する初期値
+        # self.spd_control()#スピード更新
         self.PLself = 10      #プレイヤーの車の表示位置を定める定数 道路一番手前(画面下)が0
         self.pulse_spd = 0
-        # self.data = 0
-        self.kcf = Kcf_python()#KCFのインスタンス生成
         self.value = 0
 
     def time_str(self,val):                               # **'**.**という時間の文字列を作る関数
@@ -103,8 +100,8 @@ class Player:
             self.spd = 170
         return self.spd
 
-if __name__ == '__main__':
-    player = Player(300,0)
-    while True:
-        print(player.spd_control())
+# if __name__ == '__main__':
+#     player = Player(300,0)
+#     while True:
+#         print(player.spd)
     
