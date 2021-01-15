@@ -115,6 +115,10 @@ class Canvas:
 
             if game.mylocation == 1:
                 pygame.draw.polygon(self.screen,self.road_color(game,game.p1.y+i,col),[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+            
+            if game.mylocation == 2:
+                pygame.draw.polygon(self.screen,self.road_color(game,game.p1.y+i,col),[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
+            
             """
             pygame.draw.polygon(self.screen,C.BLACK,[[ux,uy],[bx,by],[bx-side_w,by],[ux-side_w,uy]])   #道路脇の板を描く(左)
             pygame.draw.polygon(self.screen,C.BLACK,[[ux+uw,uy],[ux+uw+side_w,uy],[bx+bw+side_w,by],[bx+bw,by]])   #道路脇の板を描く(右)
@@ -139,11 +143,13 @@ class Canvas:
                 # if obj_l == 4: #金星(左)
                 #     self.draw_obj(game.img_obj[obj_l],ux+uw/2,uy-uw,scale)
             
-            if game.mylocation == 2:  #Space
-                if obj_r == 1:  #ビル(右)
-                    self.draw_obj(game.img_obj[obj_r],ux+uw*1.2,uy,scale)  
-                if obj_l == 2: #ビル(左)
-                    self.draw_obj(game.img_obj[obj_l],ux-uw*0.2,uy,scale)
+            if game.mylocation == 2:  #SD
+                for k in range(1,15):
+                    if obj_r == k:
+                        self.draw_obj(game.img_sd[obj_r],ux+uw*1.2,uy,scale) 
+                for k in range(15,28):
+                    if obj_l == k:
+                        self.draw_obj(game.img_sd[obj_l],ux-uw*0.2,uy,scale)
 
             for c in range(1,C.CAR_NUM):                                      #繰り返しで
                 if int(game.com.y[c])%C.CMAX == int(game.p1.y+i)%C.CMAX:          #その板にCOMカーがあるかどうか調べ
@@ -187,6 +193,8 @@ class Canvas:
             for j in range(C.BOARD):
                 pos = j + C.BOARD*i  
                 if game.mylocation == 0: #Tokyo
+                    self.object_right[pos] = 0
+                    self.object_left[pos] = 0
                     if i%8 < 7:
                         if j%12 == 0 :
                             self.object_right[pos] = 1 #右のビル
@@ -202,12 +210,26 @@ class Canvas:
                     """
 
                 if game.mylocation == 1:  #Space
+                    self.object_right[pos] = 0
+                    self.object_left[pos] = 0
                     if i%8 < 7:
                         if j == 0 :
                             self.object_right[pos] = 3 #水星
                     if i%8 < 7:
                         if j == 60 :
                             self.object_left[pos] = 4 #金星
+                
+                if game.mylocation == 2:  #SD
+                    self.object_right[pos] = 0
+                    self.object_left[pos] = 0
+                    for k in range(1,15):
+                        if i%14 == k - 1 :
+                            if j == 0 :
+                                self.object_right[pos] = k 
+                            if j == 60  :
+                                if k < 14:
+                                    self.object_left[pos] = k + 14
+                                
 
     
     def make_map(self):
@@ -278,7 +300,7 @@ class Canvas:
         self.screen.blit(sur,[x,y])
 
     def road_color(self,game,i,col):
-        if game.mylocation == 1:
+        if game.mylocation == 1 or game.mylocation == 2:
             if 0 <= i%21 and i%21 <= 2:
                 col = C.RED
             if 3 <= i%21 and i%21 <= 5:

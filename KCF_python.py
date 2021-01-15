@@ -7,7 +7,8 @@ class Kcf_python():
         self.tracker = cv2.TrackerKCF_create()
         self.cap = cv2.VideoCapture(0)
         self.value = 1
-        self.re_time = 0
+        self.time_value = 0
+        self.re_time1 = 0
 
     def frame_resize(self,frame,n=2):
         return cv2.resize(frame, (int(frame.shape[1]*1/2), int(frame.shape[0]*1/2)))
@@ -30,10 +31,11 @@ class Kcf_python():
         self.tracker.init(frame, bbox)
         cv2.destroyAllWindows()
 
-    def tracking_face(self):
+    def tracking_face(self,game):
         ret, frame = self.cap.read()
         track, bbox = self.tracker.update(frame)
         fps = cv2.CAP_PROP_FPS
+        [K_RIGHT, K_LEFT] = [0,0]
 
         if track:
             #p1が左上の点、つまりbboxは
@@ -45,12 +47,17 @@ class Kcf_python():
             bbox_center_x = int(bbox[0] + 1/2*bbox[2])
             #キー操作の値を変数に入れてる
             K_RIGHT, K_LEFT = self.key_decide(bbox_center_x,threshold)
-
             self.value = 1
-        
+            self.time_value = 0
+            game.re_elapsed_time = 0
+
+            
+    
         else :
             self.value = 0
-            self.re_time = time.time()
+            if self.time_value == 0:
+                self.re_time1 = time.time()
+                self.time_value = 1
             cv2.putText(frame, "Failure", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1, cv2.LINE_AA)
             [K_RIGHT, K_LEFT] = [0,0]
 

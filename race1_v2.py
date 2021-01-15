@@ -34,6 +34,7 @@ class Game:
         self.mybgm = 0
         self.myoperation = 0
         self.myspd_control = 0
+        self.re_elapsed_time = 0
         self.elapsed_time = 0
         self.elapsed_time_lap = 0
         self.kcf = Kcf_python()
@@ -194,9 +195,10 @@ class Game:
 
         #顔の位置を車両の移動に変換
         if self.myoperation == 1 and self.kcf.value == 1:
+        # if self.myoperation == 1:
             if self.idx != 8:
-                self.right = int(self.kcf.tracking_face()[0])
-                self.left = int(self.kcf.tracking_face()[1])
+                self.right = int(self.kcf.tracking_face(self)[0])
+                self.left = int(self.kcf.tracking_face(self)[1])
         # print("RIGHT:{},LEFT:{}".format(right,left))
 
 
@@ -441,14 +443,24 @@ class Game:
             self.idx = 0  #タイトル画面に戻る
 
     def re_recognition(self,key):
-        if self.myoperation == 1 and self.kcf.value == 0:
-            pygame.draw.rect(self.cvs.screen,C.BLACK,[100,250,600,150],5)
-            pygame.draw.rect(self.cvs.screen,C.WHITE,[102,252,596,146])
-            self.cvs.draw_text("Please recognize your face...",400,300,C.RED,self.cvs.fnt_m)
-            self.cvs.draw_text("[Enter] capture your face",400,340,C.RED,self.cvs.fnt_m)
-            if key[K_RETURN] == 1:
-                self.kcf.__init__()
-                self.kcf.make_bbox()
+        if self.myoperation == 1:
+            re_time2 = time.time()
+            self.re_elapsed_time = re_time2 - self.kcf.re_time1
+            if self.re_elapsed_time < 3.0 :
+                self.kcf.tracking_face(self)
+                re_count = 3 - int(self.re_elapsed_time)
+                self.cvs.draw_text("recognize after "+str(re_count)+" seconds..",400,100,C.RED,self.cvs.fnt_m)
+            if self.re_elapsed_time >= 3.0 and self.kcf.value == 0:
+                pygame.draw.rect(self.cvs.screen,C.BLACK,[100,250,600,150],5)
+                pygame.draw.rect(self.cvs.screen,C.WHITE,[102,252,596,146])
+                self.cvs.draw_text("Please recognize your face...",400,300,C.RED,self.cvs.fnt_m)
+                self.cvs.draw_text("[Enter] capture your face",400,340,C.RED,self.cvs.fnt_m)
+                if key[K_RETURN] == 1:
+                    self.re_elapsed_time = 0
+                    self.kcf.__init__()
+                    self.kcf.make_bbox()
+            else :
+                pass
             
 
 
@@ -491,6 +503,38 @@ class Game:
             pygame.image.load("image_pr/car_55.png").convert_alpha(),       #車(右2)
             pygame.image.load("image_pr/car_55.png").convert_alpha()        #車(右3)
         ]
+
+        self.img_sd = [
+            None,                                                          #オブジェクト名との整合性をとるためにNoneを入れる
+            pygame.image.load("image_pr/aoyama.png").convert_alpha(),      
+            pygame.image.load("image_pr/almazan.png").convert_alpha(),       
+            pygame.image.load("image_pr/ikaga.png").convert_alpha(),        
+            pygame.image.load("image_pr/omori.png").convert_alpha(),
+            pygame.image.load("image_pr/oya.png").convert_alpha(),
+            pygame.image.load("image_pr/ogawa.png").convert_alpha(),
+            pygame.image.load("image_pr/kakinuma.png").convert_alpha(),
+            pygame.image.load("image_pr/kazoe.png").convert_alpha(),
+            pygame.image.load("image_pr/katsura.png").convert_alpha(),
+            pygame.image.load("image_pr/kishimoto.png").convert_alpha(),
+            pygame.image.load("image_pr/koike.png").convert_alpha(),
+            pygame.image.load("image_pr/kohiyama.png").convert_alpha(),
+            pygame.image.load("image_pr/sato.png").convert_alpha(), 
+            pygame.image.load("image_pr/sudo.png").convert_alpha(),
+            pygame.image.load("image_pr/takahashi.png").convert_alpha(),
+            pygame.image.load("image_pr/taguchi.png").convert_alpha(),
+            pygame.image.load("image_pr/nakazawa.png").convert_alpha(),
+            pygame.image.load("image_pr/namerikawa.png").convert_alpha(),
+            pygame.image.load("image_pr/nishi.png").convert_alpha(),
+            pygame.image.load("image_pr/nozaki.png").convert_alpha(),       
+            pygame.image.load("image_pr/mita.png").convert_alpha(),
+            pygame.image.load("image_pr/mitsukura.png").convert_alpha(),
+            pygame.image.load("image_pr/murakami.png").convert_alpha(),
+            pygame.image.load("image_pr/yakoh.png").convert_alpha(),
+            pygame.image.load("image_pr/yamashita.png").convert_alpha(),
+            pygame.image.load("image_pr/yamamoto.png").convert_alpha(),
+            pygame.image.load("image_pr/radovic.png").convert_alpha(),
+            pygame.image.load("image_pr/radovic.png").convert_alpha(),
+        ]
         
         self.img_mode = [
             pygame.image.load("image_pr/singlemode.png").convert_alpha(),
@@ -500,7 +544,7 @@ class Game:
         self.img_location = [
             pygame.image.load("image_pr/tokyo_2.jpg").convert(),
             pygame.image.load("image_pr/space_2.png").convert(),
-            pygame.image.load("image_pr/space_2.png").convert()
+            pygame.image.load("image_pr/key.jpg").convert()
         ]
 
         self.img_operation = [
