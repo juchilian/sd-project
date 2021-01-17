@@ -1,4 +1,5 @@
 import pygame
+import random
 from pygame.locals import *  #pygame.定数の記述の省略
 import Const as C
 
@@ -15,8 +16,30 @@ class Canvas:
         self.updown = [0] * C.CMAX          #道の起伏を入れるリスト
         self.object_left = [0]*C.CMAX     #道路左にある物体の番号を入れるリスト
         self.object_right = [0] * C.CMAX  #道路右にある物体の番号を入れるリスト
+        self.object_uright = [0] * C.CMAX
+        self.object_uleft = [0] * C.CMAX
         self.make_course()
+        self.person_SD1 = [random.randint(1,28) for i in range(C.CLEN)]
+        self.person_SD2 = [random.randint(1,28) for i in range(C.CLEN)]
+        self.person_SD3 = [random.randint(1,28) for i in range(C.CLEN)]
+        self.person_SD4 = [random.randint(1,28) for i in range(C.CLEN)]
+        self.person_SD5 = [random.randint(1,28) for i in range(C.CLEN)]
+        self.person_SD6 = [random.randint(1,28) for i in range(C.CLEN)]
+        self.star_sun1 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.star_sun2 = [random.randint(5,9) for i in range(C.CLEN)]
+        self.star_sun3 = [random.randint(4,9) for i in range(C.CLEN)]
+        self.star_sun4 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.star_sun5 = [random.randint(5,9) for i in range(C.CLEN)]
+        self.star_sun6 = [random.randint(1,7) for i in range(C.CLEN)]
+        self.star_sun7 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.star_sun8 = [random.randint(5,9) for i in range(C.CLEN)]
+        self.star_sun9 = [random.randint(1,9) for i in range(C.CLEN)]
+        self.star_sun10 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.star_sun11 = [random.randint(5,9) for i in range(C.CLEN)]
+        self.star_sun12 = [random.randint(1,9) for i in range(C.CLEN)]
         
+
+
     def make_course(self): #コースデータを作る関数 #修正箇所(returnで値の変更を反映)
         for i in range(C.CLEN):
             lr1 = C.DATA_LR[i]                    #カーブデータをlr1に代入   
@@ -131,6 +154,8 @@ class Canvas:
             scale = 1.5*C.BOARD_W[i]/C.BOARD_W[0]    #道路横の物体のスケールを計算
             obj_l = self.object_left[int(game.p1.y+i)%C.CMAX]   #道路左の物体
             obj_r = self.object_right[int(game.p1.y+i)%C.CMAX]  #道路右の物体
+            obj_ul = self.object_uleft[int(game.p1.y+i)%C.CMAX]  #道路右の物体
+            obj_ur = self.object_uright[int(game.p1.y+i)%C.CMAX]  #道路右の物体
             
 
 
@@ -141,18 +166,20 @@ class Canvas:
                     self.draw_obj(game.img_obj[obj_l],ux-uw*0.2,uy,scale)
                 
             if game.mylocation == 1:  #Space
-                if obj_r == 3:  #水星(右)
-                    self.draw_obj(game.img_obj[obj_r],ux+uw*1.2,uy,scale)
-                if obj_l == 4: #金星(左)
-                    self.draw_obj(game.img_obj[obj_l],ux-uw*0.2,uy,scale)
-                # if obj_l == 4: #金星(左)
-                #     self.draw_obj(game.img_obj[obj_l],ux+uw/2,uy-uw,scale)
+                for k in range(1,10):
+                    if obj_r == k:
+                        self.draw_obj(game.img_star[obj_r],ux+uw*1.2,uy,scale) 
+                    if obj_l == k:
+                        self.draw_obj(game.img_star[obj_l],ux-uw*0.2,uy,scale)
+                    if obj_ul == k:
+                        self.draw_obj(game.img_star[obj_ul],ux+uw*0.2,uy-uw*0.5,scale)
+                    if obj_ur == k:
+                        self.draw_obj(game.img_star[obj_ur],ux+uw*0.8,uy-uw*0.5,scale)
             
             if game.mylocation == 2:  #SD
-                for k in range(1,15):
+                for k in range(1,29):
                     if obj_r == k:
                         self.draw_obj(game.img_sd[obj_r],ux+uw*1.2,uy,scale) 
-                for k in range(15,28):
                     if obj_l == k:
                         self.draw_obj(game.img_sd[obj_l],ux-uw*0.2,uy,scale)
 
@@ -200,6 +227,8 @@ class Canvas:
                 if game.mylocation == 0: #Tokyo
                     self.object_right[pos] = 0
                     self.object_left[pos] = 0
+                    self.object_uleft[pos] = 0
+                    self.object_uright[pos] = 0
                     if i%8 < 7:
                         if j%12 == 0 :
                             self.object_right[pos] = 1 #右のビル
@@ -217,23 +246,46 @@ class Canvas:
                 if game.mylocation == 1:  #Space
                     self.object_right[pos] = 0
                     self.object_left[pos] = 0
-                    if i%8 < 7:
+                    self.object_uleft[pos] = 0
+                    self.object_uright[pos] = 0
+                    if i%9 < 8:
                         if j == 0 :
-                            self.object_right[pos] = 3 #水星
-                    if i%8 < 7:
-                        if j == 60 :
-                            self.object_left[pos] = 4 #金星
+                            self.object_right[pos] = self.star_sun1[i] 
+                            self.object_uright[pos] = self.star_sun7[i] 
+                        if j == 40 :
+                            self.object_right[pos] = self.star_sun2[i]
+                            self.object_uright[pos] = self.star_sun8[i]
+                        if j == 80 :
+                            self.object_right[pos] = self.star_sun3[i]
+                            self.object_uright[pos] = self.star_sun9[i]
+                        if j == 20 :
+                            self.object_left[pos] = self.star_sun4[i] 
+                            self.object_uleft[pos] = self.star_sun10[i] 
+                        if j == 60  :
+                            self.object_left[pos] = self.star_sun5[i]
+                            self.object_uleft[pos] = self.star_sun11[i]
+                        if j == 100 :
+                            self.object_left[pos] = self.star_sun6[i]
+                            self.object_uleft[pos] = self.star_sun12[i]
                 
                 if game.mylocation == 2:  #SD
                     self.object_right[pos] = 0
                     self.object_left[pos] = 0
-                    for k in range(1,15):
-                        if i%14 == k - 1 :
-                            if j == 0 :
-                                self.object_right[pos] = k 
-                            if j == 60  :
-                                if k < 14:
-                                    self.object_left[pos] = k + 14
+                    self.object_uleft[pos] = 0
+                    self.object_uright[pos] = 0
+                    if i%28 < 27:
+                        if j == 0 :
+                            self.object_right[pos] = self.person_SD1[i] 
+                        if j == 40 :
+                            self.object_right[pos] = self.person_SD2[i]
+                        if j == 80 :
+                            self.object_right[pos] = self.person_SD3[i]
+                        if j == 20 :
+                            self.object_left[pos] = self.person_SD4[i] 
+                        if j == 60  :
+                            self.object_left[pos] = self.person_SD5[i]
+                        if j == 100 :
+                            self.object_left[pos] = self.person_SD6[i]
                                 
 
     
@@ -305,7 +357,7 @@ class Canvas:
         self.screen.blit(sur,[x,y])
 
     def road_color(self,game,i,col):
-        if game.mylocation == 1 or game.mylocation == 2:
+        if game.mylocation == 1:
             if 0 <= i%21 and i%21 <= 2:
                 col = C.RED
             if 3 <= i%21 and i%21 <= 5:
@@ -320,4 +372,7 @@ class Canvas:
                 col = C.BLUE
             if 18 <= i%21 and i%21 <= 20:
                 col = C.PURPLE
+        elif game.myoperation == 2:
+            col = C.GRAY
+
         return col

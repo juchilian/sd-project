@@ -471,7 +471,7 @@ class Game:
         self.img_bg = [
             pygame.image.load("image_pr/tokyo_3.jpg").convert(),
             pygame.image.load("image_pr/space_3.jpg").convert(),
-            pygame.image.load("image_pr/space_3.jpg").convert()
+            pygame.image.load("image_pr/ski_1.jpeg").convert()
         ]
 
         self.img_sea = pygame.image.load("image_pr/sea.png").convert_alpha()    #海
@@ -479,8 +479,20 @@ class Game:
             None,                                                          #オブジェクト名との整合性をとるためにNoneを入れる
             pygame.image.load("image_pr/building_1.jpg").convert_alpha(),       #ビル画像1
             pygame.image.load("image_pr/building_2.png").convert_alpha(),       #ビル画像2
-            pygame.image.load("image_pr/mercury_1.png").convert_alpha(),        #水星
-            pygame.image.load("image_pr/venus_1.png").convert_alpha()        #金星
+            pygame.image.load("image_pr/mercury.png").convert_alpha(),        #水星
+            pygame.image.load("image_pr/venus.png").convert_alpha()        #金星
+        ]
+        self.img_star = [
+            None,
+            pygame.image.load("image_pr/mercury.png").convert_alpha(),        #水星
+            pygame.image.load("image_pr/venus.png").convert_alpha(),        #金星
+            pygame.image.load("image_pr/earth.png").convert_alpha(),
+            pygame.image.load("image_pr/mars.png").convert_alpha(),
+            pygame.image.load("image_pr/jupiter.png").convert_alpha(),
+            pygame.image.load("image_pr/saturn.png").convert_alpha(),
+            pygame.image.load("image_pr/uranus.png").convert_alpha(),
+            pygame.image.load("image_pr/neptune.png").convert_alpha(),
+            pygame.image.load("image_pr/pluto.png").convert_alpha()
         ]
         self.img_car = [
             pygame.image.load("image_pr/car_41.png").convert_alpha(),       #車(左3)_赤
@@ -535,7 +547,7 @@ class Game:
             pygame.image.load("image_pr/yamashita.png").convert_alpha(),
             pygame.image.load("image_pr/yamamoto.png").convert_alpha(),
             pygame.image.load("image_pr/radovic.png").convert_alpha(),
-            pygame.image.load("image_pr/radovic.png").convert_alpha(),
+            pygame.image.load("image_pr/aoyama.png").convert_alpha(),
         ]
         
         self.img_arrow = [
