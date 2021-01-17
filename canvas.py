@@ -19,6 +19,12 @@ class Canvas:
         self.object_uright = [0] * C.CMAX
         self.object_uleft = [0] * C.CMAX
         self.make_course()
+        self.buil_1 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.buil_2 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.buil_3 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.buil_4 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.buil_5 = [random.randint(1,4) for i in range(C.CLEN)]
+        self.buil_6 = [random.randint(1,4) for i in range(C.CLEN)]
         self.person_SD1 = [random.randint(1,28) for i in range(C.CLEN)]
         self.person_SD2 = [random.randint(1,28) for i in range(C.CLEN)]
         self.person_SD3 = [random.randint(1,28) for i in range(C.CLEN)]
@@ -160,9 +166,10 @@ class Canvas:
 
 
             if game.mylocation == 0:  #Tokyo
-                if obj_r == 1:  #ビル(右)
+                if obj_r == 1 or obj_r == 2 or obj_r == 3 or obj_r == 4:  #ビル(右)
                     self.draw_obj(game.img_obj[obj_r],ux+uw*1.2,uy,scale)  
-                if obj_l == 2: #ビル(左)
+
+                if obj_l == 1 or obj_l == 2 or obj_l == 3 or obj_l == 4: #ビル(左)
                     self.draw_obj(game.img_obj[obj_l],ux-uw*0.2,uy,scale)
                 
             if game.mylocation == 1:  #Space
@@ -229,12 +236,20 @@ class Canvas:
                     self.object_left[pos] = 0
                     self.object_uleft[pos] = 0
                     self.object_uright[pos] = 0
-                    if i%8 < 7:
-                        if j%12 == 0 :
-                            self.object_right[pos] = 1 #右のビル
-                    if i%8 < 7:
-                        if j%12 == 0 :
-                            self.object_left[pos] = 2 #左のビル
+                    if i%8 <= 7:
+                        if j%24 == 0 :
+                            self.object_right[pos] = self.buil_1[i]  #右のビル
+                        if j%24 == 8 :
+                            self.object_right[pos] = self.buil_2[i] #右のビル
+                        if j%24 == 16 :
+                            self.object_right[pos] = self.buil_3[i] #右のビル
+                    if i%8 <= 7:
+                        if j%24 == 0 :
+                            self.object_left[pos] = self.buil_4[i] #右のビル
+                        if j%24 == 8 :
+                            self.object_left[pos] = self.buil_5[i] #右のビル
+                        if j%24 == 16 :
+                            self.object_left[pos] = self.buil_6[i] #右のビル
                     """
                     else:
                         if j%20 == 0:

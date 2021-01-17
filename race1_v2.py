@@ -479,8 +479,8 @@ class Game:
             None,                                                          #オブジェクト名との整合性をとるためにNoneを入れる
             pygame.image.load("image_pr/building_1.jpg").convert_alpha(),       #ビル画像1
             pygame.image.load("image_pr/building_2.png").convert_alpha(),       #ビル画像2
-            pygame.image.load("image_pr/mercury.png").convert_alpha(),        #水星
-            pygame.image.load("image_pr/venus.png").convert_alpha()        #金星
+            pygame.image.load("image_pr/building_3.png").convert_alpha(),        #水星
+            pygame.image.load("image_pr/building_4.png").convert_alpha()        #金星
         ]
         self.img_star = [
             None,
