@@ -82,11 +82,11 @@ class Game:
 
         if self.idx == 0:                                                     #idxが0(タイトル画面)のとき
             self.cvs.screen.blit(self.img_title, [120, 120])  #タイトルロゴを表示
-            self.cvs.draw_text("[C] Select your car", 400, 320, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
-            self.cvs.draw_text("[L] Select location",400,360,C.WHITE,self.cvs.fnt_m)
-            self.cvs.draw_text("[G] Select BGM",400,400,C.WHITE,self.cvs.fnt_m)
-            self.cvs.draw_text("[O] Select operation",400,440,C.WHITE,self.cvs.fnt_m)
-            self.cvs.draw_text("[S] Select speed control",400,480,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[C] Select your car", 400, 280, C.WHITE, self.cvs.fnt_m)  #[S] Select your car の文字を表示
+            self.cvs.draw_text("[L] Select location",400,320,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[G] Select BGM",400,360,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[O] Select operation",400,400,C.WHITE,self.cvs.fnt_m)
+            self.cvs.draw_text("[S] Select speed control",400,440,C.WHITE,self.cvs.fnt_m)
             self.cvs.draw_text("[M] Select mode",400,520,C.WHITE,self.cvs.fnt_m)
             self.p1.move_player(self.tmr, self.laps) #プレイヤーの車をただ動かすだけ
             self.com.move_car(1, self.tmr)  #コンピュータの車を動かす
@@ -318,6 +318,7 @@ class Game:
             self.mylocation = 0
             self.l_page = 0
         if self.l_page == 0:
+            bg.blit(self.img_arrow[self.l_page],[680,250])
             for i in range(2):
                 x = 250 + 300 * i  #xに選択用の枠のx座標を代入
                 y = 300  #yに選択用の枠のy座標を代入
@@ -332,6 +333,7 @@ class Game:
                 if i == 1:
                     self.cvs.draw_text("Space",x,y-40,C.WHITE,self.cvs.fnt_m)
         if self.l_page == 1:
+            bg.blit(self.img_arrow[self.l_page],[20,250])
             for i in range(2,3):
                 x = 250 + 300 * i - 600 #xに選択用の枠のx座標を代入
                 y = 300  #yに選択用の枠のy座標を代入
@@ -534,6 +536,11 @@ class Game:
             pygame.image.load("image_pr/yamamoto.png").convert_alpha(),
             pygame.image.load("image_pr/radovic.png").convert_alpha(),
             pygame.image.load("image_pr/radovic.png").convert_alpha(),
+        ]
+        
+        self.img_arrow = [
+            pygame.image.load("image_pr/right2.png").convert_alpha(),
+            pygame.image.load("image_pr/left2.png").convert_alpha()
         ]
         
         self.img_mode = [

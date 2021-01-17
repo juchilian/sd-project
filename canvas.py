@@ -90,6 +90,8 @@ class Canvas:
             by = sy - C.BOARD_UP[i-1]*board_ud[i-1]                  #下底のy座標をbyに代入
             bw = C.BOARD_W[i-1]                                      #下底の幅をbwに代入
             col = (160,160,160)                                    #colに板の色を代入
+            scale = 1.5*C.BOARD_W[i]/C.BOARD_W[0]    #道路横の物体のスケールを計算
+
             if int(game.p1.y+i) % C.CMAX == game.p1.PLself + 10:                 #ゴールの位置なら
                 col = (192,0,0)                                         #赤線の色の値を代入
                 pygame.draw.rect(self.screen,C.RED,[ux,uy-uw*0.5,uw,uw*0.5],2)   
@@ -97,6 +99,8 @@ class Canvas:
                 pygame.draw.rect(self.screen,C.WHITE,[ux,uy-uw*0.5,uw,uw*0.1],)  
                 #self.draw_text("START & GOAL",ux+uw/2,uy-20-uw*0.5,C.BLACK,self.fnt_l) 
             side_w = uw * 0.3
+            
+            
 
             if game.mylocation == 0:
                 pygame.draw.polygon(self.screen,col,[[ux,uy],[ux+uw,uy],[bx+bw,by],[bx,by]])   #道路の板を描く
@@ -127,6 +131,7 @@ class Canvas:
             scale = 1.5*C.BOARD_W[i]/C.BOARD_W[0]    #道路横の物体のスケールを計算
             obj_l = self.object_left[int(game.p1.y+i)%C.CMAX]   #道路左の物体
             obj_r = self.object_right[int(game.p1.y+i)%C.CMAX]  #道路右の物体
+            
 
 
             if game.mylocation == 0:  #Tokyo

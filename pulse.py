@@ -17,7 +17,7 @@ class Pulse:
     def pulse_socket(self):
         #試したい場合のコード
         self.data = random.randint(200,300)
-        print(self.data)
+        # print(self.data)
         return self.data
 
 
