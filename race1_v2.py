@@ -3,13 +3,13 @@ import sys
 from math import sin,radians
 import random
 from pygame.locals import *  #pygame.定数の記述の省略
+import time
 import Const as C
 from player import Player
 from computer import Computer
 from network import Network
 from multigame import MultiGame
 from canvas import Canvas
-import time
 from KCF_python import Kcf_python
 
 class Game:
